@@ -1,0 +1,57 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+		xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+		xmlns:i="https://github.com/projektanker/icons.avalonia"
+		xmlns:vm="using:Needlework.Net.Desktop.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Needlework.Net.Desktop.Views.MainWindow"
+		x:DataType="vm:MainWindowViewModel"
+        Title="Needlework.Net"
+        Width="1280"
+        Height="720">
+     <!-- TOP LEVEL -->
+	<suki:SukiSideMenu ItemsSource="{Binding Pages}">
+		<!-- ITEMS -->
+		<suki:SukiSideMenu.ItemTemplate>
+			<DataTemplate>
+				<suki:SukiSideMenuItem Header="{Binding DisplayName}">
+					<suki:SukiSideMenuItem.Icon>
+						<materialIcons:MaterialIcon Kind="{Binding Icon}" />
+					</suki:SukiSideMenuItem.Icon>
+				</suki:SukiSideMenuItem>
+			</DataTemplate>
+		</suki:SukiSideMenu.ItemTemplate>
+		<!-- FOOTER -->
+		<suki:SukiSideMenu.FooterContent>
+			<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+				<StackPanel.Styles>
+					<Style Selector="Button.Basic">
+						<Setter Property="Command" Value="{Binding OpenUrlCommand}" />
+					</Style>
+					<Style Selector="materialIcons|MaterialIcon">
+						<Setter Property="Width" Value="25" />
+						<Setter Property="Height" Value="25" />
+					</Style>
+					<Style Selector="i|Icon">
+						<Setter Property="FontSize" Value="25" />
+					</Style>
+				</StackPanel.Styles>
+				<Button Classes="Flat"
+						Content="{Binding Version}" />
+				<Button Classes="Basic"
+						CommandParameter="https://github.com/BlossomiShymae/Needlework.Net"
+						ToolTip.Tip="Open on GitHub.">
+					<materialIcons:MaterialIcon Kind="Github" />
+				</Button>
+				<Button Classes="Basic"
+						CommandParameter="https://discord.gg/chEvEX5J4E"
+						ToolTip.Tip="Open Discord server.">
+					<i:Icon Value="fa-brand fa-discord" />
+				</Button>
+			</StackPanel>
+		</suki:SukiSideMenu.FooterContent>
+	</suki:SukiSideMenu>
+</Window>

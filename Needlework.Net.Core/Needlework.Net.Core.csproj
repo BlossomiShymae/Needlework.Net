@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="BlossomiShymae.GrrrLCU" Version="0.4.0" />
+    <PackageReference Include="Microsoft.OpenApi" Version="1.6.16" />
+    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.16" />
+  </ItemGroup>
+
 </Project>
