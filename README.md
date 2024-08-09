@@ -10,7 +10,7 @@ Needlework.Net is an open-source helper tool for the LCU that provides documente
 
 ## Download
 
-[Needlework can be downloaded from the latest release for Windows!](https://github.com/BlossomiShymae/Needlework/releases)
+[Needlework can be downloaded from the latest release for Windows!](https://github.com/BlossomiShymae/Needlework.Net/releases)
 
 ## Contributors
 
