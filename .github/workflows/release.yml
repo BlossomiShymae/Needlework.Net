@@ -27,7 +27,7 @@ jobs:
       shell: powershell
       run: |
         $xml = [xml](Get-Content .\Needlework.Net.Desktop\Needlework.Net.Desktop.csproj)
-        "{VERSION}={($xml.Project.PropertyGroup).AssemblyVersion}" >> "$GITHUB_ENV"
+        echo "{VERSION}={($xml.Project.PropertyGroup).AssemblyVersion}" >> "$GITHUB_ENV"
         $env:VERSION
     - name: Zip
       run: 7z a -tzip NeedleworkDotNet-win-x64.zip ./Publish/* README.md LICENSE
