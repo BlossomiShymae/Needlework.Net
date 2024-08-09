@@ -16,40 +16,36 @@ namespace Needlework.Net.Desktop.ViewModels
 
         public HomeViewModel() : base("Home", Material.Icons.MaterialIconKind.Home, int.MinValue)
         {
-            StartProcessing();
+            var thread = new Thread(StartProcessing) { IsBackground = true };
+            thread.Start();
         }
 
         private void StartProcessing()
         {
-            var thread = new Thread(() =>
+            while (true)
             {
-                while (true)
+                void Set(string text, Color color, string address)
                 {
-                    void Set(string text, Color color, string address)
+                    Avalonia.Threading.Dispatcher.UIThread.Invoke(() =>
                     {
-                        Avalonia.Threading.Dispatcher.UIThread.Invoke(() =>
-                        {
-                            StatusText = text;
-                            StatusForeground = new SolidColorBrush(color.ToUInt32());
-                            StatusAddress = address;
-                        });
-                    }
-
-                    try
-                    {
-                        var processInfo = Connector.GetProcessInfo();
-                        Set("Online", Colors.Green, $"https://127.0.0.1:{processInfo.AppPort}/");
-                    }
-                    catch (InvalidOperationException)
-                    {
-                        Set("Offline", Colors.Red, "N/A");
-                    }
-
-                    Thread.Sleep(TimeSpan.FromSeconds(5));
+                        StatusText = text;
+                        StatusForeground = new SolidColorBrush(color.ToUInt32());
+                        StatusAddress = address;
+                    });
                 }
-            })
-            { IsBackground = true };
-            thread.Start();
+
+                try
+                {
+                    var processInfo = Connector.GetProcessInfo();
+                    Set("Online", Colors.Green, $"https://127.0.0.1:{processInfo.AppPort}/");
+                }
+                catch (InvalidOperationException)
+                {
+                    Set("Offline", Colors.Red, "N/A");
+                }
+
+                Thread.Sleep(TimeSpan.FromSeconds(5));
+            }
         }
 
         [RelayCommand]

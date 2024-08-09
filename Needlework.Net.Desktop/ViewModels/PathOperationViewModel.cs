@@ -50,10 +50,7 @@ namespace Needlework.Net.Desktop.ViewModels
                 var processInfo = Connector.GetProcessInfo();
                 return processInfo;
             }
-            catch (Exception ex)
-            {
-                Task.Run(async () => await SukiHost.ShowToast("Error", ex.Message, SukiUI.Enums.NotificationType.Error));
-            }
+            catch (Exception) { }
             return null;
         }
 
@@ -100,14 +97,16 @@ namespace Needlework.Net.Desktop.ViewModels
                 var response = await Connector.SendAsync(method, $"{uri}", content) ?? throw new Exception("Response is null.");
                 var riotAuthentication = new RiotAuthentication(processInfo.RemotingAuthToken);
                 var responseBody = await response.Content.ReadAsStringAsync();
-                responseBody = !string.IsNullOrEmpty(responseBody) ? JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(responseBody), App.JsonSerializerOptions) : string.Empty;
+
+                responseBody = JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(responseBody, App.JsonSerializerOptions));
+                if (responseBody.Length >= App.MaxCharacters) WeakReferenceMessenger.Default.Send(new OopsiesWindowRequestedMessage(responseBody));
+                else WeakReferenceMessenger.Default.Send(new EditorUpdateMessage(new(responseBody, "EndpointResponseEditor")));
 
                 ResponseStatus = $"{(int)response.StatusCode} {response.StatusCode}";
                 ResponsePath = $"https://127.0.0.1:{processInfo.AppPort}{uri}";
                 ResponseAuthentication = $"Basic {riotAuthentication.Value}";
                 ResponseUsername = riotAuthentication.Username;
                 ResponsePassword = riotAuthentication.Password;
-                WeakReferenceMessenger.Default.Send(new EditorUpdateMessage(new(responseBody, "EndpointResponseEditor")));
             }
             catch (Exception ex)
             {

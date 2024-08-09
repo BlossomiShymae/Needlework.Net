@@ -5,16 +5,16 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Needlework.Net.Desktop.Messages;
 using Needlework.Net.Desktop.Services;
-using Needlework.Net.Desktop.Views;
 using SukiUI.Controls;
 using System;
 using System.Net.Http;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Needlework.Net.Desktop.ViewModels
 {
-    public partial class ConsoleViewModel : PageBase, IRecipient<OopsiesWindowRequestedMessage>, IRecipient<DataReadyMessage>
+    public partial class ConsoleViewModel : PageBase, IRecipient<DataReadyMessage>
     {
         public IAvaloniaReadOnlyList<string> RequestMethods { get; } = new AvaloniaList<string>(["GET", "POST", "PUT", "DELETE", "HEAD", "PATCH", "OPTIONS", "TRACE"]);
 
@@ -34,7 +34,6 @@ namespace Needlework.Net.Desktop.ViewModels
         {
             WindowService = windowService;
 
-            WeakReferenceMessenger.Default.Register<OopsiesWindowRequestedMessage, string>(this, nameof(ConsoleView));
             WeakReferenceMessenger.Default.Register<DataReadyMessage>(this);
         }
 
@@ -66,10 +65,13 @@ namespace Needlework.Net.Desktop.ViewModels
                 var riotAuthentication = new RiotAuthentication(processInfo.RemotingAuthToken);
                 var body = await response.Content.ReadAsStringAsync();
 
+                body = JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(body, App.JsonSerializerOptions));
+                if (body.Length >= App.MaxCharacters) WindowService.ShowOopsiesWindow(body);
+                else WeakReferenceMessenger.Default.Send(new ResponseUpdatedMessage(body), nameof(ConsoleViewModel));
+
                 ResponseStatus = response.StatusCode.ToString();
                 ResponsePath = $"https://127.0.0.1:{processInfo.AppPort}{RequestPath}";
                 ResponseAuthentication = $"Basic {riotAuthentication.Value}";
-                WeakReferenceMessenger.Default.Send(new ResponseUpdatedMessage(body), nameof(ConsoleViewModel));
             }
             catch (Exception ex)
             {
@@ -83,11 +85,6 @@ namespace Needlework.Net.Desktop.ViewModels
             {
                 IsRequestBusy = false;
             }
-        }
-
-        public void Receive(OopsiesWindowRequestedMessage message)
-        {
-            WindowService.ShowOopsiesWindow(message.Value);
         }
 
         public void Receive(DataReadyMessage message)

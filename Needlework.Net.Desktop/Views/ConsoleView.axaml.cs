@@ -9,7 +9,6 @@ using Needlework.Net.Desktop.Extensions;
 using Needlework.Net.Desktop.Messages;
 using Needlework.Net.Desktop.ViewModels;
 using SukiUI;
-using System.Text.Json;
 using TextMateSharp.Grammars;
 
 namespace Needlework.Net.Desktop.Views;
@@ -26,17 +25,7 @@ public partial class ConsoleView : UserControl, IRecipient<ResponseUpdatedMessag
 
     public void Receive(ResponseUpdatedMessage message)
     {
-        if (!string.IsNullOrEmpty(message.Value))
-        {
-            var text = JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(message.Value), App.JsonSerializerOptions);
-            if (text.Length >= App.MaxCharacters)
-            {
-                WeakReferenceMessenger.Default.Send(new OopsiesWindowRequestedMessage(text), nameof(ConsoleView));
-                _responseEditor!.Text = string.Empty;
-            }
-            else _responseEditor!.Text = text;
-        }
-        else _responseEditor!.Text = message.Value;
+        _responseEditor!.Text = message.Value;
     }
 
     public void Receive(ContentRequestMessage message)

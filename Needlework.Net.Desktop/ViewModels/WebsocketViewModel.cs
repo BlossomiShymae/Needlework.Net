@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using Websocket.Client;
 
 namespace Needlework.Net.Desktop.ViewModels
@@ -27,6 +28,8 @@ namespace Needlework.Net.Desktop.ViewModels
 
         private Dictionary<string, EventMessage> _events = [];
 
+        public WebsocketClient? Client { get; set; }
+
         public WindowService WindowService { get; }
 
         public List<string> FilteredEventLog => string.IsNullOrWhiteSpace(Search) ? [.. EventLog] : [.. EventLog.Where(x => x.ToLower().Contains(Search.ToLower()))];
@@ -35,13 +38,29 @@ namespace Needlework.Net.Desktop.ViewModels
         {
             WindowService = windowService;
 
-            var client = Connector.CreateLcuWebsocketClient();
-            client.EventReceived.Subscribe(OnMessage);
-            client.DisconnectionHappened.Subscribe(OnDisconnection);
-            client.ReconnectionHappened.Subscribe(OnReconnection);
+            var thread = new Thread(InitializeWebsocket) { IsBackground = true };
+            thread.Start();
+        }
 
-            client.Start();
-            client.Send(new EventMessage(RequestType.Subscribe, EventMessage.Kinds.OnJsonApiEvent));
+        private void InitializeWebsocket()
+        {
+            while (true)
+            {
+                try
+                {
+                    var client = Connector.CreateLcuWebsocketClient();
+                    client.EventReceived.Subscribe(OnMessage);
+                    client.DisconnectionHappened.Subscribe(OnDisconnection);
+                    client.ReconnectionHappened.Subscribe(OnReconnection);
+
+                    client.Start();
+                    client.Send(new EventMessage(RequestType.Subscribe, EventMessage.Kinds.OnJsonApiEvent));
+                    Client = client;
+                    return;
+                }
+                catch (Exception) { }
+                Thread.Sleep(TimeSpan.FromSeconds(5));
+            }
         }
 
         [RelayCommand]
@@ -63,12 +82,15 @@ namespace Needlework.Net.Desktop.ViewModels
 
         private void OnReconnection(ReconnectionInfo info)
         {
-            Trace.WriteLine($"-- Reconnection --\n{JsonSerializer.Serialize(info, App.JsonSerializerOptions)}");
+            Trace.WriteLine($"-- Reconnection --\nType{info.Type}");
         }
 
         private void OnDisconnection(DisconnectionInfo info)
         {
-            Trace.WriteLine($"-- Disconnection --\n{JsonSerializer.Serialize(info, App.JsonSerializerOptions)}");
+            Trace.WriteLine($"-- Disconnection --\nType:{info.Type}\nSubProocol:{info.SubProtocol}\nCloseStatus:{info.CloseStatus}\nCloseStatusDescription:{info.CloseStatusDescription}\nExceptionMessage:{info?.Exception?.Message}\n:InnerException:{info?.Exception?.InnerException}");
+            Client?.Dispose();
+            var thread = new Thread(InitializeWebsocket) { IsBackground = true };
+            thread.Start();
         }
 
         private void OnMessage(EventMessage message)
