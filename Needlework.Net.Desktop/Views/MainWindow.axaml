@@ -1,4 +1,5 @@
-<Window xmlns="https://github.com/avaloniaui"
+<suki:SukiWindow 
+		xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -10,8 +11,15 @@
         x:Class="Needlework.Net.Desktop.Views.MainWindow"
 		x:DataType="vm:MainWindowViewModel"
         Title="Needlework.Net"
+		Icon="/Assets/app.ico"
         Width="1280"
         Height="720">
+	<suki:SukiWindow.LogoContent>
+		<Image Source="/Assets/app.png"
+			   Width="20"
+			   Height="20"
+			   VerticalAlignment="Center"/>
+	</suki:SukiWindow.LogoContent>
      <!-- TOP LEVEL -->
 	<suki:SukiSideMenu ItemsSource="{Binding Pages}">
 		<!-- ITEMS -->
@@ -40,13 +48,25 @@
 					</Style>
 				</StackPanel.Styles>
 				<Button Classes="Flat"
-						Content="{Binding Version}" />
+						Content="{Binding Version}"
+						FontSize="12"
+						Margin="0 0 4 0"
+						Padding="12 4 12 4"
+						VerticalAlignment="Center"/>
 				<Button Classes="Basic"
+						VerticalAlignment="Center"
 						CommandParameter="https://github.com/BlossomiShymae/Needlework.Net"
-						ToolTip.Tip="Open on GitHub.">
-					<materialIcons:MaterialIcon Kind="Github" />
+						ToolTip.Tip="Open on GitHub."
+						Margin="0 0 4 0">
+					<StackPanel Orientation="Horizontal">
+						<materialIcons:MaterialIcon Kind="Github" Margin="0 0 4 0" />
+						<TextBlock FontSize="12"
+								   VerticalAlignment="Center"
+								   Foreground="White">Star</TextBlock>
+					</StackPanel>
 				</Button>
 				<Button Classes="Basic"
+						VerticalAlignment="Center"
 						CommandParameter="https://discord.gg/chEvEX5J4E"
 						ToolTip.Tip="Open Discord server.">
 					<i:Icon Value="fa-brand fa-discord" />
@@ -54,4 +74,4 @@
 			</StackPanel>
 		</suki:SukiSideMenu.FooterContent>
 	</suki:SukiSideMenu>
-</Window>
+</suki:SukiWindow>

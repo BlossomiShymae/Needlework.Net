@@ -8,10 +8,8 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Needlework.Net.Desktop.Views.EndpointsView"
 		x:DataType="vm:EndpointsViewModel">
-	<!-- TOP LEVEL -->
 	<suki:BusyArea IsBusy="{Binding IsBusy}" BusyText="Loading...">
 		<Grid Margin="16" RowDefinitions="auto,auto,*" ColumnDefinitions="*">
-			<TextBlock Classes="h3" Margin="0 4" Grid.Row="0" Grid.Column="0">Endpoints</TextBlock>
 			<TextBox Watermark="Search" Margin="0 4" Text="{Binding Search}" Grid.Row="1" Grid.Column="0"/>
 			<ScrollViewer Grid.Row="2" Grid.Column="0">
 				<ListBox ItemsSource="{Binding Query}" SelectedItem="{Binding SelectedQuery}">

@@ -1,19 +1,313 @@
-<Window xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+		xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
 		xmlns:vm="using:Needlework.Net.Desktop.ViewModels"
+		xmlns:avalonEdit="https://github.com/avaloniaui/avaloniaedit"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Needlework.Net.Desktop.Views.EndpointView"
-		x:DataType="vm:EndpointViewModel"
-		Title="{Binding Title}"
-		Width="1280"
-		Height="720">
-	<Grid Margin="8" RowDefinitions="auto,*" ColumnDefinitions="*">
-		<TextBlock Classes="h3" Grid.Row="0" Grid.Column="0" Text="{Binding Endpoint}"/>
-		<ScrollViewer Grid.Row="1" Grid.Column="0">
-			
-		</ScrollViewer>
+		x:DataType="vm:EndpointViewModel">
+	<Grid RowDefinitions="auto,*" ColumnDefinitions="3*,2,4*,2,4*">
+		<Grid Grid.Row="0"
+			  Grid.Column="0"
+			  Grid.RowSpan="2"
+			  RowDefinitions="auto,*"
+			  ColumnDefinitions="*">
+			<ListBox ItemsSource="{Binding PathOperations}"
+					 SelectedItem="{Binding SelectedPathOperation}"
+					 ScrollViewer.HorizontalScrollBarVisibility="Visible"
+					 Margin="0 0 0 0"
+					 Grid.Row="0"
+					 Grid.RowSpan="2"
+					 Grid.Column="0">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<Grid
+						RowDefinitions="*"
+						ColumnDefinitions="auto,*">
+							<Button
+								VerticalAlignment="Center"
+								Classes="Flat"
+								Margin="0 0 8 0"
+								Content="{Binding Method}"
+								Background="{Binding Color}"
+								FontSize="8"
+								Width="45"
+								Padding="10 2 10 2"
+								Grid.Row="0"
+								Grid.Column="0"/>
+							<TextBlock
+								VerticalAlignment="Center"
+								Text="{Binding Path}"
+								FontSize="11"
+								Grid.Row="0"
+								Grid.Column="1"/>
+						</Grid>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</Grid>
+		<GridSplitter Background="Gray"
+						  Grid.Row="0"
+						  Grid.RowSpan="2"
+						  Grid.Column="1"/>
+		<Grid Grid.Row="0"
+			  Grid.Column="2"
+			  RowDefinitions="*"
+			  ColumnDefinitions="auto,*,auto">
+			<TextBox Grid.Row="0" 
+					 Grid.Column="0" 
+					 Text="{Binding SelectedPathOperation.Method}"
+					 FontSize="12"
+					 IsReadOnly="True"/>
+			<TextBox Grid.Row="0" 
+					 Grid.Column="1" 
+					 FontSize="12"
+					 Text="{Binding SelectedPathOperation.ResponsePath}"
+					 IsReadOnly="True"/>
+			<StackPanel Grid.Row="0" 
+						Grid.Column="2" 
+						Orientation="Horizontal">
+				<Button Classes="Flat"
+						Margin="4"
+						FontSize="12"
+						HorizontalAlignment="Right"
+						Padding="12 4 12 4"
+						VerticalAlignment="Center"
+						Command="{Binding SelectedPathOperation.SendRequestCommand}">Send</Button>
+			</StackPanel>
+		</Grid>
+		<Grid Grid.Row="1" Grid.Column="2">
+			<TabControl>
+				<TabItem Header="Params">
+					<ScrollViewer>
+						<StackPanel IsVisible="{Binding SelectedPathOperation, Converter={StaticResource NullBoolConverter}}">
+							<suki:GroupBox Header="Path Parameters"
+										   Margin="0 4"
+										   IsVisible="{Binding SelectedPathOperation.Operation.PathParameters, Converter={StaticResource EnumerableBoolConverter}}">
+								<DataGrid
+								ItemsSource="{Binding SelectedPathOperation.Operation.PathParameters}"
+								IsReadOnly="True"
+								GridLinesVisibility="Horizontal">
+									<DataGrid.Styles>
+										<Style Selector="DataGridRow DataGridCell">
+											<Setter Property="FontSize" Value="12"></Setter>
+										</Style>
+									</DataGrid.Styles>
+									<DataGrid.Columns>
+										<DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+										<DataGridCheckBoxColumn Header="Required" Binding="{Binding IsRequired}"/>
+										<DataGridTemplateColumn Header="Value">
+											<DataGridTemplateColumn.CellTemplate>
+												<DataTemplate DataType="vm:ParameterViewModel">
+													<TextBox Text="{Binding Value}"/>
+												</DataTemplate>
+											</DataGridTemplateColumn.CellTemplate>
+										</DataGridTemplateColumn>
+										<DataGridTextColumn Header="Type" Binding="{Binding Type}"/>
+									</DataGrid.Columns>
+								</DataGrid>
+							</suki:GroupBox>
+							<suki:GroupBox Header="Query Parameters"
+										   Margin="0 4"
+										   IsVisible="{Binding SelectedPathOperation.Operation.QueryParameters, Converter={StaticResource EnumerableBoolConverter}}">
+								<DataGrid
+								ItemsSource="{Binding SelectedPathOperation.Operation.QueryParameters}"
+								IsReadOnly="True"
+								GridLinesVisibility="Horizontal">
+									<DataGrid.Styles>
+										<Style Selector="DataGridRow DataGridCell">
+											<Setter Property="FontSize" Value="12"></Setter>
+										</Style>
+									</DataGrid.Styles>
+									<DataGrid.Columns>
+										<DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+										<DataGridCheckBoxColumn Header="Required" Binding="{Binding IsRequired}"/>
+										<DataGridTemplateColumn Header="Value">
+											<DataGridTemplateColumn.CellTemplate>
+												<DataTemplate DataType="vm:ParameterViewModel">
+													<TextBox Text="{Binding Value}"/>
+												</DataTemplate>
+											</DataGridTemplateColumn.CellTemplate>
+										</DataGridTemplateColumn>
+										<DataGridTextColumn Header="Type" Binding="{Binding Type}"/>
+									</DataGrid.Columns>
+								</DataGrid>
+							</suki:GroupBox>
+						</StackPanel>
+					</ScrollViewer>
+				</TabItem>
+				<TabItem Header="Body">
+					<avalonEdit:TextEditor
+						Name="EndpointRequestEditor"
+						HorizontalScrollBarVisibility="Auto"
+						VerticalScrollBarVisibility="Visible"
+						Text=""
+						ShowLineNumbers="True"
+						FontSize="12"/>
+				</TabItem>
+				<TabItem Header="Auth">
+					<Grid RowDefinitions="auto,auto,auto,*" ColumnDefinitions="*,4*">
+						<TextBlock FontSize="12"
+								   Grid.Row="0"
+								   Grid.Column="0"
+								   VerticalAlignment="Center">
+							Username
+						</TextBlock>
+						<TextBox FontSize="12"
+								 Grid.Row="0"
+								 Grid.Column="1"
+								 IsReadOnly="True"
+								 Text="{Binding SelectedPathOperation.ResponseUsername}" />
+						<TextBlock FontSize="12"
+								   Grid.Row="1"
+								   Grid.Column="0"
+								   VerticalAlignment="Center">
+							Password
+						</TextBlock>
+						<TextBox FontSize="12"
+								 Grid.Row="1"
+								 Grid.Column="1"
+								 IsReadOnly="True"
+								 Text="{Binding SelectedPathOperation.ResponsePassword}"/>
+						<TextBlock FontSize="12"
+								   Grid.Row="2"
+								   Grid.Column="0"
+								   VerticalAlignment="Center">
+							Authorization
+						</TextBlock>
+						<TextBox FontSize="12"
+								 Grid.Row="2"
+								 Grid.Column="1"
+								 IsReadOnly="True"
+								 Text="{Binding SelectedPathOperation.ResponseAuthorization}"/>
+					</Grid>
+				</TabItem>
+				<TabItem Header="Schemas">
+					<ScrollViewer>
+						<StackPanel>
+							<suki:GlassCard Margin="0 4" IsVisible="{Binding SelectedPathOperation.Operation.RequestBodyType, Converter={StaticResource NullBoolConverter}}">
+								<TextBlock>
+									<Run Text="Request body: " FontWeight="DemiBold" FontSize="12"/>
+									<Run Text="{Binding SelectedPathOperation.Operation.RequestBodyType}" FontSize="12"/>
+								</TextBlock>
+							</suki:GlassCard>
+							<Border Margin="0 4" IsVisible="{Binding SelectedPathOperation.Operation.RequestClasses, Converter={StaticResource EnumerableBoolConverter}}">
+								<ItemsRepeater ItemsSource="{Binding SelectedPathOperation.Operation.RequestClasses}">
+									<ItemsRepeater.ItemTemplate>
+										<DataTemplate>
+											<StackPanel Margin="0 4 0 8">
+												<suki:GlassCard IsVisible="{Binding PropertyFields, Converter={StaticResource EnumerableBoolConverter}}">
+													<suki:GroupBox Header="{Binding Id}">
+														<DataGrid
+															ItemsSource="{Binding PropertyFields}"
+															AutoGenerateColumns="True"
+															IsReadOnly="True"
+															GridLinesVisibility="Horizontal">
+															<DataGrid.Styles>
+																<Style Selector="DataGridRow DataGridCell">
+																	<Setter Property="FontSize" Value="12"></Setter>
+																</Style>
+															</DataGrid.Styles>
+														</DataGrid>
+													</suki:GroupBox>
+												</suki:GlassCard>
+												<suki:GlassCard Margin="0 0 0 8" IsVisible="{Binding PropertyEnums, Converter={StaticResource EnumerableBoolConverter}}">
+													<suki:GroupBox Header="{Binding Id}">
+														<DataGrid
+														ItemsSource="{Binding PropertyEnums}"
+														AutoGenerateColumns="True"
+														IsReadOnly="True"
+														GridLinesVisibility="Horizontal">
+															<DataGrid.Styles>
+																<Style Selector="DataGridRow DataGridCell">
+																	<Setter Property="FontSize" Value="12"></Setter>
+																</Style>
+															</DataGrid.Styles>
+														</DataGrid>
+													</suki:GroupBox>
+												</suki:GlassCard>
+											</StackPanel>
+										</DataTemplate>
+									</ItemsRepeater.ItemTemplate>
+								</ItemsRepeater>
+							</Border>
+							<suki:GlassCard Margin="0 4">
+								<TextBlock>
+									<Run Text="Return value: " FontWeight="DemiBold" FontSize="12"/>
+									<Run Text="{Binding SelectedPathOperation.Operation.ReturnType}" FontSize="12"/>
+								</TextBlock>
+							</suki:GlassCard>
+							<Border Margin="0 4" IsVisible="{Binding SelectedPathOperation.Operation.ResponseClasses, Converter={StaticResource EnumerableBoolConverter}}">
+								<ItemsRepeater ItemsSource="{Binding SelectedPathOperation.Operation.ResponseClasses}">
+									<ItemsRepeater.ItemTemplate>
+										<DataTemplate>
+											<StackPanel Margin="0 4 0 8">
+												<suki:GlassCard IsVisible="{Binding PropertyFields, Converter={StaticResource EnumerableBoolConverter}}">
+													<suki:GroupBox Header="{Binding Id}">
+														<DataGrid
+													ItemsSource="{Binding PropertyFields}"
+													AutoGenerateColumns="True"
+													IsReadOnly="True"
+													GridLinesVisibility="Horizontal">
+															<DataGrid.Styles>
+																<Style Selector="DataGridRow DataGridCell">
+																	<Setter Property="FontSize" Value="12"></Setter>
+																</Style>
+															</DataGrid.Styles>
+														</DataGrid>
+													</suki:GroupBox>
+												</suki:GlassCard>
+												<suki:GlassCard Margin="0 0 0 8" IsVisible="{Binding PropertyEnums, Converter={StaticResource EnumerableBoolConverter}}">
+													<suki:GroupBox Header="{Binding Id}">
+														<DataGrid
+														ItemsSource="{Binding PropertyEnums}"
+														AutoGenerateColumns="True"
+														IsReadOnly="True"
+														GridLinesVisibility="Horizontal">
+															<DataGrid.Styles>
+																<Style Selector="DataGridRow DataGridCell">
+																	<Setter Property="FontSize" Value="12"></Setter>
+																</Style>
+															</DataGrid.Styles>
+														</DataGrid>
+													</suki:GroupBox>
+												</suki:GlassCard>
+											</StackPanel>
+										</DataTemplate>
+									</ItemsRepeater.ItemTemplate>
+								</ItemsRepeater>
+							</Border>
+						</StackPanel>
+					</ScrollViewer>
+				</TabItem>
+			</TabControl>
+		</Grid>
+		<GridSplitter Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Background="Gray"/>
+		<StackPanel Grid.Row="0" Grid.Column="4" Orientation="Horizontal">
+			<Button HorizontalAlignment="Left"
+					VerticalAlignment="Center"
+					Margin="4"
+					FontSize="10"
+					Padding="12 4 12 4"
+					Classes="Flat"
+					Content="{Binding SelectedPathOperation.ResponseStatus}"/>
+					
+		</StackPanel>
+		<Grid Grid.Row="1" Grid.Column="4">
+			<TabControl>
+				<TabItem Header="Preview">
+					<avalonEdit:TextEditor
+						Name="EndpointResponseEditor"
+						HorizontalScrollBarVisibility="Auto"
+						VerticalScrollBarVisibility="Visible"
+						ShowLineNumbers="True"
+						Text=""
+						FontSize="12"/>
+				</TabItem>
+			</TabControl>
+		</Grid>
 	</Grid>
-</Window>
+</UserControl>

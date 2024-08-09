@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,8 +16,13 @@ public partial class App(IServiceProvider serviceProvider) : Application
 
     public static JsonSerializerOptions JsonSerializerOptions { get; } = new()
     {
-        WriteIndented = true
+        WriteIndented = true,
+        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
     };
+
+    public static readonly int MaxCharacters = 10_000;
+
+    public static Window? MainWindow;
 
     public override void Initialize()
     {
@@ -31,7 +37,10 @@ public partial class App(IServiceProvider serviceProvider) : Application
             {
                 DataContext = _serviceProvider.GetRequiredService<MainWindowViewModel>()
             };
+            MainWindow = desktop.MainWindow;
         }
+
+
 
         base.OnFrameworkInitializationCompleted();
     }

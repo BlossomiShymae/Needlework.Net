@@ -35,7 +35,7 @@ class Program
         var builder = new ServiceCollection();
 
         builder.AddSingleton<MainWindowViewModel>();
-        builder.AddSingleton<DialogService>();
+        builder.AddSingleton<WindowService>();
         // Dynamically add ViewModels
         var types = AppDomain.CurrentDomain.GetAssemblies()
           .SelectMany(s => s.GetTypes())

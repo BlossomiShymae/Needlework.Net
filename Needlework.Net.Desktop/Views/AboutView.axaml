@@ -8,8 +8,10 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Needlework.Net.Desktop.Views.AboutView"
 			 x:DataType="vm:AboutViewModel">
-	<ScrollViewer>
-		<WrapPanel Margin="8"
+	<Grid Margin="8"
+			VerticalAlignment="Center"
+			HorizontalAlignment="Center">
+		<WrapPanel
 				   theme:WrapPanelExtensions.AnimatedScroll="true"
 				   Orientation="Horizontal">
 			<suki:GlassCard Margin="8">
@@ -27,13 +29,13 @@
 				<suki:GlassCard Width="400" Margin="8">
 					<suki:GroupBox Header="About">
 						<TextBlock TextWrapping="Wrap">
-							Needlework.Net is the sister project of Needlework. Like Needlework, this project is inspired by 
-							LCU Explorer. This tool was made to help others with LCU development. Feel free to ask any questions 
+							Needlework.Net is .NET rewrite of Needlework. Like Needlework, this project is inspired by
+							LCU Explorer. This tool was made to help others with LCU development. Feel free to ask any questions
 							or help contribute to the project! 💜
 						</TextBlock>
 					</suki:GroupBox>
 				</suki:GlassCard>
 			</StackPanel>
 		</WrapPanel>
-	</ScrollViewer>
+	</Grid>
 </UserControl>

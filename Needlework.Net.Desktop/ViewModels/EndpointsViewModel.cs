@@ -1,57 +1,55 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Needlework.Net.Core;
-using Needlework.Net.Desktop.Services;
-using System.Collections.Generic;
+﻿using Avalonia.Collections;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
+using Needlework.Net.Desktop.Messages;
+using SukiUI.Controls;
+using System;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace Needlework.Net.Desktop.ViewModels
 {
-    public partial class EndpointsViewModel : PageBase
+    public partial class EndpointsViewModel : ObservableObject, IRecipient<DataReadyMessage>, ISukiStackPageTitleProvider
     {
         public HttpClient HttpClient { get; }
 
-        public DialogService DialogService { get; }
+        public string Title => "Endpoints";
+        public Action<ISukiStackPageTitleProvider> OnClicked;
 
-        [ObservableProperty] private List<string> _plugins = [];
+        [ObservableProperty] private IAvaloniaReadOnlyList<string> _plugins = new AvaloniaList<string>();
         [ObservableProperty] private bool _isBusy = true;
         [ObservableProperty] private string _search = string.Empty;
-        [ObservableProperty] private List<string> _query = [];
+        [ObservableProperty] private IAvaloniaReadOnlyList<string> _query = new AvaloniaList<string>();
         [ObservableProperty] private string? _selectedQuery = string.Empty;
 
-        public EndpointsViewModel(HttpClient httpClient, DialogService dialogService) : base("Endpoints", Material.Icons.MaterialIconKind.Hub, -500)
+        public EndpointsViewModel(HttpClient httpClient, Action<ISukiStackPageTitleProvider> onClicked)
         {
             HttpClient = httpClient;
-            DialogService = dialogService;
+            OnClicked = onClicked;
 
-            Task.Run(InitializeAsync);
+            WeakReferenceMessenger.Default.Register(this);
         }
 
-        private async Task InitializeAsync()
+        public void Receive(DataReadyMessage message)
         {
-            var handler = new LcuSchemaHandler(await Resources.GetOpenApiDocumentAsync(HttpClient));
-            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-            {
-                Plugins = [.. handler.Plugins.Keys];
-                Query = [.. Plugins];
-                IsBusy = false;
-            });
+            IsBusy = false;
+            Plugins = new AvaloniaList<string>([.. message.Value.Plugins.Keys]);
+            Query = new AvaloniaList<string>([.. Plugins]);
         }
 
         partial void OnSearchChanged(string value)
         {
             if (!string.IsNullOrEmpty(Search))
-                Query = Plugins.Where(x => x.Contains(value)).ToList();
+                Query = new AvaloniaList<string>(Plugins.Where(x => x.Contains(value)));
             else
                 Query = Plugins;
         }
 
         partial void OnSelectedQueryChanged(string? value)
         {
-            if (string.IsNullOrEmpty(value))
-                return;
-            DialogService.ShowEndpoint(value);
+            if (string.IsNullOrEmpty(value)) return;
+
+            OnClicked.Invoke(new EndpointViewModel(value));
         }
     }
 }

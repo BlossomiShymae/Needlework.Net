@@ -4,46 +4,69 @@ namespace Needlework.Net.Core;
 
 public class LcuSchemaHandler
 {
-    internal OpenApiDocument OpenApiDocument { get; } 
+    internal OpenApiDocument OpenApiDocument { get; }
 
-    public SortedDictionary<string, OpenApiPathItem> Plugins { get; } = [];
+    public SortedDictionary<string, List<PathOperation>> Plugins { get; }
 
     public OpenApiInfo Info => OpenApiDocument.Info;
+
+    public List<string> Paths => [.. OpenApiDocument.Paths.Keys];
 
     public LcuSchemaHandler(OpenApiDocument openApiDocument)
     {
         OpenApiDocument = openApiDocument;
+        var plugins = new SortedDictionary<string, List<PathOperation>>();
 
-        // Group paths by plugins
-        foreach (var tag in OpenApiDocument.Tags)
+        foreach ((var path, var pathItem) in openApiDocument.Paths)
         {
-            foreach (var path in OpenApiDocument.Paths)
+            foreach ((var method, var operation) in pathItem.Operations)
             {
-                var containsTag = false;
-                var sentinelTag = string.Empty;
+                var operations = new List<PathOperation>();
+                var pluginsKey = "_unknown";
 
-                foreach (var operation in path.Value.Operations)
+                // Process and group endpoints into the following formats:
+                // "_unknown" - group that should not be possible
+                // "default" - no tags
+                // "builtin" - 'builtin' not associated with an endpoint
+                // "lol-summoner" etc. - 'plugin' associated with an endpoint
+                // "performance", "tracing", etc.
+                if (operation.Tags.Count == 0)
                 {
-                    foreach (var operationTag in operation.Value.Tags)
+                    pluginsKey = "default";
+                    if (plugins.TryGetValue(pluginsKey, out var p))
+                        p.Add(new(method.ToString(), path, operation));
+                    else
                     {
-                        var lhs = tag.Name.Replace("Plugin ", string.Empty);
-                        var rhs = operationTag.Name.Replace("Plugin ", string.Empty);
-                    
-                        if (lhs.Equals(rhs, StringComparison.OrdinalIgnoreCase))
+                        operations.Add(new(method.ToString(), path, operation));
+                        plugins[pluginsKey] = operations;
+                    }
+                }
+                else
+                {
+                    foreach (var tag in operation.Tags)
+                    {
+                        var lowercaseTag = tag.Name.ToLower();
+                        if (lowercaseTag == "plugins")
+                            continue;
+                        else if (lowercaseTag.Contains("plugin "))
+                            pluginsKey = lowercaseTag.Replace("plugin ", "");
+                        else
+                            pluginsKey = lowercaseTag;
+
+                        if (plugins.TryGetValue(pluginsKey, out var p))
+                            p.Add(new(method.ToString(), path, operation));
+                        else
                         {
-                            containsTag = true;
-                            sentinelTag = lhs.ToLower();
-                            break; // Break early since all operations in a path share the same tags
+                            operations.Add(new(method.ToString(), path, operation));
+                            plugins[pluginsKey] = operations;
                         }
                     }
-
-                    if (containsTag)
-                        break; // Ditto
                 }
-
-                if (containsTag)
-                    Plugins[sentinelTag] = path.Value;
             }
         }
+
+        Plugins = plugins;
     }
 }
+
+public record PathOperation(string Method, string Path, OpenApiOperation Operation);

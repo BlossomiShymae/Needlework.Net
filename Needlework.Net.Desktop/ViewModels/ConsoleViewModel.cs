@@ -2,17 +2,25 @@
 using BlossomiShymae.GrrrLCU;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using Needlework.Net.Desktop.Messages;
+using Needlework.Net.Desktop.Services;
+using Needlework.Net.Desktop.Views;
 using SukiUI.Controls;
 using System;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Needlework.Net.Desktop.ViewModels
 {
-    public partial class ConsoleViewModel : PageBase
+    public partial class ConsoleViewModel : PageBase, IRecipient<OopsiesWindowRequestedMessage>, IRecipient<DataReadyMessage>
     {
         public IAvaloniaReadOnlyList<string> RequestMethods { get; } = new AvaloniaList<string>(["GET", "POST", "PUT", "DELETE", "HEAD", "PATCH", "OPTIONS", "TRACE"]);
 
+        [ObservableProperty] private bool _isBusy = true;
+        [ObservableProperty] private bool _isRequestBusy = false;
+        [ObservableProperty] private IAvaloniaReadOnlyList<string> _requestPaths = new AvaloniaList<string>();
         [ObservableProperty] private string? _requestMethodSelected = "GET";
         [ObservableProperty] private string? _requestPath = null;
         [ObservableProperty] private string? _requestBody = null;
@@ -20,10 +28,14 @@ namespace Needlework.Net.Desktop.ViewModels
         [ObservableProperty] private string? _responseStatus = null;
         [ObservableProperty] private string? _responseAuthentication = null;
 
-        public event EventHandler<TextUpdatedEventArgs>? ResponseBodyUpdated;
+        public WindowService WindowService { get; }
 
-        public ConsoleViewModel() : base("Console", Material.Icons.MaterialIconKind.Console, -100)
+        public ConsoleViewModel(WindowService windowService) : base("Console", Material.Icons.MaterialIconKind.Console, -200)
         {
+            WindowService = windowService;
+
+            WeakReferenceMessenger.Default.Register<OopsiesWindowRequestedMessage, string>(this, nameof(ConsoleView));
+            WeakReferenceMessenger.Default.Register<DataReadyMessage>(this);
         }
 
         [RelayCommand]
@@ -31,6 +43,7 @@ namespace Needlework.Net.Desktop.ViewModels
         {
             try
             {
+                IsRequestBusy = true;
                 if (string.IsNullOrEmpty(RequestPath)) throw new Exception("Path is empty.");
 
                 var method = RequestMethodSelected switch
@@ -47,29 +60,43 @@ namespace Needlework.Net.Desktop.ViewModels
                 };
 
                 var processInfo = Connector.GetProcessInfo();
-                var response = await Connector.SendAsync(method, RequestPath) ?? throw new Exception("Response is null.");
+                var requestBody = WeakReferenceMessenger.Default.Send(new ContentRequestMessage(), "ConsoleRequestEditor").Response;
+                var content = new StringContent(Regex.Replace(requestBody, @"\s+", ""), new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
+                var response = await Connector.SendAsync(method, RequestPath, content) ?? throw new Exception("Response is null.");
                 var riotAuthentication = new RiotAuthentication(processInfo.RemotingAuthToken);
                 var body = await response.Content.ReadAsStringAsync();
 
-                Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                {
-                    ResponseStatus = response.StatusCode.ToString();
-                    ResponsePath = $"https://127.0.0.1/{processInfo.AppPort}{RequestPath}";
-                    ResponseAuthentication = riotAuthentication.Value;
-                    ResponseBodyUpdated?.Invoke(this, new(body));
-                });
+                ResponseStatus = response.StatusCode.ToString();
+                ResponsePath = $"https://127.0.0.1:{processInfo.AppPort}{RequestPath}";
+                ResponseAuthentication = $"Basic {riotAuthentication.Value}";
+                WeakReferenceMessenger.Default.Send(new ResponseUpdatedMessage(body), nameof(ConsoleViewModel));
             }
             catch (Exception ex)
             {
                 await SukiHost.ShowToast("Request Failed", ex.Message, SukiUI.Enums.NotificationType.Error);
-                Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                {
-                    ResponseStatus = null;
-                    ResponsePath = null;
-                    ResponseAuthentication = null;
-                    ResponseBodyUpdated?.Invoke(this, new(string.Empty));
-                });
+                ResponseStatus = null;
+                ResponsePath = null;
+                ResponseAuthentication = null;
+                WeakReferenceMessenger.Default.Send(new ResponseUpdatedMessage(string.Empty), nameof(ConsoleViewModel));
             }
+            finally
+            {
+                IsRequestBusy = false;
+            }
+        }
+
+        public void Receive(OopsiesWindowRequestedMessage message)
+        {
+            WindowService.ShowOopsiesWindow(message.Value);
+        }
+
+        public void Receive(DataReadyMessage message)
+        {
+            Avalonia.Threading.Dispatcher.UIThread.Invoke(() =>
+            {
+                RequestPaths = new AvaloniaList<string>([.. message.Value.Paths]);
+                IsBusy = false;
+            });
         }
     }
 }

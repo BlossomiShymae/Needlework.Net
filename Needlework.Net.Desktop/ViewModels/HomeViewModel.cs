@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace Needlework.Net.Desktop.ViewModels
 {
@@ -16,27 +16,40 @@ namespace Needlework.Net.Desktop.ViewModels
 
         public HomeViewModel() : base("Home", Material.Icons.MaterialIconKind.Home, int.MinValue)
         {
-            Task.Run(async () => { while (true) { SetStatus(); await Task.Delay(TimeSpan.FromSeconds(5)); } });
+            StartProcessing();
         }
 
-        private void SetStatus()
+        private void StartProcessing()
         {
-            void Set(string text, Color color, string address)
+            var thread = new Thread(() =>
             {
-                StatusText = text;
-                StatusForeground = new SolidColorBrush(color.ToUInt32());
-                StatusAddress = address;
-            }
+                while (true)
+                {
+                    void Set(string text, Color color, string address)
+                    {
+                        Avalonia.Threading.Dispatcher.UIThread.Invoke(() =>
+                        {
+                            StatusText = text;
+                            StatusForeground = new SolidColorBrush(color.ToUInt32());
+                            StatusAddress = address;
+                        });
+                    }
 
-            try
-            {
-                var processInfo = Connector.GetProcessInfo();
-                Avalonia.Threading.Dispatcher.UIThread.Post(() => Set("Online", Colors.Green, $"https://127.0.0.1:{processInfo.AppPort}/"));
-            }
-            catch (InvalidOperationException)
-            {
-                Avalonia.Threading.Dispatcher.UIThread.Post(() => Set("Offline", Colors.Red, "N/A"));
-            }
+                    try
+                    {
+                        var processInfo = Connector.GetProcessInfo();
+                        Set("Online", Colors.Green, $"https://127.0.0.1:{processInfo.AppPort}/");
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        Set("Offline", Colors.Red, "N/A");
+                    }
+
+                    Thread.Sleep(TimeSpan.FromSeconds(5));
+                }
+            })
+            { IsBackground = true };
+            thread.Start();
         }
 
         [RelayCommand]

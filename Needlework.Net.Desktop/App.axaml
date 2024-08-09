@@ -3,6 +3,7 @@
              x:Class="Needlework.Net.Desktop.App"
              RequestedThemeVariant="Dark"
 			 xmlns:local="using:Needlework.Net.Desktop"
+			 xmlns:converters="using:Needlework.Net.Desktop.Converters"
              xmlns:sukiUi="clr-namespace:SukiUI;assembly=SukiUI"
 			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
@@ -12,8 +13,14 @@
 	
 	<Application.Styles>
 		<FluentTheme></FluentTheme>
-		<sukiUi:SukiTheme ThemeColor="Blue"  />
+		<sukiUi:SukiTheme ThemeColor="Blue" />
 		<materialIcons:MaterialIconStyles />
 		<StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
+		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
 	</Application.Styles>
+
+	<Application.Resources>
+		<converters:EnumerableBoolConverter x:Key="EnumerableBoolConverter"/>
+		<converters:NullBoolConverter x:Key="NullBoolConverter"/>
+	</Application.Resources>
 </Application>

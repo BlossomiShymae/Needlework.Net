@@ -1,0 +1,68 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:avaloniaEdit="https://github.com/avaloniaui/avaloniaedit"
+			 xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+			 xmlns:vm="using:Needlework.Net.Desktop.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Needlework.Net.Desktop.Views.WebsocketView"
+			 x:DataType="vm:WebsocketViewModel">
+	<Grid RowDefinitions="*,2,*"  Margin="16">
+		<Border Grid.Row="0"
+				Padding="0 0 0 8">
+			<suki:GlassCard>
+				<Grid RowDefinitions="auto,*" ColumnDefinitions="*">
+					<Grid
+						Grid.Row="0"
+						Grid.Column="0"
+						RowDefinitions="*"
+						ColumnDefinitions="auto,*,auto,auto">
+						<Button Grid.Row="0"
+								Grid.Column="0"
+								Command="{Binding ClearCommand}"
+								Margin="0 0 8 0">Clear</Button>
+						<TextBox Grid.Row="0"
+								 Grid.Column="1"
+								 Margin="0 0 8 0"
+								 Text="{Binding Search, Mode=TwoWay}"/>
+						<StackPanel Orientation="Horizontal"
+									Grid.Row="0"
+									Grid.Column="2"
+									Margin="0 0 8 0">
+							<ToggleSwitch Margin="0 0 0 8"
+										  IsChecked="{Binding IsAttach}"/>
+							<TextBlock Margin="0 6 0 0"
+									   FontSize="18">Attach</TextBlock>
+						</StackPanel>
+						<StackPanel Orientation="Horizontal"
+									Grid.Row="0"
+									Grid.Column="3">
+							<ToggleSwitch Margin="0 0 0 8"
+										  IsChecked="{Binding IsTail}"/>
+							<TextBlock Margin="0 6 0 0"
+									   FontSize="18">Tail</TextBlock>
+						</StackPanel>
+					</Grid>
+					<ListBox Grid.Row="1"
+							 Grid.Column="0"
+							 Name="EventViewer"
+							 ItemsSource="{Binding FilteredEventLog}"
+							 SelectedItem="{Binding SelectedEventLog}"/>
+				</Grid>
+			</suki:GlassCard>
+		</Border>
+		<GridSplitter Grid.Row="1" ResizeDirection="Rows" Background="Gray"/>
+		<Border Grid.Row="2"
+				Padding="0 8 0 0">
+			<suki:GlassCard>
+				<avaloniaEdit:TextEditor
+					Name="ResponseEditor"
+					HorizontalScrollBarVisibility="Auto"
+					VerticalScrollBarVisibility="Visible"
+					Text=""
+					FontSize="14"/>
+			</suki:GlassCard>
+		</Border>
+	</Grid>
+</UserControl>

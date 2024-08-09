@@ -9,57 +9,78 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Needlework.Net.Desktop.Views.ConsoleView"
 			 x:DataType="vm:ConsoleViewModel">
-	<Grid Margin="16" RowDefinitions="auto,*" ColumnDefinitions="*,*">
-		<Grid Grid.Row="0"
-			  Grid.Column="0"
-			  Grid.ColumnSpan="2">
-			<suki:GlassCard Margin="0 0 0 16">
-				<suki:GroupBox Header="Console">
-					<Grid RowDefinitions="auto,auto" ColumnDefinitions="auto,*">
-						<ComboBox ItemsSource="{Binding RequestMethods}" SelectedItem="{Binding RequestMethodSelected}"
-								  Grid.Row="0" Grid.Column="0"/>
-						<TextBox Text="{Binding RequestPath}"
-								 Grid.Row="0" Grid.Column="1"
-								 Watermark="E.g. /lol-summoner/v1/current-summoner"/>
-						<TextBox Text="{Binding RequestBody}" Height="200" AcceptsReturn="True" TextWrapping="Wrap"
-								 Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"/>
-					</Grid>
-				</suki:GroupBox>
-			</suki:GlassCard>
-			<Button Classes="Flat Rounded"
-					Margin="0 0 0 0"
-					HorizontalAlignment="Center"
-					VerticalAlignment="Bottom"
-					FontWeight="DemiBold"
-					Command="{Binding SendRequestCommand}">
-				Send
-			</Button>
-		</Grid>
-		<StackPanel
-				Margin="0 0 8 0"
-				Grid.Row="1"
-				Grid.Column="0">
-			<suki:GlassCard Margin="0 4">
-				<TextBlock Text="{Binding ResponsePath}"/>
-			</suki:GlassCard>
-			<suki:GlassCard Margin="0 4">
-				<TextBlock Text="{Binding ResponseStatus}"/>
-			</suki:GlassCard>
-			<suki:GlassCard Margin="0 4">
-				<TextBlock Text="{Binding ResponseAuthentication}" />
-			</suki:GlassCard>
-		</StackPanel>
-		<suki:GlassCard
-				Margin="0 8"
-				Grid.Row="1"
-				Grid.Column="1">
-			<avaloniaEdit:TextEditor Name="ResponseEditor" 
+	<suki:BusyArea IsBusy="{Binding IsBusy}" BusyText="Loading...">
+		<Grid Margin="16" RowDefinitions="auto,*" ColumnDefinitions="*,*">
+			<Grid Grid.Row="0"
+				  Grid.Column="0"
+				  Grid.ColumnSpan="2">
+				<suki:GlassCard Margin="0 0 0 16">
+					<suki:GroupBox Header="Console">
+						<Grid RowDefinitions="auto,auto" ColumnDefinitions="auto,*">
+							<ComboBox ItemsSource="{Binding RequestMethods}" SelectedItem="{Binding RequestMethodSelected}"
+									  Grid.Row="0" Grid.Column="0"/>
+							<AutoCompleteBox
+									 ItemsSource="{Binding RequestPaths}"
+									 Text="{Binding RequestPath}"
+									 MaxDropDownHeight="400"
+									 FilterMode="StartsWith"
+									 Grid.Row="0" Grid.Column="1"/>
+							<avaloniaEdit:TextEditor
+									 Name="RequestEditor"
 									 Text=""
-									 FontFamily="Cascadia Code,Consolas,Menlo,Monospace"
+									 ShowLineNumbers="True"
 									 HorizontalScrollBarVisibility="Auto"
 									 VerticalScrollBarVisibility="Visible"
-									 FontWeight="Light"
-									 FontSize="14"/>
-		</suki:GlassCard>
-	</Grid>
+									 FontSize="12"
+									 Height="100"
+									 Grid.Row="1"
+									 Grid.Column="0"
+									 Grid.ColumnSpan="2"/>
+						</Grid>
+					</suki:GroupBox>
+				</suki:GlassCard>
+				<Button Classes="Flat Rounded"
+						Margin="0 0 0 0"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Bottom"
+						FontWeight="DemiBold"
+						Command="{Binding SendRequestCommand}"
+						theme:ButtonExtensions.ShowProgress="{Binding IsRequestBusy}">
+					Send
+				</Button>
+			</Grid>
+			<StackPanel
+					Margin="0 0 8 0"
+					Grid.Row="1"
+					Grid.Column="0">
+				<suki:GlassCard Margin="0 4">
+					<suki:GroupBox Header="Path">
+						<TextBlock Text="{Binding ResponsePath}"/>
+					</suki:GroupBox>
+				</suki:GlassCard>
+				<suki:GlassCard Margin="0 4">
+					<suki:GroupBox Header="Status">
+						<TextBlock Text="{Binding ResponseStatus}"/>
+					</suki:GroupBox>
+				</suki:GlassCard>
+				<suki:GlassCard Margin="0 4">
+					<suki:GroupBox Header="Authentication">
+						<TextBlock Text="{Binding ResponseAuthentication}" />
+					</suki:GroupBox>
+				</suki:GlassCard>
+			</StackPanel>
+			<suki:GlassCard
+					Margin="0 8"
+					Grid.Row="1"
+					Grid.Column="1">
+				<avaloniaEdit:TextEditor
+									   Name="ResponseEditor"
+									   HorizontalScrollBarVisibility="Auto"
+									   VerticalScrollBarVisibility="Visible"
+									   ShowLineNumbers="True"
+									   Text=""
+									   FontSize="12"/>
+			</suki:GlassCard>
+		</Grid>
+	</suki:BusyArea>
 </UserControl>
