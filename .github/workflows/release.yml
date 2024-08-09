@@ -1,0 +1,35 @@
+# .github/workflows/release.yml
+
+on: push
+
+jobs:
+  build:
+    runs-on: windows-latest  # For a list of available runner types, refer to
+                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+    steps:
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        ref: release
+    - name: Build
+      run: dotnet build Needlework.Net.Desktop -c Release
+    - name: Publish
+      run: dotnet publish Needlework.Net.Desktop -c Release -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -p:DebugSymbols=false -o publish -r win-x64 --self-contained=false
+    - name: Version
+      shell: powershell
+      run: $xml = [xml](Get-Content .\Needlework.Net.Desktop\Needlework.Net.Desktop.csproj); echo ($xml.Project.PropertyGroup).AssemblyVersion >> $env.VERSION;
+    - name: Zip
+      run: 7z a -tzip NeedleworkDotNet-win-x64.zip ./Publish/* README.md LICENSE
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: "Needlework.Net v${{env.VERSION}}"
+        prerelease: true
+        tag_name: "${{env.VERSION}}"
+        files: |
+          Publish/NeedleworkDotNet-win-x64.zip
