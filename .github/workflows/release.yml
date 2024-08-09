@@ -23,20 +23,20 @@ jobs:
       run: dotnet build Needlework.Net.Desktop -c Release
     - name: Publish
       run: dotnet publish Needlework.Net.Desktop -c Release -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -p:DebugSymbols=false -o publish -r win-x64 --self-contained=false
-    - name: Version
-      id: ver
+    - name: Get Version
+      id: version
       shell: powershell
       run: |
         $xml=[xml](Get-Content .\Needlework.Net.Desktop\Needlework.Net.Desktop.csproj)
         $ver=($xml.Project.PropertyGroup).AssemblyVersion
         echo "VERSION=$ver" >> $env:GITHUB_OUTPUT
-    - name: Zip
+    - name: Zip Files
       run: 7z a -tzip NeedleworkDotNet-win-x64.zip ./Publish/* README.md LICENSE
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
-        name: "Needlework.Net v${{ steps.ver.outputs.VERSION }}"
-        prerelease: true
-        tag_name: "${{ steps.ver.outputs.VERSION }}"
+        name: "Needlework.Net v${{ steps.version.outputs.VERSION }}"
+        prerelease: false
+        tag_name: "${{ steps.version.outputs.VERSION }}"
         files: |
-          Publish/NeedleworkDotNet-win-x64.zip
+          NeedleworkDotNet-win-x64.zip
