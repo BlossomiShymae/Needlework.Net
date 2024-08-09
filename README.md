@@ -1,6 +1,6 @@
 # Needlework.Net
 
-![App preview](app-preview.gif)
+![App preview](app-preview.png)
 
 Needlework.Net is an open-source helper tool for the LCU that provides documented endpoints and can send requests without any code setup. Created using .NET! 🌠
 
