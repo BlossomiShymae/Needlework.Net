@@ -64,7 +64,7 @@
 					</suki:GroupBox>
 				</suki:GlassCard>
 				<suki:GlassCard Margin="0 4">
-					<suki:GroupBox Header="Authentication">
+					<suki:GroupBox Header="Authorization">
 						<TextBlock Text="{Binding ResponseAuthentication}" />
 					</suki:GroupBox>
 				</suki:GlassCard>

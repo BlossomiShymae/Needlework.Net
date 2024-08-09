@@ -98,7 +98,7 @@ namespace Needlework.Net.Desktop.ViewModels
                 var riotAuthentication = new RiotAuthentication(processInfo.RemotingAuthToken);
                 var responseBody = await response.Content.ReadAsStringAsync();
 
-                responseBody = JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(responseBody, App.JsonSerializerOptions));
+                responseBody = !string.IsNullOrEmpty(responseBody) ? JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(responseBody), App.JsonSerializerOptions) : string.Empty;
                 if (responseBody.Length >= App.MaxCharacters) WeakReferenceMessenger.Default.Send(new OopsiesWindowRequestedMessage(responseBody));
                 else WeakReferenceMessenger.Default.Send(new EditorUpdateMessage(new(responseBody, "EndpointResponseEditor")));
 

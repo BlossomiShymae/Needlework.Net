@@ -26,7 +26,7 @@ namespace Needlework.Net.Desktop.ViewModels
         [ObservableProperty] private string? _requestBody = null;
         [ObservableProperty] private string? _responsePath = null;
         [ObservableProperty] private string? _responseStatus = null;
-        [ObservableProperty] private string? _responseAuthentication = null;
+        [ObservableProperty] private string? _responseAuthorization = null;
 
         public WindowService WindowService { get; }
 
@@ -65,20 +65,20 @@ namespace Needlework.Net.Desktop.ViewModels
                 var riotAuthentication = new RiotAuthentication(processInfo.RemotingAuthToken);
                 var body = await response.Content.ReadAsStringAsync();
 
-                body = JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(body, App.JsonSerializerOptions));
+                body = !string.IsNullOrEmpty(body) ? JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(body), App.JsonSerializerOptions) : string.Empty;
                 if (body.Length >= App.MaxCharacters) WindowService.ShowOopsiesWindow(body);
                 else WeakReferenceMessenger.Default.Send(new ResponseUpdatedMessage(body), nameof(ConsoleViewModel));
 
-                ResponseStatus = response.StatusCode.ToString();
+                ResponseStatus = $"{(int)response.StatusCode} {response.StatusCode.ToString()}";
                 ResponsePath = $"https://127.0.0.1:{processInfo.AppPort}{RequestPath}";
-                ResponseAuthentication = $"Basic {riotAuthentication.Value}";
+                ResponseAuthorization = $"Basic {riotAuthentication.Value}";
             }
             catch (Exception ex)
             {
                 await SukiHost.ShowToast("Request Failed", ex.Message, SukiUI.Enums.NotificationType.Error);
                 ResponseStatus = null;
                 ResponsePath = null;
-                ResponseAuthentication = null;
+                ResponseAuthorization = null;
                 WeakReferenceMessenger.Default.Send(new ResponseUpdatedMessage(string.Empty), nameof(ConsoleViewModel));
             }
             finally
