@@ -1,6 +1,9 @@
 # .github/workflows/release.yml
 
-on: push
+on:
+  push:
+    branches:
+    - release
 
 jobs:
   build:
@@ -24,8 +27,8 @@ jobs:
       shell: powershell
       run: |
         $xml = [xml](Get-Content .\Needlework.Net.Desktop\Needlework.Net.Desktop.csproj)
-        "{VERSION}={($xml.Project.PropertyGroup).AssemblyVersion}" >> "$env:GITHUB_ENV"
-        echo $env:VERSION
+        "{VERSION}={($xml.Project.PropertyGroup).AssemblyVersion}" >> "$GITHUB_ENV"
+        $env:VERSION
     - name: Zip
       run: 7z a -tzip NeedleworkDotNet-win-x64.zip ./Publish/* README.md LICENSE
     - name: Release
