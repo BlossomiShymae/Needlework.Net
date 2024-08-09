@@ -29,7 +29,9 @@ jobs:
       run: |
         $xml=[xml](Get-Content .\Needlework.Net.Desktop\Needlework.Net.Desktop.csproj)
         $ver=($xml.Project.PropertyGroup).AssemblyVersion
-        echo "VERSION=$ver" >> $env:GITHUB_OUTPUT
+        $ver="VERSION=$ver"
+        $ver=$ver -replace '\s',''
+        echo $ver >> $env:GITHUB_OUTPUT
     - name: Zip Files
       run: 7z a -tzip NeedleworkDotNet-win-x64.zip ./Publish/* README.md LICENSE
     - name: Release
