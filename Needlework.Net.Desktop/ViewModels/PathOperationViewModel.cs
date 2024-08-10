@@ -99,7 +99,11 @@ namespace Needlework.Net.Desktop.ViewModels
                 var responseBody = await response.Content.ReadAsStringAsync();
 
                 responseBody = !string.IsNullOrEmpty(responseBody) ? JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(responseBody), App.JsonSerializerOptions) : string.Empty;
-                if (responseBody.Length >= App.MaxCharacters) WeakReferenceMessenger.Default.Send(new OopsiesWindowRequestedMessage(responseBody));
+                if (responseBody.Length >= App.MaxCharacters)
+                {
+                    WeakReferenceMessenger.Default.Send(new OopsiesWindowRequestedMessage(responseBody));
+                    WeakReferenceMessenger.Default.Send(new EditorUpdateMessage(new(string.Empty, "EndpointResponseEditor")));
+                }
                 else WeakReferenceMessenger.Default.Send(new EditorUpdateMessage(new(responseBody, "EndpointResponseEditor")));
 
                 ResponseStatus = $"{(int)response.StatusCode} {response.StatusCode}";

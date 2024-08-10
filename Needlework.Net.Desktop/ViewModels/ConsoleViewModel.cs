@@ -66,7 +66,11 @@ namespace Needlework.Net.Desktop.ViewModels
                 var body = await response.Content.ReadAsStringAsync();
 
                 body = !string.IsNullOrEmpty(body) ? JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(body), App.JsonSerializerOptions) : string.Empty;
-                if (body.Length >= App.MaxCharacters) WindowService.ShowOopsiesWindow(body);
+                if (body.Length >= App.MaxCharacters)
+                {
+                    WindowService.ShowOopsiesWindow(body);
+                    WeakReferenceMessenger.Default.Send(new ResponseUpdatedMessage(string.Empty), nameof(ConsoleViewModel));
+                }
                 else WeakReferenceMessenger.Default.Send(new ResponseUpdatedMessage(body), nameof(ConsoleViewModel));
 
                 ResponseStatus = $"{(int)response.StatusCode} {response.StatusCode.ToString()}";
