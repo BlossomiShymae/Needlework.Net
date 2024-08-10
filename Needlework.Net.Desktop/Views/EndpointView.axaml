@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+		xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
 		xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
 		xmlns:vm="using:Needlework.Net.Desktop.ViewModels"
 		xmlns:avalonEdit="https://github.com/avaloniaui/avaloniaedit"
@@ -12,15 +13,22 @@
 	<Grid RowDefinitions="auto,*" ColumnDefinitions="3*,2,4*,2,4*">
 		<Grid Grid.Row="0"
 			  Grid.Column="0"
-			  Grid.RowSpan="2"
-			  RowDefinitions="auto,*"
+			  RowDefinitions="*"
+			  ColumnDefinitions="auto,*">
+			<TextBox Text="{Binding Search}"
+					 Grid.Row="0"
+					 Grid.Column="0"
+					 Grid.ColumnSpan="2"/>
+		</Grid>
+		<Grid Grid.Row="1"
+			  Grid.Column="0"
+			  RowDefinitions="*"
 			  ColumnDefinitions="*">
-			<ListBox ItemsSource="{Binding PathOperations}"
+			<ListBox ItemsSource="{Binding FilteredPathOperations}"
 					 SelectedItem="{Binding SelectedPathOperation}"
 					 ScrollViewer.HorizontalScrollBarVisibility="Visible"
 					 Margin="0 0 0 0"
-					 Grid.Row="0"
-					 Grid.RowSpan="2"
+					 Grid.Row="1"
 					 Grid.Column="0">
 				<ListBox.ItemTemplate>
 					<DataTemplate>
