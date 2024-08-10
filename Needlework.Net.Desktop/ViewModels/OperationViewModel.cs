@@ -49,7 +49,7 @@ namespace Needlework.Net.Desktop.ViewModels
             foreach (var parameter in parameters)
             {
                 if (parameter.In != location) continue;
-                pathParameters.Add(new ParameterViewModel(parameter.Name, parameter.Schema.Type, parameter.Required));
+                pathParameters.Add(new ParameterViewModel(parameter.Name, GetSchemaType(parameter.Schema), parameter.Required));
             }
 
             return pathParameters;
