@@ -58,10 +58,11 @@
 			<suki:GlassCard>
 				<avaloniaEdit:TextEditor
 					Name="ResponseEditor"
+					ShowLineNumbers="True"
 					HorizontalScrollBarVisibility="Auto"
 					VerticalScrollBarVisibility="Visible"
 					Text=""
-					FontSize="14"/>
+					FontSize="12"/>
 			</suki:GlassCard>
 		</Border>
 	</Grid>
