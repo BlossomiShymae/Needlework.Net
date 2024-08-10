@@ -48,7 +48,7 @@ namespace Needlework.Net.Desktop.ViewModels
             var pathParameters = new AvaloniaList<ParameterViewModel>();
             foreach (var parameter in parameters)
             {
-                if (parameter.In != location) break;
+                if (parameter.In != location) continue;
                 pathParameters.Add(new ParameterViewModel(parameter.Name, parameter.Schema.Type, parameter.Required));
             }
 
