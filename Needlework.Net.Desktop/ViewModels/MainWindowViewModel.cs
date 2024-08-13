@@ -50,7 +50,7 @@ namespace Needlework.Net.Desktop.ViewModels
             {
                 Task.Run(CheckLatestVersionAsync);
 
-                Thread.Sleep(TimeSpan.FromSeconds(2));
+                Thread.Sleep(TimeSpan.FromSeconds(60));
             }
         }
 
