@@ -12,7 +12,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Needlework.Net.Desktop.ViewModels
@@ -28,6 +30,7 @@ namespace Needlework.Net.Desktop.ViewModels
         public OpenApiDocument? HostDocument { get; set; }
 
         [ObservableProperty] private bool _isBusy = true;
+        [ObservableProperty] private bool _isUpdateShown = false;
 
         public MainWindowViewModel(IEnumerable<PageBase> pages, HttpClient httpClient, WindowService windowService)
         {
@@ -36,7 +39,44 @@ namespace Needlework.Net.Desktop.ViewModels
             WindowService = windowService;
 
             WeakReferenceMessenger.Default.RegisterAll(this);
+
             Task.Run(FetchDataAsync);
+            new Thread(ProcessEvents) { IsBackground = true }.Start();
+        }
+
+        private void ProcessEvents(object? obj)
+        {
+            while (true)
+            {
+                Task.Run(CheckLatestVersionAsync);
+
+                Thread.Sleep(TimeSpan.FromSeconds(2));
+            }
+        }
+
+        private async Task CheckLatestVersionAsync()
+        {
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, "https://api.github.com/repos/BlossomiShymae/Needlework.Net/releases/latest");
+                request.Headers.UserAgent.Add(new System.Net.Http.Headers.ProductInfoHeaderValue("Needlework.Net", Version));
+
+                var response = await HttpClient.SendAsync(request);
+                var release = await response.Content.ReadFromJsonAsync<GithubRelease>();
+                if (release == null) return;
+
+                var currentVersion = int.Parse(Version.Replace(".", ""));
+
+                if (release.IsLatest(currentVersion) && !IsUpdateShown)
+                {
+                    await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(async () =>
+                    {
+                        await SukiHost.ShowToast("Needlework.Net Update", $"There is a new version available: {release.TagName}.", SukiUI.Enums.NotificationType.Info, TimeSpan.FromSeconds(10), () => OpenUrl("https://github.com/BlossomiShymae/Needlework.Net/releases"));
+                        IsUpdateShown = true;
+                    });
+                }
+            }
+            catch (Exception) { }
         }
 
         private async Task FetchDataAsync()
@@ -72,12 +112,6 @@ namespace Needlework.Net.Desktop.ViewModels
                 }
             };
             process.Start();
-        }
-
-        [RelayCommand]
-        private void OpenConsole()
-        {
-
         }
 
         public void Receive(OopsiesWindowRequestedMessage message)
