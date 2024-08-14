@@ -38,6 +38,7 @@ namespace Needlework.Net.Desktop.ViewModels
             if (requestBody.Content.TryGetValue("application/json", out var media))
             {
                 var schema = media.Schema;
+                if (schema == null) return null; // Because "PostLolAccountVerificationV1SendDeactivationPin" exists where the media body is empty...
                 return GetSchemaType(schema);
             }
             return null;

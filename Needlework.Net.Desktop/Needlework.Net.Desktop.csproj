@@ -11,8 +11,8 @@
     <AvaloniaXamlIlDebuggerLaunch>False</AvaloniaXamlIlDebuggerLaunch>
 	<ApplicationIcon>app.ico</ApplicationIcon>
     <AssemblyName>NeedleworkDotNet</AssemblyName>
-    <AssemblyVersion>0.3.1.0</AssemblyVersion>
-    <FileVersion>0.3.1.0</FileVersion>
+    <AssemblyVersion>0.3.2.0</AssemblyVersion>
+    <FileVersion>0.3.2.0</FileVersion>
     <AvaloniaXamlVerboseExceptions>False</AvaloniaXamlVerboseExceptions>
   </PropertyGroup>
 
