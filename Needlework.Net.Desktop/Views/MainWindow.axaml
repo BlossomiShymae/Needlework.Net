@@ -43,9 +43,6 @@
 			<ui:NavigationView.PaneFooter>
 				<StackPanel Orientation="Vertical">
 					<StackPanel.Styles>
-						<Style Selector="Button.Basic">
-							<Setter Property="Command" Value="{Binding OpenUrlCommand}" />
-						</Style>
 						<Style Selector="materialIcons|MaterialIcon">
 							<Setter Property="Width" Value="20" />
 							<Setter Property="Height" Value="20" />
@@ -57,6 +54,7 @@
 					<Button 
 							Theme="{StaticResource TransparentButton}"
 							VerticalAlignment="Center"
+							Command="{Binding OpenUrlCommand}"
 							CommandParameter="https://github.com/BlossomiShymae/Needlework.Net"
 							ToolTip.Tip="Open on GitHub."
 							Margin="4">
@@ -65,6 +63,7 @@
 					<Button 
 							Theme="{StaticResource TransparentButton}"
 							VerticalAlignment="Center"
+							Command="{Binding OpenUrlCommand}"
 							CommandParameter="https://discord.gg/chEvEX5J4E"
 							ToolTip.Tip="Open Discord server."
 							Margin="4">
