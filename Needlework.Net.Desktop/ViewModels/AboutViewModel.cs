@@ -2,7 +2,7 @@
 {
     public class AboutViewModel : PageBase
     {
-        public AboutViewModel() : base("About", Material.Icons.MaterialIconKind.InfoCircle)
+        public AboutViewModel() : base("About", "info-circle")
         {
         }
     }

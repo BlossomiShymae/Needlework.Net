@@ -2,13 +2,31 @@
 			xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
-			xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
 			xmlns:vm="using:Needlework.Net.Desktop.ViewModels"
 			xmlns:avalonEdit="https://github.com/avaloniaui/avaloniaedit"
+			xmlns:i="https://github.com/projektanker/icons.avalonia"
 			mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			x:Class="Needlework.Net.Desktop.Views.EndpointsContainerView"
 			x:DataType="vm:EndpointsContainerViewModel">
-  <suki:SukiStackPage Content="{Binding ActiveViewModel}"
-					  Margin="-24 -4 0 0"/>
+	<Grid RowDefinitions="auto,*"
+		  ColumnDefinitions="*"
+		  Margin="16">
+		<StackPanel Orientation="Horizontal"
+					Grid.Row="0"
+					Grid.Column="0"
+					Margin="0 0 0 8">
+			<Button Command="{Binding GoBackCommand}"
+					Theme="{StaticResource TransparentButton}"
+					Margin="0 0 8 0">
+				<i:Icon Value="fa-arrow-left"
+						FontSize="20"/>
+			</Button>
+			<TextBlock Theme="{StaticResource TitleTextBlockStyle}"
+					   Text="{Binding Title}"/>
+		</StackPanel>
+		<TransitioningContentControl
+			Grid.Row="1"
+			Grid.Column="0"
+			Content="{Binding ActiveViewModel}"/>
+	</Grid>
 </UserControl>

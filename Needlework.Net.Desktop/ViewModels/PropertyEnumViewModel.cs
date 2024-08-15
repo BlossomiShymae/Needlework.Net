@@ -11,7 +11,7 @@ namespace Needlework.Net.Desktop.ViewModels
 
         public PropertyEnumViewModel(IList<IOpenApiAny> enumValue)
         {
-            Values = $"[{string.Join(", ", enumValue.Select(x => ((OpenApiString)x).Value).ToList())}]";
+            Values = $"[{string.Join(", ", enumValue.Select(x => $"\"{((OpenApiString)x).Value}\"").ToList())}]";
         }
     }
 }

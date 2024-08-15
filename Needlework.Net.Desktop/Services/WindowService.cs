@@ -2,18 +2,13 @@
 using Needlework.Net.Desktop.Messages;
 using Needlework.Net.Desktop.ViewModels;
 using Needlework.Net.Desktop.Views;
-using SukiUI.Controls;
 using System;
-using System.Collections.Generic;
 
 namespace Needlework.Net.Desktop.Services
 {
     public class WindowService : IRecipient<OopsiesWindowCanceledMessage>
     {
         public IServiceProvider ServiceProvider { get; }
-
-        public Dictionary<string, SukiWindow> EndpointWindows { get; } = []; // Workaround memory leak by storing and reusing windows.
-                                                                             // Figure out why creating and closing windows leaks memory.
 
         public OopsiesWindow? OopsiesWindow { get; set; }
 

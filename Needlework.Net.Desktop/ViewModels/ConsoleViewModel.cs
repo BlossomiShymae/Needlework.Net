@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Needlework.Net.Desktop.Messages;
 using Needlework.Net.Desktop.Services;
-using SukiUI.Controls;
 using System;
 using System.Net.Http;
 using System.Text.Json;
@@ -30,7 +29,7 @@ namespace Needlework.Net.Desktop.ViewModels
 
         public WindowService WindowService { get; }
 
-        public ConsoleViewModel(WindowService windowService) : base("Console", Material.Icons.MaterialIconKind.Console, -200)
+        public ConsoleViewModel(WindowService windowService) : base("Console", "terminal", -200)
         {
             WindowService = windowService;
 
@@ -79,7 +78,7 @@ namespace Needlework.Net.Desktop.ViewModels
             }
             catch (Exception ex)
             {
-                await SukiHost.ShowToast("Request Failed", ex.Message, SukiUI.Enums.NotificationType.Error);
+                WeakReferenceMessenger.Default.Send(new InfoBarUpdateMessage(new InfoBarViewModel("Request Failed", true, ex.Message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error, TimeSpan.FromSeconds(5))));
                 ResponseStatus = null;
                 ResponsePath = null;
                 ResponseAuthorization = null;

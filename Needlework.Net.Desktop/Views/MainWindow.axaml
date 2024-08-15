@@ -1,9 +1,10 @@
-<suki:SukiWindow 
+<Window
 		xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+		xmlns:ui="using:FluentAvalonia.UI.Controls"             
+        xmlns:uip="using:FluentAvalonia.UI.Controls.Primitives"
 		xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
 		xmlns:i="https://github.com/projektanker/icons.avalonia"
 		xmlns:vm="using:Needlework.Net.Desktop.ViewModels"
@@ -14,64 +15,85 @@
 		Icon="/Assets/app.ico"
         Width="1280"
         Height="720">
-	<suki:SukiWindow.LogoContent>
-		<Image Source="/Assets/app.png"
-			   Width="20"
-			   Height="20"
-			   VerticalAlignment="Center"/>
-	</suki:SukiWindow.LogoContent>
-     <!-- TOP LEVEL -->
-	<suki:SukiSideMenu ItemsSource="{Binding Pages}">
-		<!-- ITEMS -->
-		<suki:SukiSideMenu.ItemTemplate>
-			<DataTemplate>
-				<suki:SukiSideMenuItem Header="{Binding DisplayName}">
-					<suki:SukiSideMenuItem.Icon>
-						<materialIcons:MaterialIcon Kind="{Binding Icon}" />
-					</suki:SukiSideMenuItem.Icon>
-				</suki:SukiSideMenuItem>
-			</DataTemplate>
-		</suki:SukiSideMenu.ItemTemplate>
-		<!-- FOOTER -->
-		<suki:SukiSideMenu.FooterContent>
-			<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-				<StackPanel.Styles>
-					<Style Selector="Button.Basic">
-						<Setter Property="Command" Value="{Binding OpenUrlCommand}" />
-					</Style>
-					<Style Selector="materialIcons|MaterialIcon">
-						<Setter Property="Width" Value="25" />
-						<Setter Property="Height" Value="25" />
-					</Style>
-					<Style Selector="i|Icon">
-						<Setter Property="FontSize" Value="25" />
-					</Style>
-				</StackPanel.Styles>
-				<Button Classes="Flat"
-						Content="{Binding Version}"
-						FontSize="12"
-						Margin="0 0 4 0"
-						Padding="12 4 12 4"
-						VerticalAlignment="Center"/>
-				<Button Classes="Basic"
-						VerticalAlignment="Center"
-						CommandParameter="https://github.com/BlossomiShymae/Needlework.Net"
-						ToolTip.Tip="Open on GitHub."
-						Margin="0 0 4 0">
-					<StackPanel Orientation="Horizontal">
-						<materialIcons:MaterialIcon Kind="Github" Margin="0 0 4 0" />
-						<TextBlock FontSize="12"
-								   VerticalAlignment="Center"
-								   Foreground="White">Star</TextBlock>
-					</StackPanel>
-				</Button>
-				<Button Classes="Basic"
-						VerticalAlignment="Center"
-						CommandParameter="https://discord.gg/chEvEX5J4E"
-						ToolTip.Tip="Open Discord server.">
-					<i:Icon Value="fa-brand fa-discord" />
-				</Button>
-			</StackPanel>
-		</suki:SukiSideMenu.FooterContent>
-	</suki:SukiSideMenu>
-</suki:SukiWindow>
+	<Grid RowDefinitions="auto,*">
+		<Grid ColumnDefinitions="auto,auto,*,auto"
+			  Background="Transparent"
+			  Height="40"
+			  Grid.Row="0">
+			<Image Margin="12 4"
+				   IsHitTestVisible="False"
+				   Source="/Assets/app.png"
+				   Width="18"
+				   Height="18"
+				   DockPanel.Dock="Left"
+				   Grid.Column="0"/>
+			<TextBlock FontSize="12"
+					   IsHitTestVisible="False"
+					   VerticalAlignment="Center"
+					   Grid.Column="1">
+				Needlework.Net
+			</TextBlock>
+		</Grid>
+		<ui:NavigationView AlwaysShowHeader="False"
+						   PaneDisplayMode="Left"
+						   IsSettingsVisible="False"
+						   Grid.Row="1"
+						   MenuItemsSource="{Binding MenuItems}"
+						   SelectedItem="{Binding SelectedMenuItem}">
+			<ui:NavigationView.PaneFooter>
+				<StackPanel Orientation="Vertical">
+					<StackPanel.Styles>
+						<Style Selector="Button.Basic">
+							<Setter Property="Command" Value="{Binding OpenUrlCommand}" />
+						</Style>
+						<Style Selector="materialIcons|MaterialIcon">
+							<Setter Property="Width" Value="20" />
+							<Setter Property="Height" Value="20" />
+						</Style>
+						<Style Selector="i|Icon">
+							<Setter Property="FontSize" Value="20" />
+						</Style>
+					</StackPanel.Styles>
+					<Button 
+							Theme="{StaticResource TransparentButton}"
+							VerticalAlignment="Center"
+							CommandParameter="https://github.com/BlossomiShymae/Needlework.Net"
+							ToolTip.Tip="Open on GitHub."
+							Margin="4">
+						<materialIcons:MaterialIcon Kind="Github" />
+					</Button>
+					<Button 
+							Theme="{StaticResource TransparentButton}"
+							VerticalAlignment="Center"
+							CommandParameter="https://discord.gg/chEvEX5J4E"
+							ToolTip.Tip="Open Discord server."
+							Margin="4">
+						<i:Icon Value="fa-brand fa-discord" />
+					</Button>
+				</StackPanel>
+			</ui:NavigationView.PaneFooter>
+			<Grid>
+				<TransitioningContentControl Content="{Binding CurrentPage}"/>
+				<Button Content="{Binding Version}"
+						HorizontalAlignment="Right"
+						VerticalAlignment="Bottom"
+						Margin="16"/>
+				<ItemsRepeater ItemsSource="{Binding InfoBarItems}" 
+							   VerticalAlignment="Bottom">
+					<ItemsRepeater.ItemTemplate>
+						<DataTemplate>
+							<Border Margin="4">
+								<ui:InfoBar
+								Title="{Binding Title}"
+								IsOpen="{Binding IsOpen}"
+								Severity="{Binding Severity}"
+								Message="{Binding Message}"
+								ActionButton="{Binding ActionButton}"/>
+							</Border>
+						</DataTemplate>
+					</ItemsRepeater.ItemTemplate>
+				</ItemsRepeater>
+			</Grid>
+		</ui:NavigationView>
+	</Grid>
+</Window>

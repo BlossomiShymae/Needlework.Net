@@ -2,24 +2,31 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
-		xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
 		xmlns:vm="using:Needlework.Net.Desktop.ViewModels"
+		xmlns:controls="using:Needlework.Net.Desktop.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+		Name="EndpointsControl"
         x:Class="Needlework.Net.Desktop.Views.EndpointsView"
 		x:DataType="vm:EndpointsViewModel">
-	<suki:BusyArea IsBusy="{Binding IsBusy}" BusyText="Loading...">
-		<Grid Margin="16" RowDefinitions="auto,auto,*" ColumnDefinitions="*">
-			<TextBox Watermark="Search" Margin="0 4" Text="{Binding Search}" Grid.Row="1" Grid.Column="0"/>
-			<ScrollViewer Grid.Row="2" Grid.Column="0">
-				<ListBox ItemsSource="{Binding Query}" SelectedItem="{Binding SelectedQuery}">
-					<ListBox.ItemTemplate>
-						<DataTemplate>
-							<TextBlock Text="{Binding}" Foreground="White" />
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
-			</ScrollViewer>
-		</Grid>
-	</suki:BusyArea>
+	<controls:BusyArea IsBusy="{Binding IsBusy}"
+					   BusyText="Loading...">
+		<Grid RowDefinitions="auto,auto,*" ColumnDefinitions="*">
+		<TextBox Watermark="Search" Margin="0 4" Text="{Binding Search}" Grid.Row="1" Grid.Column="0"/>
+		<ScrollViewer Grid.Row="2" Grid.Column="0">
+			<ItemsRepeater ItemsSource="{Binding Query}">
+				<ItemsRepeater.ItemTemplate>
+					<DataTemplate>
+						<Button Command="{Binding #EndpointsControl.((vm:EndpointsViewModel)DataContext).OpenEndpointCommand}"
+								VerticalAlignment="Stretch"
+								HorizontalAlignment="Stretch"
+								HorizontalContentAlignment="Left"
+								CommandParameter="{Binding}"
+								Content="{Binding}"
+								Theme="{StaticResource TransparentButton}"/>
+					</DataTemplate>
+				</ItemsRepeater.ItemTemplate>
+			</ItemsRepeater>
+		</ScrollViewer>
+	</Grid>
+	</controls:BusyArea>
 </UserControl>

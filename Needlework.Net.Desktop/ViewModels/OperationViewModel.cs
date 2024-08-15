@@ -4,6 +4,8 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.OpenApi.Models;
 using Needlework.Net.Desktop.Messages;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
 
 namespace Needlework.Net.Desktop.ViewModels
 {
@@ -18,6 +20,7 @@ namespace Needlework.Net.Desktop.ViewModels
         public IAvaloniaReadOnlyList<PropertyClassViewModel> ResponseClasses { get; }
         public IAvaloniaReadOnlyList<ParameterViewModel> PathParameters { get; }
         public IAvaloniaReadOnlyList<ParameterViewModel> QueryParameters { get; }
+        public string? RequestTemplate { get; }
 
         public OperationViewModel(OpenApiOperation operation)
         {
@@ -30,6 +33,71 @@ namespace Needlework.Net.Desktop.ViewModels
             PathParameters = GetParameters(operation.Parameters, ParameterLocation.Path);
             QueryParameters = GetParameters(operation.Parameters, ParameterLocation.Query);
             RequestBodyType = GetRequestBodyType(operation.RequestBody);
+            RequestTemplate = GetRequestTemplate(operation.RequestBody);
+        }
+
+        private string? GetRequestTemplate(OpenApiRequestBody? requestBody)
+        {
+            var requestClasses = GetRequestClasses(requestBody);
+            if (requestClasses.Count == 0)
+            {
+                var type = GetRequestBodyType(requestBody);
+                if (type == null) return null;
+                return GetRequestDefaultValue(type);
+            }
+
+            var template = CreateTemplate(requestClasses);
+            return JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(string.Join(string.Empty, template)), App.JsonSerializerOptions);
+        }
+
+        private List<string> CreateTemplate(AvaloniaList<PropertyClassViewModel> requestClasses)
+        {
+            if (requestClasses.Count == 0) return [];
+            List<string> template = [];
+            template.Add("{");
+
+            var rootClass = requestClasses.First();
+            if (rootClass.PropertyEnums.Any()) return [rootClass.PropertyEnums.First().Values];
+            var propertyFields = rootClass.PropertyFields;
+            for (int i = 0; i < propertyFields.Count; i++)
+            {
+                template.Add($"\"{propertyFields[i].Name}\"");
+                template.Add(":");
+                template.Add($"#{propertyFields[i].Type}");
+
+                if (i == propertyFields.Count - 1) template.Add("}");
+                else template.Add(",");
+            }
+
+            for (int i = 0; i < template.Count; i++)
+            {
+                var type = template[i];
+                if (!type.Contains("#")) continue;
+                if (requestClasses.Where(c => c.Id == type.Replace("#", string.Empty)).Any())
+                {
+                    AvaloniaList<PropertyClassViewModel> classes = [.. requestClasses];
+                    classes.Remove(rootClass);
+                    template[i] = string.Join(string.Empty, CreateTemplate(classes));
+                }
+                else
+                {
+                    template[i] = GetRequestDefaultValue(type);
+                }
+            }
+
+            return template;
+        }
+
+        private static string GetRequestDefaultValue(string type)
+        {
+            var defaultValue = string.Empty;
+            if (type.Contains("[]")) defaultValue = "[]";
+            else if (type.Contains("string")) defaultValue = "\"\"";
+            else if (type.Contains("boolean")) defaultValue = "false";
+            else if (type.Contains("integer")) defaultValue = "0";
+            else if (type.Contains("double") || type.Contains("float")) defaultValue = "0.0";
+            else if (type.Contains("object")) defaultValue = "{}";
+            return defaultValue;
         }
 
         private string? GetRequestBodyType(OpenApiRequestBody? requestBody)
@@ -38,6 +106,7 @@ namespace Needlework.Net.Desktop.ViewModels
             if (requestBody.Content.TryGetValue("application/json", out var media))
             {
                 var schema = media.Schema;
+                if (schema == null) return null; // Because "PostLolAccountVerificationV1SendDeactivationPin" exists where the media body is empty...
                 return GetSchemaType(schema);
             }
             return null;
@@ -77,6 +146,8 @@ namespace Needlework.Net.Desktop.ViewModels
                 string componentId = GetComponentId(schema);
                 var componentSchema = document.Components.Schemas[componentId];
                 var responseClass = new PropertyClassViewModel(componentId, componentSchema.Properties, componentSchema.Enum);
+
+                if (propertyClasses.Where(c => c.Id == componentId).Any()) return; // Avoid adding duplicate schemas in classes
                 propertyClasses.Add(responseClass);
 
                 foreach ((var _, var property) in componentSchema.Properties)

@@ -1,11 +1,13 @@
-using SukiUI.Controls;
+using FluentAvalonia.UI.Windowing;
 
 namespace Needlework.Net.Desktop.Views;
 
-public partial class OopsiesWindow : SukiWindow
+public partial class OopsiesWindow : AppWindow
 {
     public OopsiesWindow()
     {
         InitializeComponent();
+
+        TitleBar.ExtendsContentIntoTitleBar = true;
     }
 }
