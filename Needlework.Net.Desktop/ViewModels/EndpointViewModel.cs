@@ -2,12 +2,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Needlework.Net.Desktop.Messages;
-using SukiUI.Controls;
 using System.Linq;
 
 namespace Needlework.Net.Desktop.ViewModels
 {
-    public partial class EndpointViewModel : ObservableObject, ISukiStackPageTitleProvider
+    public partial class EndpointViewModel : ObservableObject
     {
         public string Endpoint { get; }
         public string Title => Endpoint;
@@ -37,6 +36,12 @@ namespace Needlework.Net.Desktop.ViewModels
             }
 
             FilteredPathOperations = new AvaloniaList<PathOperationViewModel>(PathOperations.Where(o => o.Path.ToLower().Contains(value.ToLower())));
+        }
+
+        partial void OnSelectedPathOperationChanged(PathOperationViewModel? value)
+        {
+            if (value == null) return;
+            WeakReferenceMessenger.Default.Send(new EditorUpdateMessage(new(value.Operation.RequestTemplate ?? string.Empty, "EndpointRequestEditor")));
         }
     }
 }

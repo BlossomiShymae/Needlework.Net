@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Needlework.Net.Core;
 using Needlework.Net.Desktop.Messages;
-using SukiUI.Controls;
 using System;
 using System.Net.Http;
 using System.Text.Json;
@@ -114,7 +113,7 @@ namespace Needlework.Net.Desktop.ViewModels
             }
             catch (Exception ex)
             {
-                await SukiHost.ShowToast("Request Failed", ex.Message, SukiUI.Enums.NotificationType.Error);
+                WeakReferenceMessenger.Default.Send(new InfoBarUpdateMessage(new InfoBarViewModel("Request Failed", true, ex.Message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error, TimeSpan.FromSeconds(5))));
                 WeakReferenceMessenger.Default.Send(new EditorUpdateMessage(new(string.Empty, "EndpointResponseEditor")));
             }
             finally

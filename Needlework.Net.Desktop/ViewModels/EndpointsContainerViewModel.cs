@@ -1,21 +1,31 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using SukiUI.Controls;
+using CommunityToolkit.Mvvm.Input;
 using System.Net.Http;
 
 namespace Needlework.Net.Desktop.ViewModels
 {
     public partial class EndpointsContainerViewModel : PageBase
     {
-        [ObservableProperty] private ISukiStackPageTitleProvider _activeViewModel;
+        [ObservableProperty] private ObservableObject _activeViewModel;
+        [ObservableProperty] private ObservableObject _endpointsViewModel;
+        [ObservableProperty] private string _title = string.Empty;
 
-        public EndpointsContainerViewModel(HttpClient httpClient) : base("Endpoints", Material.Icons.MaterialIconKind.Hub, -500)
+        public EndpointsContainerViewModel(HttpClient httpClient) : base("Endpoints", "list-alt", -500)
         {
-            _activeViewModel = new EndpointsViewModel(httpClient, OnClicked);
+            _activeViewModel = _endpointsViewModel = new EndpointsViewModel(httpClient, OnClicked);
         }
 
-        private void OnClicked(ISukiStackPageTitleProvider viewModel)
+        private void OnClicked(ObservableObject viewModel)
         {
             ActiveViewModel = viewModel;
+            if (viewModel is EndpointViewModel endpoint) Title = endpoint.Title;
+        }
+
+        [RelayCommand]
+        private void GoBack()
+        {
+            ActiveViewModel = EndpointsViewModel;
+            Title = string.Empty;
         }
     }
 }

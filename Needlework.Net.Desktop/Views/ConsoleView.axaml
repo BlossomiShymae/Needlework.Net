@@ -2,85 +2,86 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
 			 xmlns:avaloniaEdit="https://github.com/avaloniaui/avaloniaedit"
-			 xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
 			 xmlns:vm="using:Needlework.Net.Desktop.ViewModels"
+			 xmlns:controls="using:Needlework.Net.Desktop.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Needlework.Net.Desktop.Views.ConsoleView"
 			 x:DataType="vm:ConsoleViewModel">
-	<suki:BusyArea IsBusy="{Binding IsBusy}" BusyText="Loading...">
+	<controls:BusyArea IsBusy="{Binding IsBusy}"
+					   BusyText="Loading...">
 		<Grid Margin="16" RowDefinitions="auto,*" ColumnDefinitions="*,*">
 			<Grid Grid.Row="0"
 				  Grid.Column="0"
 				  Grid.ColumnSpan="2">
-				<suki:GlassCard Margin="0 0 0 16">
-					<suki:GroupBox Header="Console">
-						<Grid RowDefinitions="auto,auto" ColumnDefinitions="auto,*">
-							<ComboBox ItemsSource="{Binding RequestMethods}" SelectedItem="{Binding RequestMethodSelected}"
-									  Grid.Row="0" Grid.Column="0"/>
-							<AutoCompleteBox
-									 ItemsSource="{Binding RequestPaths}"
-									 Text="{Binding RequestPath}"
-									 MaxDropDownHeight="400"
-									 FilterMode="StartsWith"
-									 Grid.Row="0" Grid.Column="1"/>
-							<avaloniaEdit:TextEditor
-									 Name="RequestEditor"
-									 Text=""
-									 ShowLineNumbers="True"
-									 HorizontalScrollBarVisibility="Auto"
-									 VerticalScrollBarVisibility="Visible"
-									 FontSize="12"
-									 Height="100"
-									 Grid.Row="1"
-									 Grid.Column="0"
-									 Grid.ColumnSpan="2"/>
-						</Grid>
-					</suki:GroupBox>
-				</suki:GlassCard>
-				<Button Classes="Flat Rounded"
-						Margin="0 0 0 0"
-						HorizontalAlignment="Center"
-						VerticalAlignment="Bottom"
-						FontWeight="DemiBold"
-						Command="{Binding SendRequestCommand}"
-						theme:ButtonExtensions.ShowProgress="{Binding IsRequestBusy}">
-					Send
-				</Button>
+				<StackPanel Margin="0 0 0 16">
+					<Grid RowDefinitions="auto" ColumnDefinitions="auto,*,auto">
+						<ComboBox ItemsSource="{Binding RequestMethods}"
+								  SelectedItem="{Binding RequestMethodSelected}"
+								  Margin="0 0 8 0"
+								  Grid.Row="0"
+								  Grid.Column="0"/>
+						<AutoCompleteBox
+								 ItemsSource="{Binding RequestPaths}"
+								 Text="{Binding RequestPath}"
+								 MaxDropDownHeight="400"
+								 FilterMode="StartsWith"
+								 Grid.Row="0"
+								 Grid.Column="1"/>
+						<Button Margin="8 0 0 0"
+								HorizontalAlignment="Center"
+								VerticalAlignment="Bottom"
+								FontWeight="DemiBold"
+								Grid.Row="0"
+								Grid.Column="2"
+								Command="{Binding SendRequestCommand}">
+							Send
+						</Button>
+					</Grid>
+				</StackPanel>
 			</Grid>
-			<StackPanel
-					Margin="0 0 8 0"
-					Grid.Row="1"
-					Grid.Column="0">
-				<suki:GlassCard Margin="0 4">
-					<suki:GroupBox Header="Path">
-						<TextBlock Text="{Binding ResponsePath}"/>
-					</suki:GroupBox>
-				</suki:GlassCard>
-				<suki:GlassCard Margin="0 4">
-					<suki:GroupBox Header="Status">
-						<TextBlock Text="{Binding ResponseStatus}"/>
-					</suki:GroupBox>
-				</suki:GlassCard>
-				<suki:GlassCard Margin="0 4">
-					<suki:GroupBox Header="Authorization">
-						<TextBlock Text="{Binding ResponseAuthorization}" />
-					</suki:GroupBox>
-				</suki:GlassCard>
-			</StackPanel>
-			<suki:GlassCard
-					Margin="0 8"
+			<Grid Grid.Row="1"
+				  Grid.Column="0"
+				  RowDefinitions="auto,*"
+				  ColumnDefinitions="*">
+				<TextBox IsReadOnly="True"
+						 Grid.Row="0"
+						 Grid.Column="0"
+						 Text="{Binding ResponsePath}"/>
+				<avaloniaEdit:TextEditor
+								 Name="RequestEditor"
+								 Text=""
+								 ShowLineNumbers="True"
+								 HorizontalScrollBarVisibility="Auto"
+								 VerticalScrollBarVisibility="Visible"
+								 Margin="0 8 0 0"
+								 FontSize="12"
+								 Grid.Row="1"
+								 Grid.Column="0"/>
+			</Grid>
+			<Grid	RowDefinitions="35,*"
+					ColumnDefinitions="*"
+					Margin="8 0 0 0"
 					Grid.Row="1"
 					Grid.Column="1">
+				<StackPanel Orientation="Horizontal"
+							Grid.Row="0"
+							Grid.Column="0">
+					<Button Content="{Binding ResponseStatus}"
+							FontSize="12"
+							VerticalAlignment="Center"/>
+				</StackPanel>
 				<avaloniaEdit:TextEditor
+									   Grid.Row="1"
+									   Grid.Column="0"
 									   Name="ResponseEditor"
 									   HorizontalScrollBarVisibility="Auto"
 									   VerticalScrollBarVisibility="Visible"
 									   ShowLineNumbers="True"
+									   IsReadOnly="True"
 									   Text=""
 									   FontSize="12"/>
-			</suki:GlassCard>
+			</Grid>
 		</Grid>
-	</suki:BusyArea>
+	</controls:BusyArea>
 </UserControl>

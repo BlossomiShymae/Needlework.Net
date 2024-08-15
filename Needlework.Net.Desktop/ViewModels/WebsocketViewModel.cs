@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Material.Icons;
 using Needlework.Net.Desktop.Messages;
 using Needlework.Net.Desktop.Services;
 using System;
@@ -34,7 +33,7 @@ namespace Needlework.Net.Desktop.ViewModels
 
         public List<string> FilteredEventLog => string.IsNullOrWhiteSpace(Search) ? [.. EventLog] : [.. EventLog.Where(x => x.ToLower().Contains(Search.ToLower()))];
 
-        public WebsocketViewModel(WindowService windowService) : base("Event Viewer", MaterialIconKind.Connection, -100)
+        public WebsocketViewModel(WindowService windowService) : base("Event Viewer", "plug", -100)
         {
             WindowService = windowService;
 

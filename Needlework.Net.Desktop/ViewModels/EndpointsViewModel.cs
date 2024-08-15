@@ -1,20 +1,20 @@
 ﻿using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Needlework.Net.Desktop.Messages;
-using SukiUI.Controls;
 using System;
 using System.Linq;
 using System.Net.Http;
 
 namespace Needlework.Net.Desktop.ViewModels
 {
-    public partial class EndpointsViewModel : ObservableObject, IRecipient<DataReadyMessage>, ISukiStackPageTitleProvider
+    public partial class EndpointsViewModel : ObservableObject, IRecipient<DataReadyMessage>
     {
         public HttpClient HttpClient { get; }
 
         public string Title => "Endpoints";
-        public Action<ISukiStackPageTitleProvider> OnClicked;
+        public Action<ObservableObject> OnClicked;
 
         [ObservableProperty] private IAvaloniaReadOnlyList<string> _plugins = new AvaloniaList<string>();
         [ObservableProperty] private bool _isBusy = true;
@@ -22,7 +22,7 @@ namespace Needlework.Net.Desktop.ViewModels
         [ObservableProperty] private IAvaloniaReadOnlyList<string> _query = new AvaloniaList<string>();
         [ObservableProperty] private string? _selectedQuery = string.Empty;
 
-        public EndpointsViewModel(HttpClient httpClient, Action<ISukiStackPageTitleProvider> onClicked)
+        public EndpointsViewModel(HttpClient httpClient, Action<ObservableObject> onClicked)
         {
             HttpClient = httpClient;
             OnClicked = onClicked;
@@ -45,7 +45,8 @@ namespace Needlework.Net.Desktop.ViewModels
                 Query = Plugins;
         }
 
-        partial void OnSelectedQueryChanged(string? value)
+        [RelayCommand]
+        private void OpenEndpoint(string? value)
         {
             if (string.IsNullOrEmpty(value)) return;
 

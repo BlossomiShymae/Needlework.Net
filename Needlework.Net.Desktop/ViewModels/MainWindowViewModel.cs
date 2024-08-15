@@ -2,13 +2,14 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using FluentAvalonia.UI.Controls;
 using Microsoft.OpenApi.Models;
 using Needlework.Net.Core;
 using Needlework.Net.Desktop.Messages;
 using Needlework.Net.Desktop.Services;
-using SukiUI.Controls;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
@@ -19,10 +20,15 @@ using System.Threading.Tasks;
 
 namespace Needlework.Net.Desktop.ViewModels
 {
-    public partial class MainWindowViewModel : ObservableObject, IRecipient<DataRequestMessage>, IRecipient<HostDocumentRequestMessage>, IRecipient<OopsiesWindowRequestedMessage>
+    public partial class MainWindowViewModel : ObservableObject, IRecipient<DataRequestMessage>, IRecipient<HostDocumentRequestMessage>, IRecipient<OopsiesWindowRequestedMessage>, IRecipient<InfoBarUpdateMessage>
     {
-        public IAvaloniaReadOnlyList<PageBase> Pages { get; }
+        public IAvaloniaReadOnlyList<NavigationViewItem> MenuItems { get; }
+        [NotifyPropertyChangedFor(nameof(CurrentPage))]
+        [ObservableProperty] private NavigationViewItem _selectedMenuItem;
+        public PageBase CurrentPage => (PageBase)SelectedMenuItem.Tag!;
+
         public string Version { get; } = Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "0.0.0.0";
+        [ObservableProperty] private bool _isUpdateShown = false;
 
         public HttpClient HttpClient { get; }
         public WindowService WindowService { get; }
@@ -30,11 +36,22 @@ namespace Needlework.Net.Desktop.ViewModels
         public OpenApiDocument? HostDocument { get; set; }
 
         [ObservableProperty] private bool _isBusy = true;
-        [ObservableProperty] private bool _isUpdateShown = false;
+
+        [ObservableProperty] private ObservableCollection<InfoBarViewModel> _infoBarItems = [];
 
         public MainWindowViewModel(IEnumerable<PageBase> pages, HttpClient httpClient, WindowService windowService)
         {
-            Pages = new AvaloniaList<PageBase>(pages.OrderBy(x => x.Index).ThenBy(x => x.DisplayName));
+            MenuItems = new AvaloniaList<NavigationViewItem>(pages
+                .OrderBy(p => p.Index)
+                .ThenBy(p => p.DisplayName)
+                .Select(p => new NavigationViewItem()
+                {
+                    Content = p.DisplayName,
+                    Tag = p,
+                    IconSource = new BitmapIconSource() { UriSource = new Uri($"avares://NeedleworkDotNet/Assets/Icons/{p.Icon}.png") }
+                }));
+            SelectedMenuItem = MenuItems[0];
+
             HttpClient = httpClient;
             WindowService = windowService;
 
@@ -69,9 +86,14 @@ namespace Needlework.Net.Desktop.ViewModels
 
                 if (release.IsLatest(currentVersion) && !IsUpdateShown)
                 {
-                    await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(async () =>
+                    Avalonia.Threading.Dispatcher.UIThread.Post(async () =>
                     {
-                        await SukiHost.ShowToast("Needlework.Net Update", $"There is a new version available: {release.TagName}.", SukiUI.Enums.NotificationType.Info, TimeSpan.FromSeconds(10), () => OpenUrl("https://github.com/BlossomiShymae/Needlework.Net/releases"));
+                        await ShowInfoBarAsync(new("Needlework.Net Update", true, $"There is a new version available: {release.TagName}.", InfoBarSeverity.Informational, TimeSpan.FromSeconds(10), new Avalonia.Controls.Button()
+                        {
+                            Command = OpenUrlCommand,
+                            CommandParameter = "https://github.com/BlossomiShymae/Needlework.Net/releases",
+                            Content = "Download"
+                        }));
                         IsUpdateShown = true;
                     });
                 }
@@ -87,7 +109,6 @@ namespace Needlework.Net.Desktop.ViewModels
             LcuSchemaHandler = handler;
 
             WeakReferenceMessenger.Default.Send(new DataReadyMessage(handler));
-            await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(async () => await SukiHost.ShowToast("OpenAPI Data Processed", "Some pages can now be used.", SukiUI.Enums.NotificationType.Success, TimeSpan.FromSeconds(5)));
             IsBusy = false;
         }
 
@@ -117,6 +138,18 @@ namespace Needlework.Net.Desktop.ViewModels
         public void Receive(OopsiesWindowRequestedMessage message)
         {
             WindowService.ShowOopsiesWindow(message.Value);
+        }
+
+        public void Receive(InfoBarUpdateMessage message)
+        {
+            Avalonia.Threading.Dispatcher.UIThread.Post(async () => await ShowInfoBarAsync(message.Value));
+        }
+
+        private async Task ShowInfoBarAsync(InfoBarViewModel vm)
+        {
+            InfoBarItems.Add(vm);
+            await Task.Delay(vm.Duration);
+            InfoBarItems.Remove(vm);
         }
     }
 }
