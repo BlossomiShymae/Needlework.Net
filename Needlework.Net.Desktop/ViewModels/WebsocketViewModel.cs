@@ -17,8 +17,7 @@ namespace Needlework.Net.Desktop.ViewModels
 {
     public partial class WebsocketViewModel : PageBase
     {
-        [NotifyPropertyChangedFor(nameof(FilteredEventLog))]
-        [ObservableProperty] private ObservableCollection<string> _eventLog = [];
+        public ObservableCollection<string> EventLog { get; } = [];
         [NotifyPropertyChangedFor(nameof(FilteredEventLog))]
         [ObservableProperty] private string _search = string.Empty;
         [ObservableProperty] private bool _isAttach = true;
@@ -31,12 +30,12 @@ namespace Needlework.Net.Desktop.ViewModels
 
         public WindowService WindowService { get; }
 
-        public List<string> FilteredEventLog => string.IsNullOrWhiteSpace(Search) ? [.. EventLog] : [.. EventLog.Where(x => x.ToLower().Contains(Search.ToLower()))];
+        public IReadOnlyList<string> FilteredEventLog => string.IsNullOrWhiteSpace(Search) ? EventLog : [.. EventLog.Where(x => x.Contains(Search, StringComparison.InvariantCultureIgnoreCase))];
 
         public WebsocketViewModel(WindowService windowService) : base("Event Viewer", "plug", -100)
         {
             WindowService = windowService;
-
+            EventLog.CollectionChanged += (s, e) => OnPropertyChanged(nameof(FilteredEventLog));
             var thread = new Thread(InitializeWebsocket) { IsBackground = true };
             thread.Start();
         }
@@ -65,7 +64,8 @@ namespace Needlework.Net.Desktop.ViewModels
         [RelayCommand]
         private void Clear()
         {
-            EventLog = [];
+            _events.Clear();
+            EventLog.Clear();
         }
 
         partial void OnSelectedEventLogChanged(string? value)
@@ -99,25 +99,21 @@ namespace Needlework.Net.Desktop.ViewModels
                 if (!IsAttach) return;
 
                 var line = $"{DateTime.Now:HH:mm:ss.fff} {message.Data?.EventType.ToUpper()} {message.Data?.Uri}";
-                var log = EventLog.ToList();
                 Trace.WriteLine($"Message: {line}");
-                if (log.Count < 1000)
+                if (EventLog.Count < 1000)
                 {
-                    log.Add(line);
+                    EventLog.Add(line);
                     _events[line] = message;
                 }
                 else
                 {
-                    var key = $"{log[0]}";
-                    log.RemoveAt(0);
+                    var key = EventLog[0];
+                    EventLog.RemoveAt(0);
                     _events.Remove(key);
 
-                    log.Add(line);
+                    EventLog.Add(line);
                     _events[line] = message;
                 }
-
-                EventLog = []; // This is a hack needed to update for ListBox
-                EventLog = new ObservableCollection<string>(log);
             });
         }
     }

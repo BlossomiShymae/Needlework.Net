@@ -63,7 +63,7 @@ namespace Needlework.Net.Desktop.ViewModels
 
         private void ProcessEvents(object? obj)
         {
-            while (true)
+            while (!IsUpdateShown)
             {
                 Task.Run(CheckLatestVersionAsync);
 
@@ -84,7 +84,7 @@ namespace Needlework.Net.Desktop.ViewModels
 
                 var currentVersion = int.Parse(Version.Replace(".", ""));
 
-                if (release.IsLatest(currentVersion) && !IsUpdateShown)
+                if (release.IsLatest(currentVersion))
                 {
                     Avalonia.Threading.Dispatcher.UIThread.Post(async () =>
                     {

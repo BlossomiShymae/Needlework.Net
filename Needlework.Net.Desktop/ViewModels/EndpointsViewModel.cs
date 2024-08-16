@@ -15,11 +15,11 @@ namespace Needlework.Net.Desktop.ViewModels
 
         public string Title => "Endpoints";
         public Action<ObservableObject> OnClicked;
+        public IAvaloniaList<string> Plugins { get; } = new AvaloniaList<string>();
+        public IAvaloniaList<string> Query { get; } = new AvaloniaList<string>();
 
-        [ObservableProperty] private IAvaloniaReadOnlyList<string> _plugins = new AvaloniaList<string>();
         [ObservableProperty] private bool _isBusy = true;
         [ObservableProperty] private string _search = string.Empty;
-        [ObservableProperty] private IAvaloniaReadOnlyList<string> _query = new AvaloniaList<string>();
         [ObservableProperty] private string? _selectedQuery = string.Empty;
 
         public EndpointsViewModel(HttpClient httpClient, Action<ObservableObject> onClicked)
@@ -33,16 +33,19 @@ namespace Needlework.Net.Desktop.ViewModels
         public void Receive(DataReadyMessage message)
         {
             IsBusy = false;
-            Plugins = new AvaloniaList<string>([.. message.Value.Plugins.Keys]);
-            Query = new AvaloniaList<string>([.. Plugins]);
+            Plugins.Clear();
+            Plugins.AddRange(message.Value.Plugins.Keys);
+            Query.Clear();
+            Query.AddRange(Plugins);
         }
 
         partial void OnSearchChanged(string value)
         {
+            Query.Clear();
             if (!string.IsNullOrEmpty(Search))
-                Query = new AvaloniaList<string>(Plugins.Where(x => x.Contains(value)));
+                Query.AddRange(Plugins.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
             else
-                Query = Plugins;
+                Query.AddRange(Plugins);
         }
 
         [RelayCommand]

@@ -7,6 +7,7 @@ using Needlework.Net.Core;
 using Needlework.Net.Desktop.Messages;
 using System;
 using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -31,14 +32,18 @@ namespace Needlework.Net.Desktop.ViewModels
         public PathOperationViewModel(PathOperation pathOperation)
         {
             Method = pathOperation.Method.ToUpper();
-            Color = new SolidColorBrush(GetColor(pathOperation.Method.ToUpper()));
+            Color = new SolidColorBrush(GetColor(Method));
             Path = pathOperation.Path;
             Operation = new OperationViewModel(pathOperation.Operation);
             ProcessInfo = GetProcessInfo();
-            ResponsePath = ProcessInfo != null ? $"https://127.0.0.1:{ProcessInfo.AppPort}{Path}" : null;
-            ResponseUsername = ProcessInfo != null ? new RiotAuthentication(ProcessInfo.RemotingAuthToken).Username : null;
-            ResponsePassword = ProcessInfo != null ? new RiotAuthentication(ProcessInfo.RemotingAuthToken).Password : null;
-            ResponseAuthorization = ProcessInfo != null ? $"Basic {new RiotAuthentication(ProcessInfo.RemotingAuthToken).Value}" : null;
+            if (ProcessInfo != null)
+            {
+                ResponsePath = $"https://127.0.0.1:{ProcessInfo.AppPort}{Path}";
+                var riotAuth = new RiotAuthentication(ProcessInfo.RemotingAuthToken);
+                ResponseUsername = riotAuth.Username;
+                ResponsePassword = riotAuth.Password;
+                ResponseAuthorization = $"Basic {riotAuth.Value}";
+            }
         }
 
         private ProcessInfo? GetProcessInfo()
@@ -59,7 +64,7 @@ namespace Needlework.Net.Desktop.ViewModels
             {
                 IsBusy = true;
 
-                var method = Method.ToUpper() switch
+                var method = Method switch
                 {
                     "GET" => HttpMethod.Get,
                     "POST" => HttpMethod.Post,
@@ -73,30 +78,32 @@ namespace Needlework.Net.Desktop.ViewModels
                 };
 
                 var processInfo = Connector.GetProcessInfo();
-                var path = Path;
+                var sb = new StringBuilder(Path);
                 foreach (var pathParameter in Operation.PathParameters)
                 {
-                    path = path.Replace($"{{{pathParameter.Name}}}", pathParameter.Value);
+                    sb.Replace($"{{{pathParameter.Name}}}", pathParameter.Value);
                 }
 
-                var query = "";
+                var firstQueryAdded = false;
                 foreach (var queryParameter in Operation.QueryParameters)
                 {
-                    if (query.Length != 0 && !string.IsNullOrWhiteSpace(queryParameter.Value))
-                        query += $"&{queryParameter.Name}={Uri.EscapeDataString(queryParameter.Value)}";
-                    else if (query.Length == 0 && !string.IsNullOrWhiteSpace(queryParameter.Value))
-                        query += $"?{queryParameter.Name}={Uri.EscapeDataString(queryParameter.Value)}";
+                    if (!string.IsNullOrWhiteSpace(queryParameter.Value))
+                    {
+                        sb.Append(firstQueryAdded ? '&' : '?');
+                        firstQueryAdded = true;
+                        sb.Append($"{queryParameter.Name}={Uri.EscapeDataString(queryParameter.Value)}");
+                    }
                 }
-                var uri = $"{path}{query}";
+                var uri = sb.ToString();
 
                 var requestBody = WeakReferenceMessenger.Default.Send(new ContentRequestMessage(), "EndpointRequestEditor").Response;
                 var content = new StringContent(requestBody, new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
 
-                var response = await Connector.SendAsync(method, $"{uri}", content) ?? throw new Exception("Response is null.");
+                var response = await Connector.SendAsync(method, uri, content);
                 var riotAuthentication = new RiotAuthentication(processInfo.RemotingAuthToken);
-                var responseBody = await response.Content.ReadAsStringAsync();
+                var responseBytes = await response.Content.ReadAsByteArrayAsync();
 
-                responseBody = !string.IsNullOrEmpty(responseBody) ? JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(responseBody), App.JsonSerializerOptions) : string.Empty;
+                var responseBody = responseBytes.Length > 0 ? JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(responseBytes), App.JsonSerializerOptions) : string.Empty;
                 if (responseBody.Length >= App.MaxCharacters)
                 {
                     WeakReferenceMessenger.Default.Send(new OopsiesWindowRequestedMessage(responseBody));

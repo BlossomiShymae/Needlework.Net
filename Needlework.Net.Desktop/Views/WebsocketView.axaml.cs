@@ -31,7 +31,7 @@ public partial class WebsocketView : UserControl, IRecipient<ResponseUpdatedMess
 
         var vm = (WebsocketViewModel)DataContext!;
         var viewer = this.FindControl<ListBox>("EventViewer");
-        viewer!.PropertyChanged += (s, e) => { if (vm.IsTail) viewer.ScrollIntoView(vm.EventLog.Count - 1); };
+        vm.EventLog.CollectionChanged += (s, e) => { if (vm.IsTail) viewer!.ScrollIntoView(vm.EventLog.Count - 1); };
 
         _responseEditor = this.FindControl<TextEditor>("ResponseEditor");
         _responseEditor?.ApplyJsonEditorSettings();

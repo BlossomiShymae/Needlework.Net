@@ -14,7 +14,7 @@
         Title="Needlework.Net"
 		Icon="/Assets/app.ico"
         Width="1280"
-        Height="720">
+        Height="720">	
 	<Grid RowDefinitions="auto,*">
 		<Grid ColumnDefinitions="auto,auto,*,auto"
 			  Background="Transparent"
@@ -83,6 +83,7 @@
 						<DataTemplate>
 							<Border Margin="4">
 								<ui:InfoBar
+								Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
 								Title="{Binding Title}"
 								IsOpen="{Binding IsOpen}"
 								Severity="{Binding Severity}"

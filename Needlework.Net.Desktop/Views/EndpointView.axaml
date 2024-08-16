@@ -55,11 +55,11 @@
 						<Grid
 						RowDefinitions="*"
 						ColumnDefinitions="auto,*">
-							<Button
+							<TextBlock
 								VerticalAlignment="Center"
-								Classes="Flat"
+								TextAlignment="Center"
 								Margin="0 0 8 0"
-								Content="{Binding Method}"
+								Text="{Binding Method}"
 								Background="{Binding Color}"
 								FontSize="8"
 								Width="50"
