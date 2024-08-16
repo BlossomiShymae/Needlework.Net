@@ -55,6 +55,7 @@
 						<Grid
 						RowDefinitions="*"
 						ColumnDefinitions="auto,*">
+							<!-- TODO change button to sometnig else or disabled "highlighting"-->
 							<Button
 								VerticalAlignment="Center"
 								Classes="Flat"

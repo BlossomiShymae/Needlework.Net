@@ -15,10 +15,10 @@ namespace Needlework.Net.Desktop.ViewModels
     public partial class ConsoleViewModel : PageBase, IRecipient<DataReadyMessage>
     {
         public IAvaloniaReadOnlyList<string> RequestMethods { get; } = new AvaloniaList<string>(["GET", "POST", "PUT", "DELETE", "HEAD", "PATCH", "OPTIONS", "TRACE"]);
+        public IAvaloniaList<string> RequestPaths { get; } = new AvaloniaList<string>();
 
         [ObservableProperty] private bool _isBusy = true;
         [ObservableProperty] private bool _isRequestBusy = false;
-        [ObservableProperty] private IAvaloniaReadOnlyList<string> _requestPaths = new AvaloniaList<string>();
         [ObservableProperty] private string? _requestMethodSelected = "GET";
         [ObservableProperty] private string? _requestPath = null;
         [ObservableProperty] private string? _requestBody = null;
@@ -59,18 +59,18 @@ namespace Needlework.Net.Desktop.ViewModels
                 var processInfo = Connector.GetProcessInfo();
                 var requestBody = WeakReferenceMessenger.Default.Send(new ContentRequestMessage(), "ConsoleRequestEditor").Response;
                 var content = new StringContent(requestBody, new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
-                var response = await Connector.SendAsync(method, RequestPath, content) ?? throw new Exception("Response is null.");
+                var response = await Connector.SendAsync(method, RequestPath, content);
                 var riotAuthentication = new RiotAuthentication(processInfo.RemotingAuthToken);
-                var body = await response.Content.ReadAsStringAsync();
-
-                body = !string.IsNullOrEmpty(body) ? JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(body), App.JsonSerializerOptions) : string.Empty;
+                var responseBody = await response.Content.ReadAsByteArrayAsync();
+  
+                var body = responseBody.Length > 0 ? JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(responseBody), App.JsonSerializerOptions) : string.Empty;
                 if (body.Length >= App.MaxCharacters)
                 {
                     WindowService.ShowOopsiesWindow(body);
                     WeakReferenceMessenger.Default.Send(new ResponseUpdatedMessage(string.Empty), nameof(ConsoleViewModel));
                 }
                 else WeakReferenceMessenger.Default.Send(new ResponseUpdatedMessage(body), nameof(ConsoleViewModel));
-
+               
                 ResponseStatus = $"{(int)response.StatusCode} {response.StatusCode.ToString()}";
                 ResponsePath = $"https://127.0.0.1:{processInfo.AppPort}{RequestPath}";
                 ResponseAuthorization = $"Basic {riotAuthentication.Value}";
@@ -93,7 +93,8 @@ namespace Needlework.Net.Desktop.ViewModels
         {
             Avalonia.Threading.Dispatcher.UIThread.Invoke(() =>
             {
-                RequestPaths = new AvaloniaList<string>([.. message.Value.Paths]);
+                RequestPaths.Clear();
+                RequestPaths.AddRange(message.Value.Paths);
                 IsBusy = false;
             });
         }

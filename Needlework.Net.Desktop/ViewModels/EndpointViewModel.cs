@@ -2,6 +2,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Needlework.Net.Desktop.Messages;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Needlework.Net.Desktop.ViewModels
@@ -12,11 +14,11 @@ namespace Needlework.Net.Desktop.ViewModels
         public string Title => Endpoint;
 
 
-        [ObservableProperty] private IAvaloniaReadOnlyList<PathOperationViewModel> _pathOperations;
+        public IAvaloniaReadOnlyList<PathOperationViewModel> PathOperations { get; }
         [ObservableProperty] private PathOperationViewModel? _selectedPathOperation;
 
         [ObservableProperty] private string? _search;
-        [ObservableProperty] private IAvaloniaReadOnlyList<PathOperationViewModel> _filteredPathOperations;
+        public IAvaloniaList<PathOperationViewModel> FilteredPathOperations { get; }
 
         public EndpointViewModel(string endpoint)
         {
@@ -29,13 +31,14 @@ namespace Needlework.Net.Desktop.ViewModels
 
         partial void OnSearchChanged(string? value)
         {
+            FilteredPathOperations.Clear();
+
             if (string.IsNullOrWhiteSpace(value))
             {
-                FilteredPathOperations = new AvaloniaList<PathOperationViewModel>(PathOperations);
+                FilteredPathOperations.AddRange(PathOperations);
                 return;
             }
-
-            FilteredPathOperations = new AvaloniaList<PathOperationViewModel>(PathOperations.Where(o => o.Path.ToLower().Contains(value.ToLower())));
+            FilteredPathOperations.AddRange(PathOperations.Where(o => o.Path.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
         }
 
         partial void OnSelectedPathOperationChanged(PathOperationViewModel? value)
