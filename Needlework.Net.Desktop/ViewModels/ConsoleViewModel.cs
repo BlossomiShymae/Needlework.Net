@@ -8,7 +8,6 @@ using Needlework.Net.Desktop.Services;
 using System;
 using System.Net.Http;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Needlework.Net.Desktop.ViewModels
@@ -59,7 +58,7 @@ namespace Needlework.Net.Desktop.ViewModels
 
                 var processInfo = Connector.GetProcessInfo();
                 var requestBody = WeakReferenceMessenger.Default.Send(new ContentRequestMessage(), "ConsoleRequestEditor").Response;
-                var content = new StringContent(Regex.Replace(requestBody, @"\s+", ""), new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
+                var content = new StringContent(requestBody, new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
                 var response = await Connector.SendAsync(method, RequestPath, content);
                 var riotAuthentication = new RiotAuthentication(processInfo.RemotingAuthToken);
                 var responseBody =
