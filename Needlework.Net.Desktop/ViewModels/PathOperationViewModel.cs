@@ -99,11 +99,11 @@ namespace Needlework.Net.Desktop.ViewModels
                 var requestBody = WeakReferenceMessenger.Default.Send(new ContentRequestMessage(), "EndpointRequestEditor").Response;
                 var content = new StringContent(requestBody, new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
 
-                var response = await Connector.SendAsync(method, uri, content) ?? throw new Exception("Response is null.");
+                var response = await Connector.SendAsync(method, uri, content);
                 var riotAuthentication = new RiotAuthentication(processInfo.RemotingAuthToken);
-                var responseBody = await response.Content.ReadAsStringAsync();
+                var responseBytes = await response.Content.ReadAsByteArrayAsync();
 
-                responseBody = !string.IsNullOrEmpty(responseBody) ? JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(responseBody), App.JsonSerializerOptions) : string.Empty;
+                var responseBody = responseBytes.Length > 0 ? JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(responseBody), App.JsonSerializerOptions) : string.Empty;
                 if (responseBody.Length >= App.MaxCharacters)
                 {
                     WeakReferenceMessenger.Default.Send(new OopsiesWindowRequestedMessage(responseBody));

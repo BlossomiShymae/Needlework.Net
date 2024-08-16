@@ -61,16 +61,9 @@ namespace Needlework.Net.Desktop.ViewModels
                 var content = new StringContent(requestBody, new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
                 var response = await Connector.SendAsync(method, RequestPath, content);
                 var riotAuthentication = new RiotAuthentication(processInfo.RemotingAuthToken);
-                var responseBody =
-#if DEBUG 
-                    await response.Content.ReadAsStringAsync();
-#else
-                    await response.Content.ReadAsByteArrayAsync();
-#endif
+                var responseBody = await response.Content.ReadAsByteArrayAsync();
   
-                var body = responseBody.Length > 0 
-                    ? JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(responseBody), App.JsonSerializerOptions) 
-                    : string.Empty;
+                var body = responseBody.Length > 0 ? JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(responseBody), App.JsonSerializerOptions) : string.Empty;
                 if (body.Length >= App.MaxCharacters)
                 {
                     WindowService.ShowOopsiesWindow(body);
