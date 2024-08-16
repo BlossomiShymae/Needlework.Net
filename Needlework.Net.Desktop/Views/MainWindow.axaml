@@ -82,8 +82,8 @@
 					<ItemsRepeater.ItemTemplate>
 						<DataTemplate>
 							<Border Margin="4">
-								<!-- TODO add some background to InfoBar (currently it is (probably) transparent and you can see other things under it) --> 
 								<ui:InfoBar
+								Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
 								Title="{Binding Title}"
 								IsOpen="{Binding IsOpen}"
 								Severity="{Binding Severity}"
