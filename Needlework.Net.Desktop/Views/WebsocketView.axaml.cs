@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Needlework.Net.Desktop.Extensions;
 using Needlework.Net.Desktop.Messages;
 using Needlework.Net.Desktop.ViewModels;
+using System;
 using TextMateSharp.Grammars;
 
 namespace Needlework.Net.Desktop.Views;
@@ -14,6 +15,8 @@ namespace Needlework.Net.Desktop.Views;
 public partial class WebsocketView : UserControl, IRecipient<ResponseUpdatedMessage>
 {
     private TextEditor? _responseEditor;
+    public WebsocketViewModel? _viewModel;
+    private ListBox? _viewer;
 
     public WebsocketView()
     {
@@ -29,9 +32,9 @@ public partial class WebsocketView : UserControl, IRecipient<ResponseUpdatedMess
     {
         base.OnApplyTemplate(e);
 
-        var vm = (WebsocketViewModel)DataContext!;
-        var viewer = this.FindControl<ListBox>("EventViewer");
-        vm.EventLog.CollectionChanged += (s, e) => { if (vm.IsTail) viewer!.ScrollIntoView(vm.EventLog.Count - 1); };
+        _viewModel = (WebsocketViewModel)DataContext!;
+        _viewer = this.FindControl<ListBox>("EventViewer");
+        _viewModel.EventLog.CollectionChanged += EventLog_CollectionChanged; ;
 
         _responseEditor = this.FindControl<TextEditor>("ResponseEditor");
         _responseEditor?.ApplyJsonEditorSettings();
@@ -39,6 +42,26 @@ public partial class WebsocketView : UserControl, IRecipient<ResponseUpdatedMess
         WeakReferenceMessenger.Default.Register(this, nameof(WebsocketViewModel));
 
         OnBaseThemeChanged(Application.Current!.ActualThemeVariant);
+    }
+
+    private void EventLog_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        Avalonia.Threading.Dispatcher.UIThread.Post(async () =>
+        {
+            if (_viewModel!.IsTail)
+            {
+                await _viewModel.EventLogLock.WaitAsync();
+                try
+                {
+                    _viewer!.ScrollIntoView(_viewModel.EventLog.Count - 1);
+                }
+                catch (InvalidOperationException) { }
+                finally
+                {
+                    _viewModel.EventLogLock.Release();
+                }
+            }
+        });
     }
 
     private void OnBaseThemeChanged(ThemeVariant currentTheme)
