@@ -73,11 +73,20 @@ namespace Needlework.Net.Desktop.ViewModels
             {
                 var type = template[i];
                 if (!type.Contains("#")) continue;
-                if (requestClasses.Where(c => c.Id == type.Replace("#", string.Empty)).Any())
+
+                var foundClass = requestClasses.Where(c => c.Id == type.Replace("#", string.Empty));
+                if (foundClass.Any())
                 {
-                    AvaloniaList<PropertyClassViewModel> classes = [.. requestClasses];
-                    classes.Remove(rootClass);
-                    template[i] = string.Join(string.Empty, CreateTemplate(classes));
+                    if (foundClass.First().PropertyEnums.Any())
+                    {
+                        template[i] = string.Join(string.Empty, CreateTemplate([.. foundClass]));
+                    }
+                    else
+                    {
+                        AvaloniaList<PropertyClassViewModel> classes = [.. requestClasses];
+                        classes.Remove(rootClass);
+                        template[i] = string.Join(string.Empty, CreateTemplate(classes));
+                    }
                 }
                 else
                 {
