@@ -18,6 +18,8 @@ namespace Needlework.Net.Desktop.ViewModels
     public partial class WebsocketViewModel : PageBase
     {
         public ObservableCollection<string> EventLog { get; } = [];
+        public SemaphoreSlim EventLogLock { get; } = new(1, 1);
+
         [NotifyPropertyChangedFor(nameof(FilteredEventLog))]
         [ObservableProperty] private string _search = string.Empty;
         [ObservableProperty] private bool _isAttach = true;
@@ -94,25 +96,34 @@ namespace Needlework.Net.Desktop.ViewModels
 
         private void OnMessage(EventMessage message)
         {
-            Avalonia.Threading.Dispatcher.UIThread.Invoke(() =>
+            Avalonia.Threading.Dispatcher.UIThread.Invoke(async () =>
             {
                 if (!IsAttach) return;
 
                 var line = $"{DateTime.Now:HH:mm:ss.fff} {message.Data?.EventType.ToUpper()} {message.Data?.Uri}";
                 Trace.WriteLine($"Message: {line}");
-                if (EventLog.Count < 1000)
-                {
-                    EventLog.Add(line);
-                    _events[line] = message;
-                }
-                else
-                {
-                    var key = EventLog[0];
-                    EventLog.RemoveAt(0);
-                    _events.Remove(key);
 
-                    EventLog.Add(line);
-                    _events[line] = message;
+                await EventLogLock.WaitAsync();
+                try
+                {
+                    if (EventLog.Count < 1000)
+                    {
+                        EventLog.Add(line);
+                        _events[line] = message;
+                    }
+                    else
+                    {
+                        var key = EventLog[0];
+                        EventLog.RemoveAt(0);
+                        _events.Remove(key);
+
+                        EventLog.Add(line);
+                        _events[line] = message;
+                    }
+                }
+                finally
+                {
+                    EventLogLock.Release();
                 }
             });
         }
