@@ -1,0 +1,69 @@
+<Window
+			 xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:Needlework.Net.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Needlework.Net.Views.OopsiesWindow"
+			 x:DataType="vm:OopsiesWindowViewModel"
+			 Title="Needlework.Net - Oopsies"
+		     WindowStartupLocation="CenterOwner"
+			 Width="560"
+			 Height="200">
+	<Grid RowDefinitions="auto,*">
+		<Grid ColumnDefinitions="auto,auto,*,auto"
+			  Background="Transparent"
+			  Height="40"
+			  Grid.Row="0">
+			<Image Margin="12 4"
+				   IsHitTestVisible="False"
+				   Source="/Assets/app.png"
+				   Width="18"
+				   Height="18"
+				   DockPanel.Dock="Left"
+				   Grid.Column="0"/>
+			<TextBlock FontSize="12"
+					   IsHitTestVisible="False"
+					   VerticalAlignment="Center"
+					   Grid.Column="1">
+				Needlework.Net - Oopsies
+			</TextBlock>
+		</Grid>
+		<Grid RowDefinitions="auto,auto,auto" 
+			  ColumnDefinitions="auto,auto"
+			  Grid.Row="1"
+			  Grid.Column="0"
+			Margin="8"
+			VerticalAlignment="Center"
+			HorizontalAlignment="Center">
+			<TextBlock
+				Grid.Row="0"
+				Grid.Column="0"
+				Grid.ColumnSpan="2">
+				This response is too large for Needlework.Net to handle for performance reasons.
+			</TextBlock>
+			<TextBlock
+				Grid.Row="1"
+				Grid.Column="0"
+				Grid.ColumnSpan="2"
+				Margin="0 0 0 12">
+				It can be viewed in an external editor or viewer.
+			</TextBlock>
+			<Button Command="{Binding OpenDefaultEditorCommand}"
+					HorizontalAlignment="Stretch"
+					Grid.Row="2"
+					Grid.Column="0"
+					Margin="0 0 8 0">
+				Open
+			</Button>
+			<Button Command="{Binding CloseDialogCommand}"
+					HorizontalAlignment="Stretch"
+					Grid.Row="2"
+					Grid.Column="1"
+					Margin="8 0 0 0">
+				Cancel
+			</Button>
+		</Grid>
+	</Grid>
+</Window>

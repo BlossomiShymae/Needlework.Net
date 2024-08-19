@@ -20,14 +20,14 @@ jobs:
         fetch-depth: 0
         ref: release
     - name: Build
-      run: dotnet build Needlework.Net.Desktop -c Release
+      run: dotnet build Needlework.Net -c Release
     - name: Publish
-      run: dotnet publish Needlework.Net.Desktop -c Release -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -p:DebugSymbols=false -o publish -r win-x64 --self-contained=false
+      run: dotnet publish Needlework.Net -c Release -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -p:DebugSymbols=false -o publish -r win-x64 --self-contained=false
     - name: Get Version
       id: version
       shell: powershell
       run: |
-        $xml=[xml](Get-Content .\Needlework.Net.Desktop\Needlework.Net.Desktop.csproj)
+        $xml=[xml](Get-Content .\Needlework.Net\Needlework.Net.csproj)
         $ver=($xml.Project.PropertyGroup).AssemblyVersion
         $ver="VERSION=$ver"
         $ver=$ver -replace '\s',''

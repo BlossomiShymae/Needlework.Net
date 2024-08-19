@@ -1,0 +1,39 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:Needlework.Net.ViewModels"
+			 xmlns:controls="using:Needlework.Net.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Needlework.Net.Views.AboutView"
+			 x:DataType="vm:AboutViewModel">
+	<Grid Margin="8"
+			VerticalAlignment="Center"
+			HorizontalAlignment="Center">
+		<WrapPanel Orientation="Horizontal">
+			<controls:Card Margin="8">
+				<Image Source="/Assets/about.png"
+				   RenderOptions.BitmapInterpolationMode="MediumQuality"
+				   Width="200"
+				   Height="200"/>
+			</controls:Card>
+			<StackPanel Margin="8 0 0 0">
+				<controls:Card Width="400" Margin="8">
+					<StackPanel>
+						<TextBlock Theme="{StaticResource TitleTextBlockStyle}">Blossomi Shymae</TextBlock>
+					</StackPanel>
+				</controls:Card>
+				<controls:Card Width="400" Margin="8">
+					<StackPanel >
+						<TextBlock Theme="{StaticResource SubtitleTextBlockStyle}">About</TextBlock>
+						<TextBlock TextWrapping="Wrap">
+							Needlework.Net is the .NET rewrite of Needlework. This tool was made to help others with LCU development. Feel free to ask any questions
+							or help contribute to the project! Made with love. 💜
+						</TextBlock>
+					</StackPanel>
+				</controls:Card>
+
+			</StackPanel>
+		</WrapPanel>
+	</Grid>
+</UserControl>
