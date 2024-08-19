@@ -42,7 +42,26 @@
 						 Name="EventViewer"
 						 Margin="0 8 0 0"
 						 ItemsSource="{Binding FilteredEventLog}"
-						 SelectedItem="{Binding SelectedEventLog}"/>
+						 SelectedItem="{Binding SelectedEventLog}"
+						 ScrollViewer.HorizontalScrollBarVisibility="Auto">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<Grid ColumnDefinitions="auto,auto,*">
+								<TextBlock Text="{Binding Time}"
+										   Margin="0 0 4 0"
+										   Grid.Column="0"
+										   Foreground="#8be9fd"/>
+								<TextBlock Text="{Binding Type}"
+										   Grid.Column="1"
+										   Margin="0 0 4 0"
+										   Foreground="#ffb86c"/>
+								<TextBlock Text="{Binding Uri}"
+										   Grid.Column="2"
+										   Foreground="#f8f8f2"/>
+							</Grid>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
 			</Grid>
 		</Border>
 		<GridSplitter Grid.Row="1" ResizeDirection="Rows" Background="Gray"/>

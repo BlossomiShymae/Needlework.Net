@@ -16,20 +16,20 @@ namespace Needlework.Net.ViewModels
 {
     public partial class WebsocketViewModel : PageBase
     {
-        public ObservableCollection<string> EventLog { get; } = [];
+        public ObservableCollection<EventViewModel> EventLog { get; } = [];
         public SemaphoreSlim EventLogLock { get; } = new(1, 1);
 
         [NotifyPropertyChangedFor(nameof(FilteredEventLog))]
         [ObservableProperty] private string _search = string.Empty;
         [ObservableProperty] private bool _isAttach = true;
         [ObservableProperty] private bool _isTail = false;
-        [ObservableProperty] private string? _selectedEventLog = null;
+        [ObservableProperty] private EventViewModel? _selectedEventLog = null;
 
         private Dictionary<string, EventMessage> _events = [];
 
         public WebsocketClient? Client { get; set; }
 
-        public IReadOnlyList<string> FilteredEventLog => string.IsNullOrWhiteSpace(Search) ? EventLog : [.. EventLog.Where(x => x.Contains(Search, StringComparison.InvariantCultureIgnoreCase))];
+        public IReadOnlyList<EventViewModel> FilteredEventLog => string.IsNullOrWhiteSpace(Search) ? EventLog : [.. EventLog.Where(x => x.Key.Contains(Search, StringComparison.InvariantCultureIgnoreCase))];
 
         public WebsocketViewModel() : base("Event Viewer", "plug", -100)
         {
@@ -59,22 +59,22 @@ namespace Needlework.Net.ViewModels
             }
         }
 
-        [RelayCommand]
-        private void Clear()
-        {
-            _events.Clear();
-            EventLog.Clear();
-        }
-
-        partial void OnSelectedEventLogChanged(string? value)
+        partial void OnSelectedEventLogChanged(EventViewModel? value)
         {
             if (value == null) return;
-            if (_events.TryGetValue(value, out var message))
+            if (_events.TryGetValue(value.Key, out var message))
             {
                 var text = JsonSerializer.Serialize(message, App.JsonSerializerOptions);
                 if (text.Length >= App.MaxCharacters) WeakReferenceMessenger.Default.Send(new OopsiesDialogRequestedMessage(text));
                 else WeakReferenceMessenger.Default.Send(new ResponseUpdatedMessage(text), nameof(WebsocketViewModel));
             }
+        }
+
+        [RelayCommand]
+        private void Clear()
+        {
+            _events.Clear();
+            EventLog.Clear();
         }
 
         private void OnReconnection(ReconnectionInfo info)
@@ -96,8 +96,7 @@ namespace Needlework.Net.ViewModels
             {
                 if (!IsAttach) return;
 
-                var line = $"{DateTime.Now:HH:mm:ss.fff} {message.Data?.EventType.ToUpper()} {message.Data?.Uri}";
-                Trace.WriteLine($"Message: {line}");
+                var line = new EventViewModel(message.Data!);
 
                 await EventLogLock.WaitAsync();
                 try
@@ -105,16 +104,16 @@ namespace Needlework.Net.ViewModels
                     if (EventLog.Count < 1000)
                     {
                         EventLog.Add(line);
-                        _events[line] = message;
+                        _events[line.Key] = message;
                     }
                     else
                     {
-                        var key = EventLog[0];
+                        var _event = EventLog[0];
                         EventLog.RemoveAt(0);
-                        _events.Remove(key);
+                        _events.Remove(_event.Key);
 
                         EventLog.Add(line);
-                        _events[line] = message;
+                        _events[line.Key] = message;
                     }
                 }
                 finally
