@@ -1,8 +1,9 @@
+using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
 
-namespace Needlework.Net.Core;
+namespace Needlework.Net.Models;
 
-public class LcuSchemaHandler
+public class OpenApiDocumentWrapper
 {
     internal OpenApiDocument OpenApiDocument { get; }
 
@@ -12,7 +13,7 @@ public class LcuSchemaHandler
 
     public List<string> Paths => [.. OpenApiDocument.Paths.Keys];
 
-    public LcuSchemaHandler(OpenApiDocument openApiDocument)
+    public OpenApiDocumentWrapper(OpenApiDocument openApiDocument)
     {
         OpenApiDocument = openApiDocument;
         var plugins = new SortedDictionary<string, List<PathOperation>>();
@@ -68,5 +69,3 @@ public class LcuSchemaHandler
         Plugins = plugins;
     }
 }
-
-public record PathOperation(string Method, string Path, OpenApiOperation Operation);

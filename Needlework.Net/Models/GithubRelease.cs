@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Needlework.Net
+namespace Needlework.Net.Models
 {
     public class GithubRelease
     {

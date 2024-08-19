@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.Messaging.Messages;
-using Needlework.Net.Core;
+using Needlework.Net.Models;
 
 namespace Needlework.Net.Messages
 {
-    public class DataReadyMessage(LcuSchemaHandler handler) : ValueChangedMessage<LcuSchemaHandler>(handler)
+    public class DataReadyMessage(OpenApiDocumentWrapper wrapper) : ValueChangedMessage<OpenApiDocumentWrapper>(wrapper)
     {
     }
 }

@@ -4,8 +4,8 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
 using Microsoft.OpenApi.Models;
-using Needlework.Net.Core;
 using Needlework.Net.Messages;
+using Needlework.Net.Models;
 using Needlework.Net.Services;
 using System;
 using System.Collections.Generic;
@@ -32,7 +32,7 @@ namespace Needlework.Net.ViewModels
 
         public HttpClient HttpClient { get; }
         public WindowService WindowService { get; }
-        public LcuSchemaHandler? LcuSchemaHandler { get; set; }
+        public OpenApiDocumentWrapper? OpenApiDocumentWrapper { get; set; }
         public OpenApiDocument? HostDocument { get; set; }
 
         [ObservableProperty] private bool _isBusy = true;
@@ -105,8 +105,8 @@ namespace Needlework.Net.ViewModels
         {
             var document = await Resources.GetOpenApiDocumentAsync(HttpClient);
             HostDocument = document;
-            var handler = new LcuSchemaHandler(document);
-            LcuSchemaHandler = handler;
+            var handler = new OpenApiDocumentWrapper(document);
+            OpenApiDocumentWrapper = handler;
 
             WeakReferenceMessenger.Default.Send(new DataReadyMessage(handler));
             IsBusy = false;
@@ -114,7 +114,7 @@ namespace Needlework.Net.ViewModels
 
         public void Receive(DataRequestMessage message)
         {
-            message.Reply(LcuSchemaHandler!);
+            message.Reply(OpenApiDocumentWrapper!);
         }
 
         public void Receive(HostDocumentRequestMessage message)

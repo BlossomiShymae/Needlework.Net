@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Microsoft.Extensions.DependencyInjection;
+using Needlework.Net.Extensions;
 using Needlework.Net.Services;
 using Needlework.Net.ViewModels;
 using Projektanker.Icons.Avalonia;
@@ -36,13 +37,8 @@ class Program
 
         builder.AddSingleton<MainWindowViewModel>();
         builder.AddSingleton<WindowService>();
-        // Dynamically add ViewModels
-        var types = AppDomain.CurrentDomain.GetAssemblies()
-          .SelectMany(s => s.GetTypes())
-          .Where(p => !p.IsAbstract && typeof(PageBase).IsAssignableFrom(p));
-        foreach (var type in types)
-            builder.AddSingleton(typeof(PageBase), type);
-
+        builder.AddSingletonsFromAssemblies<PageBase>();
+       
         builder.AddHttpClient();
 
         var services = builder.BuildServiceProvider();

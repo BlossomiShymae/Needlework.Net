@@ -3,11 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Needlework.Net.Core", "Needlework.Net.Core\Needlework.Net.Core.csproj", "{B14E1B39-3C5A-400F-8148-CC3A4833CBC4}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Needlework.Net", "Needlework.Net\Needlework.Net.csproj", "{7388B579-2DC0-46D6-957A-6683D0FCF5D3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Needlework.Net.Core.Tests", "Needlework.Net.Core.Tests\Needlework.Net.Core.Tests.csproj", "{0E08542E-6E3F-4825-9F9C-7D6275D6AEC5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,17 +14,9 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B14E1B39-3C5A-400F-8148-CC3A4833CBC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B14E1B39-3C5A-400F-8148-CC3A4833CBC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B14E1B39-3C5A-400F-8148-CC3A4833CBC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B14E1B39-3C5A-400F-8148-CC3A4833CBC4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7388B579-2DC0-46D6-957A-6683D0FCF5D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7388B579-2DC0-46D6-957A-6683D0FCF5D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7388B579-2DC0-46D6-957A-6683D0FCF5D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7388B579-2DC0-46D6-957A-6683D0FCF5D3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0E08542E-6E3F-4825-9F9C-7D6275D6AEC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0E08542E-6E3F-4825-9F9C-7D6275D6AEC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0E08542E-6E3F-4825-9F9C-7D6275D6AEC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0E08542E-6E3F-4825-9F9C-7D6275D6AEC5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

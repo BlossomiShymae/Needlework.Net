@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Needlework.Net.Messages;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Needlework.Net.ViewModels

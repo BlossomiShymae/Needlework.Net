@@ -1,7 +1,9 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using System.Net.Http;
+using System.Threading.Tasks;
+using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
 
-namespace Needlework.Net.Core;
+namespace Needlework.Net.Models;
 
 public static class Resources
 {
