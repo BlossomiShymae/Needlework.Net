@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Needlework.Net.Messages;
-using Needlework.Net.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -30,13 +29,10 @@ namespace Needlework.Net.ViewModels
 
         public WebsocketClient? Client { get; set; }
 
-        public WindowService WindowService { get; }
-
         public IReadOnlyList<string> FilteredEventLog => string.IsNullOrWhiteSpace(Search) ? EventLog : [.. EventLog.Where(x => x.Contains(Search, StringComparison.InvariantCultureIgnoreCase))];
 
-        public WebsocketViewModel(WindowService windowService) : base("Event Viewer", "plug", -100)
+        public WebsocketViewModel() : base("Event Viewer", "plug", -100)
         {
-            WindowService = windowService;
             EventLog.CollectionChanged += (s, e) => OnPropertyChanged(nameof(FilteredEventLog));
             var thread = new Thread(InitializeWebsocket) { IsBackground = true };
             thread.Start();
@@ -76,7 +72,7 @@ namespace Needlework.Net.ViewModels
             if (_events.TryGetValue(value, out var message))
             {
                 var text = JsonSerializer.Serialize(message, App.JsonSerializerOptions);
-                if (text.Length >= App.MaxCharacters) WindowService.ShowOopsiesWindow(text);
+                if (text.Length >= App.MaxCharacters) WeakReferenceMessenger.Default.Send(new OopsiesDialogRequestedMessage(text));
                 else WeakReferenceMessenger.Default.Send(new ResponseUpdatedMessage(text), nameof(WebsocketViewModel));
             }
         }

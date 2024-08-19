@@ -106,7 +106,7 @@ namespace Needlework.Net.ViewModels
                 var responseBody = responseBytes.Length > 0 ? JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(responseBytes), App.JsonSerializerOptions) : string.Empty;
                 if (responseBody.Length >= App.MaxCharacters)
                 {
-                    WeakReferenceMessenger.Default.Send(new OopsiesWindowRequestedMessage(responseBody));
+                    WeakReferenceMessenger.Default.Send(new OopsiesDialogRequestedMessage(responseBody));
                     WeakReferenceMessenger.Default.Send(new EditorUpdateMessage(new(string.Empty, "EndpointResponseEditor")));
                 }
                 else WeakReferenceMessenger.Default.Send(new EditorUpdateMessage(new(responseBody, "EndpointResponseEditor")));

@@ -55,9 +55,6 @@
     <Compile Update="Views\EndpointView.axaml.cs">
       <DependentUpon>EndpointView.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\OopsiesWindow.axaml.cs">
-      <DependentUpon>OopsiesWindow.axaml</DependentUpon>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>

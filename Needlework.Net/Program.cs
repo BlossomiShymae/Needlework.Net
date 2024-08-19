@@ -6,7 +6,6 @@ using Needlework.Net.ViewModels;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
 using System;
-using System.Linq;
 
 namespace Needlework.Net;
 
@@ -36,9 +35,9 @@ class Program
         var builder = new ServiceCollection();
 
         builder.AddSingleton<MainWindowViewModel>();
-        builder.AddSingleton<WindowService>();
+        builder.AddSingleton<DialogService>();
         builder.AddSingletonsFromAssemblies<PageBase>();
-       
+
         builder.AddHttpClient();
 
         var services = builder.BuildServiceProvider();

@@ -2,7 +2,7 @@
 
 namespace Needlework.Net.Messages
 {
-    public class OopsiesWindowRequestedMessage(string text) : ValueChangedMessage<string>(text)
+    public class OopsiesDialogRequestedMessage(string text) : ValueChangedMessage<string>(text)
     {
     }
 }

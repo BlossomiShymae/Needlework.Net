@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using Needlework.Net.Messages;
 using Needlework.Net.Models;
 using Needlework.Net.Services;
+using Needlework.Net.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -20,7 +21,8 @@ using System.Threading.Tasks;
 
 namespace Needlework.Net.ViewModels
 {
-    public partial class MainWindowViewModel : ObservableObject, IRecipient<DataRequestMessage>, IRecipient<HostDocumentRequestMessage>, IRecipient<OopsiesWindowRequestedMessage>, IRecipient<InfoBarUpdateMessage>
+    public partial class MainWindowViewModel
+        : ObservableObject, IRecipient<DataRequestMessage>, IRecipient<HostDocumentRequestMessage>, IRecipient<InfoBarUpdateMessage>, IRecipient<OopsiesDialogRequestedMessage>
     {
         public IAvaloniaReadOnlyList<NavigationViewItem> MenuItems { get; }
         [NotifyPropertyChangedFor(nameof(CurrentPage))]
@@ -31,7 +33,7 @@ namespace Needlework.Net.ViewModels
         [ObservableProperty] private bool _isUpdateShown = false;
 
         public HttpClient HttpClient { get; }
-        public WindowService WindowService { get; }
+        public DialogService DialogService { get; }
         public OpenApiDocumentWrapper? OpenApiDocumentWrapper { get; set; }
         public OpenApiDocument? HostDocument { get; set; }
 
@@ -39,7 +41,7 @@ namespace Needlework.Net.ViewModels
 
         [ObservableProperty] private ObservableCollection<InfoBarViewModel> _infoBarItems = [];
 
-        public MainWindowViewModel(IEnumerable<PageBase> pages, HttpClient httpClient, WindowService windowService)
+        public MainWindowViewModel(IEnumerable<PageBase> pages, HttpClient httpClient, DialogService dialogService)
         {
             MenuItems = new AvaloniaList<NavigationViewItem>(pages
                 .OrderBy(p => p.Index)
@@ -53,7 +55,7 @@ namespace Needlework.Net.ViewModels
             SelectedMenuItem = MenuItems[0];
 
             HttpClient = httpClient;
-            WindowService = windowService;
+            DialogService = dialogService;
 
             WeakReferenceMessenger.Default.RegisterAll(this);
 
@@ -135,11 +137,6 @@ namespace Needlework.Net.ViewModels
             process.Start();
         }
 
-        public void Receive(OopsiesWindowRequestedMessage message)
-        {
-            WindowService.ShowOopsiesWindow(message.Value);
-        }
-
         public void Receive(InfoBarUpdateMessage message)
         {
             Avalonia.Threading.Dispatcher.UIThread.Post(async () => await ShowInfoBarAsync(message.Value));
@@ -150,6 +147,11 @@ namespace Needlework.Net.ViewModels
             InfoBarItems.Add(vm);
             await Task.Delay(vm.Duration);
             InfoBarItems.Remove(vm);
+        }
+
+        public void Receive(OopsiesDialogRequestedMessage message)
+        {
+            Avalonia.Threading.Dispatcher.UIThread.Invoke(async () => await DialogService.ShowAsync<OopsiesDialog>(message.Value));
         }
     }
 }

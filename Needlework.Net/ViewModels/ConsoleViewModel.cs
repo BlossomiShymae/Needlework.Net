@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Needlework.Net.Messages;
-using Needlework.Net.Services;
 using System;
 using System.Net.Http;
 using System.Text.Json;
@@ -26,12 +25,8 @@ namespace Needlework.Net.ViewModels
         [ObservableProperty] private string? _responseStatus = null;
         [ObservableProperty] private string? _responseAuthorization = null;
 
-        public WindowService WindowService { get; }
-
-        public ConsoleViewModel(WindowService windowService) : base("Console", "terminal", -200)
+        public ConsoleViewModel() : base("Console", "terminal", -200)
         {
-            WindowService = windowService;
-
             WeakReferenceMessenger.Default.Register<DataReadyMessage>(this);
         }
 
@@ -62,15 +57,15 @@ namespace Needlework.Net.ViewModels
                 var response = await Connector.SendAsync(method, RequestPath, content);
                 var riotAuthentication = new RiotAuthentication(processInfo.RemotingAuthToken);
                 var responseBody = await response.Content.ReadAsByteArrayAsync();
-  
+
                 var body = responseBody.Length > 0 ? JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(responseBody), App.JsonSerializerOptions) : string.Empty;
                 if (body.Length >= App.MaxCharacters)
                 {
-                    WindowService.ShowOopsiesWindow(body);
+                    WeakReferenceMessenger.Default.Send(new OopsiesDialogRequestedMessage(body));
                     WeakReferenceMessenger.Default.Send(new ResponseUpdatedMessage(string.Empty), nameof(ConsoleViewModel));
                 }
                 else WeakReferenceMessenger.Default.Send(new ResponseUpdatedMessage(body), nameof(ConsoleViewModel));
-               
+
                 ResponseStatus = $"{(int)response.StatusCode} {response.StatusCode.ToString()}";
                 ResponsePath = $"https://127.0.0.1:{processInfo.AppPort}{RequestPath}";
                 ResponseAuthorization = $"Basic {riotAuthentication.Value}";
