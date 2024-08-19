@@ -1,0 +1,66 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:controls="using:Needlework.Net.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Needlework.Net.Controls.BusyArea">
+	<UserControl.Styles>
+		<Style Selector="controls|BusyArea">
+			<Setter Property="Template">
+				<ControlTemplate>
+					<Panel>
+						<ContentControl Content="{TemplateBinding Content}"/>
+						<DockPanel Name="LoadingBusyArea"
+								   HorizontalAlignment="Center"
+								   VerticalAlignment="Center"
+								   LastChildFill="True">
+							<TextBlock Margin="16"
+									   DockPanel.Dock="Bottom"
+									   HorizontalAlignment="Center"
+									   FontWeight="DemiBold"
+									   Text="{TemplateBinding BusyText}"/>
+							<ProgressBar
+								Width="100"
+								IsIndeterminate="True"
+								HorizontalAlignment="Center"
+								VerticalAlignment="Center" />
+						</DockPanel>
+					</Panel>
+				</ControlTemplate>
+			</Setter>
+		</Style>
+
+		<Style Selector="controls|BusyArea DockPanel#LoadingBusyArea">
+			<Setter Property="Transitions">
+				<Transitions>
+					<DoubleTransition Property="Opacity" Duration="0:0:0.3" />
+				</Transitions>
+			</Setter>
+		</Style>
+
+		<Style Selector="controls|BusyArea[IsBusy=True] DockPanel#LoadingBusyArea">
+			<Setter Property="Opacity" Value="1"/>
+		</Style>
+
+		<Style Selector="controls|BusyArea[IsBusy=False] DockPanel#LoadingBusyArea">
+			<Setter Property="Opacity" Value="0"/>
+		</Style>
+
+		<Style Selector="controls|BusyArea ContentControl">
+			<Setter Property="Transitions">
+				<Transitions>
+					<DoubleTransition Property="Opacity" Duration="0:0:0.3"/>
+				</Transitions>
+			</Setter>
+		</Style>
+
+		<Style Selector="controls|BusyArea[IsBusy=True] ContentControl">
+			<Setter Property="Opacity" Value="0.1"/>
+		</Style>
+
+		<Style Selector="controls|BusyArea[IsBusy=False] ContentControl">
+			<Setter Property="Opacity" Value="1"/>
+		</Style>
+	</UserControl.Styles>
+</UserControl>

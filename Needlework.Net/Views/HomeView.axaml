@@ -1,0 +1,63 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:Needlework.Net.ViewModels"
+		xmlns:controls="using:Needlework.Net.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Needlework.Net.Views.HomeView"
+		x:DataType="vm:HomeViewModel">
+	<!-- TOP LEVEL -->
+	<ScrollViewer>
+		<WrapPanel Margin="8"
+				   Orientation="Horizontal">
+			<!-- WELCOME -->
+			<StackPanel>
+				<Border Margin="12">
+					<StackPanel>
+						<TextBlock Theme="{StaticResource TitleTextBlockStyle}">
+							Welcome to Needlework.Net
+						</TextBlock>
+						<TextBlock>Get started with LCU development by clicking on the endpoints tab in the left panel.</TextBlock>
+					</StackPanel>
+				</Border>
+				<controls:Card Margin="12">
+					<TextBlock TextWrapping="Wrap">THE PROGRAM IS PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE IMPLIED WARRANTIES OF MERCHANTABILITY, NONINFRINGMENT, OR OF FITNESS FOR A PARTICULAR PURPOSE. LICENSOR DOES NOT WARRANT THAT THE FUNCTIONS CONTAINED IN THE PROGRAM WILL MEET YOUR REQUIREMENTS OR THAT OPERATION WILL BE UNINTERRUPTED OR ERROR FREE. LICENSOR MAKES NO WARRANTIES RESPECTING ANY HARM THAT MAY BE CAUSED BY MALICIOUS USE OF THIS SOFTWARE. LICENSOR FURTHER EXPRESSLY DISCLAIMS ANY WARRANTY OR REPRESENTATION TO AUTHORIZED USERS OR TO ANY THIRD PARTY.</TextBlock>
+				</controls:Card>
+			</StackPanel>
+			<!-- FOOTER -->
+			<StackPanel>
+				<controls:Card Margin="12" Width="300">
+					<StackPanel>
+						<TextBlock 
+								   Theme="{StaticResource SubtitleTextBlockStyle}"
+								   Margin="0 0 0 8">Resources</TextBlock>
+						<StackPanel Orientation="Horizontal">
+							<StackPanel.Styles>
+								<Style Selector="Button">
+									<Setter Property="Command" Value="{Binding OpenUrlCommand}"/>
+								</Style>
+							</StackPanel.Styles>
+							<Button CommandParameter="https://hextechdocs.dev/tag/lcu/" Margin="0 0 8 0">
+								Hextech Docs
+							</Button>
+							<Button CommandParameter="https://hextechdocs.dev/getting-started-with-the-lcu-api/">
+								Getting Started
+							</Button>
+						</StackPanel>
+					</StackPanel>
+				</controls:Card>
+				<controls:Card Margin="12" Width="300">
+					<StackPanel>
+						<TextBlock>© 2024 - Blossomi Shymae</TextBlock>
+						<TextBlock>MIT License</TextBlock>
+					</StackPanel>
+				</controls:Card>
+			</StackPanel>
+			<!-- LEGAL -->
+			<controls:Card Margin="12" Width="300">
+				<TextBlock TextWrapping="Wrap">Needlework.Net isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.</TextBlock>
+			</controls:Card>
+		</WrapPanel>
+	</ScrollViewer>
+</UserControl>
