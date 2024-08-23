@@ -50,7 +50,7 @@ namespace Needlework.Net.ViewModels
         {
             try
             {
-                var processInfo = Connector.GetProcessInfo();
+                var processInfo = ProcessFinder.Get();
                 return processInfo;
             }
             catch (Exception) { }
@@ -77,7 +77,7 @@ namespace Needlework.Net.ViewModels
                     _ => throw new Exception("Method is missing.")
                 };
 
-                var processInfo = Connector.GetProcessInfo();
+                var processInfo = ProcessFinder.Get();
                 var sb = new StringBuilder(Path);
                 foreach (var pathParameter in Operation.PathParameters)
                 {
@@ -99,7 +99,8 @@ namespace Needlework.Net.ViewModels
                 var requestBody = WeakReferenceMessenger.Default.Send(new ContentRequestMessage(), "EndpointRequestEditor").Response;
                 var content = new StringContent(requestBody, new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
 
-                var response = await Connector.SendAsync(method, uri, content);
+                var client = Connector.GetLcuHttpClientInstance();
+                var response = await client.SendAsync(new(method, uri) { Content = content });
                 var riotAuthentication = new RiotAuthentication(processInfo.RemotingAuthToken);
                 var responseBytes = await response.Content.ReadAsByteArrayAsync();
 
