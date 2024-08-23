@@ -19,15 +19,12 @@ namespace Needlework.Net.ViewModels
         public SolidColorBrush Color { get; }
         public string Path { get; }
         public OperationViewModel Operation { get; }
+
         public ProcessInfo? ProcessInfo { get; }
 
         [ObservableProperty] private bool _isBusy;
-        [ObservableProperty] private string? _responsePath;
-        [ObservableProperty] private string? _responseStatus;
-        [ObservableProperty] private string? _responseAuthentication;
-        [ObservableProperty] private string? _responseUsername;
-        [ObservableProperty] private string? _responsePassword;
-        [ObservableProperty] private string? _responseAuthorization;
+
+        [ObservableProperty] private Lazy<ResponseViewModel> _response;
 
         public PathOperationViewModel(PathOperation pathOperation)
         {
@@ -35,26 +32,7 @@ namespace Needlework.Net.ViewModels
             Color = new SolidColorBrush(GetColor(Method));
             Path = pathOperation.Path;
             Operation = new OperationViewModel(pathOperation.Operation);
-            ProcessInfo = GetProcessInfo();
-            if (ProcessInfo != null)
-            {
-                ResponsePath = $"https://127.0.0.1:{ProcessInfo.AppPort}{Path}";
-                var riotAuth = new RiotAuthentication(ProcessInfo.RemotingAuthToken);
-                ResponseUsername = riotAuth.Username;
-                ResponsePassword = riotAuth.Password;
-                ResponseAuthorization = $"Basic {riotAuth.Value}";
-            }
-        }
-
-        private ProcessInfo? GetProcessInfo()
-        {
-            try
-            {
-                var processInfo = ProcessFinder.Get();
-                return processInfo;
-            }
-            catch (Exception) { }
-            return null;
+            Response = new(() => new ResponseViewModel(pathOperation.Path));
         }
 
         [RelayCommand]
@@ -112,11 +90,11 @@ namespace Needlework.Net.ViewModels
                 }
                 else WeakReferenceMessenger.Default.Send(new EditorUpdateMessage(new(responseBody, "EndpointResponseEditor")));
 
-                ResponseStatus = $"{(int)response.StatusCode} {response.StatusCode}";
-                ResponsePath = $"https://127.0.0.1:{processInfo.AppPort}{uri}";
-                ResponseAuthentication = $"Basic {riotAuthentication.Value}";
-                ResponseUsername = riotAuthentication.Username;
-                ResponsePassword = riotAuthentication.Password;
+                Response.Value.Status = $"{(int)response.StatusCode} {response.StatusCode}";
+                Response.Value.Path = $"https://127.0.0.1:{processInfo.AppPort}{uri}";
+                Response.Value.Authentication = Response.Value.Authorization = $"Basic {riotAuthentication.Value}";
+                Response.Value.Username = riotAuthentication.Username;
+                Response.Value.Password = riotAuthentication.Password;
             }
             catch (Exception ex)
             {
