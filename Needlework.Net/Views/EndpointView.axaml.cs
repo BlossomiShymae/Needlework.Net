@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Styling;
 using AvaloniaEdit;
 using CommunityToolkit.Mvvm.Messaging;
@@ -21,9 +20,9 @@ public partial class EndpointView : UserControl, IRecipient<EditorUpdateMessage>
         InitializeComponent();
     }
 
-    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
-        base.OnApplyTemplate(e);
+        base.OnAttachedToVisualTree(e);
 
         var vm = (EndpointViewModel)DataContext!;
         _requestEditor = this.FindControl<TextEditor>("EndpointRequestEditor");
