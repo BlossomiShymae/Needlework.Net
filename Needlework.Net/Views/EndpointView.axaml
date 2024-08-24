@@ -308,18 +308,21 @@
 					
 		</StackPanel>
 		<Grid Grid.Row="1" Grid.Column="4">
-			<TabControl>
-				<TabItem Header="Preview">
-					<avalonEdit:TextEditor
-						Name="EndpointResponseEditor"
-						HorizontalScrollBarVisibility="Auto"
-						VerticalScrollBarVisibility="Visible"
-						ShowLineNumbers="True"
-						IsReadOnly="True"
-						Text=""
-						FontSize="12"/>
-				</TabItem>
-			</TabControl>
+			<controls:BusyArea BusyText="Loading..."
+							   IsBusy="{Binding SelectedPathOperation.IsBusy}">
+				<TabControl>
+					<TabItem Header="Preview">
+						<avalonEdit:TextEditor
+							Name="EndpointResponseEditor"
+							HorizontalScrollBarVisibility="Auto"
+							VerticalScrollBarVisibility="Visible"
+							ShowLineNumbers="True"
+							IsReadOnly="True"
+							Text=""
+							FontSize="12"/>
+					</TabItem>
+				</TabControl>
+			</controls:BusyArea>
 		</Grid>
 	</Grid>
 </UserControl>
