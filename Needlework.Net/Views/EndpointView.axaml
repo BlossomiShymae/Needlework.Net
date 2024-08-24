@@ -95,7 +95,7 @@
 			<TextBox Grid.Row="0" 
 					 Grid.Column="1" 
 					 FontSize="12"
-					 Text="{Binding SelectedPathOperation.ResponsePath}"
+					 Text="{Binding SelectedPathOperation.Response.Value.Path}"
 					 IsReadOnly="True"/>
 			<StackPanel Grid.Row="0" 
 						Grid.Column="2" 
@@ -189,7 +189,7 @@
 								 Grid.Column="1"
 								 Margin="0 0 0 8"
 								 IsReadOnly="True"
-								 Text="{Binding SelectedPathOperation.ResponseUsername}" />
+								 Text="{Binding SelectedPathOperation.Response.Value.Username}" />
 						<TextBlock FontSize="12"
 								   Grid.Row="1"
 								   Grid.Column="0"
@@ -201,7 +201,7 @@
 								 Grid.Column="1"
 								 Margin="0 0 0 8"
 								 IsReadOnly="True"
-								 Text="{Binding SelectedPathOperation.ResponsePassword}"/>
+								 Text="{Binding SelectedPathOperation.Response.Value.Password}"/>
 						<TextBlock FontSize="12"
 								   Grid.Row="2"
 								   Grid.Column="0"
@@ -212,7 +212,7 @@
 								 Grid.Row="2"
 								 Grid.Column="1"
 								 IsReadOnly="True"
-								 Text="{Binding SelectedPathOperation.ResponseAuthorization}"/>
+								 Text="{Binding SelectedPathOperation.Response.Value.Authorization}"/>
 					</Grid>
 				</TabItem>
 				<TabItem Header="Schemas">
@@ -304,22 +304,25 @@
 					FontSize="10"
 					Padding="12 4 12 4"
 					Classes="Flat"
-					Content="{Binding SelectedPathOperation.ResponseStatus}"/>
+					Content="{Binding SelectedPathOperation.Response.Value.Status}"/>
 					
 		</StackPanel>
 		<Grid Grid.Row="1" Grid.Column="4">
-			<TabControl>
-				<TabItem Header="Preview">
-					<avalonEdit:TextEditor
-						Name="EndpointResponseEditor"
-						HorizontalScrollBarVisibility="Auto"
-						VerticalScrollBarVisibility="Visible"
-						ShowLineNumbers="True"
-						IsReadOnly="True"
-						Text=""
-						FontSize="12"/>
-				</TabItem>
-			</TabControl>
+			<controls:BusyArea BusyText="Loading..."
+							   IsBusy="{Binding SelectedPathOperation.IsBusy}">
+				<TabControl>
+					<TabItem Header="Preview">
+						<avalonEdit:TextEditor
+							Name="EndpointResponseEditor"
+							HorizontalScrollBarVisibility="Auto"
+							VerticalScrollBarVisibility="Visible"
+							ShowLineNumbers="True"
+							IsReadOnly="True"
+							Text=""
+							FontSize="12"/>
+					</TabItem>
+				</TabControl>
+			</controls:BusyArea>
 		</Grid>
 	</Grid>
 </UserControl>

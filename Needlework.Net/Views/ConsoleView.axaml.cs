@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Styling;
 using AvaloniaEdit;
 using CommunityToolkit.Mvvm.Messaging;
@@ -31,9 +30,9 @@ public partial class ConsoleView : UserControl, IRecipient<ResponseUpdatedMessag
         message.Reply(_requestEditor!.Text);
     }
 
-    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
-        base.OnApplyTemplate(e);
+        base.OnAttachedToVisualTree(e);
 
         _responseEditor = this.FindControl<TextEditor>("ResponseEditor");
         _requestEditor = this.FindControl<TextEditor>("RequestEditor");

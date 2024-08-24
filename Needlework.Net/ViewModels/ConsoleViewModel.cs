@@ -51,10 +51,11 @@ namespace Needlework.Net.ViewModels
                     _ => throw new Exception("Method is not selected."),
                 };
 
-                var processInfo = Connector.GetProcessInfo();
+                var processInfo = ProcessFinder.Get();
                 var requestBody = WeakReferenceMessenger.Default.Send(new ContentRequestMessage(), "ConsoleRequestEditor").Response;
                 var content = new StringContent(requestBody, new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
-                var response = await Connector.SendAsync(method, RequestPath, content);
+                var client = Connector.GetLcuHttpClientInstance();
+                var response = await client.SendAsync(new(method, RequestPath) { Content = content });
                 var riotAuthentication = new RiotAuthentication(processInfo.RemotingAuthToken);
                 var responseBody = await response.Content.ReadAsByteArrayAsync();
 
