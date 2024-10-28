@@ -1,0 +1,328 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+		xmlns:vm="using:Needlework.Net.ViewModels.Pages.Endpoints"
+		xmlns:avalonEdit="https://github.com/avaloniaui/avaloniaedit"
+		xmlns:controls="using:Needlework.Net.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Needlework.Net.Views.Pages.EndpointView"
+		x:DataType="vm:EndpointViewModel">
+	<UserControl.Styles>
+		<Style Selector="DataGrid">
+			<Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource ControlElevationBorderBrush}"/>
+		</Style>
+		<Style Selector="DataGridColumnHeader TextBlock">
+			<Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+		</Style>
+		<Style Selector="DataGridRow DataGridCell">
+			<Setter Property="FontSize" Value="12"></Setter>
+		</Style>
+		<Style Selector="DataGridRow">
+			<Setter Property="Margin" Value="0 0 0 4"></Setter>
+		</Style>
+		<Style Selector="TabItem > TextBlock">
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="FontWeight" Value="DemiBold"/>
+		</Style>
+		<Style Selector="ListBox ListBoxItem">
+			<Setter Property="MinHeight" Value="30"/>
+		</Style>
+	</UserControl.Styles>
+	<Grid RowDefinitions="auto,*" ColumnDefinitions="3*,auto,4*,auto,4*">
+		<Grid Grid.Row="0"
+			  Grid.Column="0"
+			  RowDefinitions="*"
+			  ColumnDefinitions="auto,*">
+			<TextBox Text="{Binding Search}"
+					 Grid.Row="0"
+					 Grid.Column="0"
+					 Grid.ColumnSpan="2"/>
+		</Grid>
+		<Grid Grid.Row="1"
+			  Grid.Column="0"
+			  RowDefinitions="*"
+			  ColumnDefinitions="*">
+			<ListBox ItemsSource="{Binding FilteredPathOperations}"
+					 SelectedItem="{Binding SelectedPathOperation}"
+					 ScrollViewer.HorizontalScrollBarVisibility="Visible"
+					 Margin="0 0 0 0"
+					 Grid.Row="1"
+					 Grid.Column="0">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<Grid
+						RowDefinitions="*"
+						ColumnDefinitions="auto,*">
+							<TextBlock
+								VerticalAlignment="Center"
+								TextAlignment="Center"
+								Margin="0 0 8 0"
+								Text="{Binding Method}"
+								Background="{Binding Color}"
+								FontSize="8"
+								Width="50"
+								Padding="10 2 10 2"
+								Grid.Row="0"
+								Grid.Column="0"/>
+							<TextBlock
+								VerticalAlignment="Center"
+								Text="{Binding Path}"
+								FontSize="11"
+								Grid.Row="0"
+								Grid.Column="1"/>
+						</Grid>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</Grid>
+		<GridSplitter Background="Gray"
+					  Margin="8 0 8 0"
+						  Grid.Row="0"
+						  Grid.RowSpan="2"
+						  Grid.Column="1"/>
+		<Grid Grid.Row="0"
+			  Grid.Column="2"
+			  RowDefinitions="*"
+			  ColumnDefinitions="auto,*,auto">
+			<TextBox Grid.Row="0" 
+					 Grid.Column="0" 
+					 Text="{Binding SelectedPathOperation.Method}"
+					 FontSize="12"
+					 IsReadOnly="True"
+					 Margin="0 0 8 0"/>
+			<TextBox Grid.Row="0" 
+					 Grid.Column="1" 
+					 FontSize="12"
+					 Text="{Binding SelectedPathOperation.Response.Value.Path}"
+					 IsReadOnly="True"/>
+			<StackPanel Grid.Row="0" 
+						Grid.Column="2" 
+						Orientation="Horizontal">
+				<Button Classes="Flat"
+						Margin="4"
+						FontSize="12"
+						HorizontalAlignment="Right"
+						Padding="12 4 12 4"
+						VerticalAlignment="Center"
+						Command="{Binding SelectedPathOperation.SendRequestCommand}">Send</Button>
+			</StackPanel>
+		</Grid>
+		<Grid Grid.Row="1" Grid.Column="2">
+			<TabControl>
+				<TabItem Header="Params">
+					<ScrollViewer>
+						<StackPanel IsVisible="{Binding SelectedPathOperation, Converter={StaticResource NullBoolConverter}}">
+							<controls:Card
+										   Margin="0 4"
+										   IsVisible="{Binding SelectedPathOperation.Operation.PathParameters, Converter={StaticResource EnumerableBoolConverter}}">
+								<StackPanel>
+									<TextBlock FontSize="14" 
+											   FontWeight="DemiBold">Path Parameters</TextBlock>
+									<DataGrid
+								ItemsSource="{Binding SelectedPathOperation.Operation.PathParameters}"
+								IsReadOnly="True"
+								GridLinesVisibility="All">
+										<DataGrid.Columns>
+											<DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+											<DataGridCheckBoxColumn Header="Required" Binding="{Binding IsRequired}"/>
+											<DataGridTemplateColumn Header="Value">
+												<DataGridTemplateColumn.CellTemplate>
+													<DataTemplate DataType="vm:ParameterViewModel">
+														<TextBox Text="{Binding Value}"/>
+													</DataTemplate>
+												</DataGridTemplateColumn.CellTemplate>
+											</DataGridTemplateColumn>
+											<DataGridTextColumn Header="Type" Binding="{Binding Type}"/>
+										</DataGrid.Columns>
+									</DataGrid>
+								</StackPanel>
+							</controls:Card>
+							<controls:Card
+										   Margin="0 4"
+										   IsVisible="{Binding SelectedPathOperation.Operation.QueryParameters, Converter={StaticResource EnumerableBoolConverter}}">
+								<StackPanel>
+									<TextBlock FontSize="14"
+											   FontWeight="DemiBold">Query Parameters</TextBlock>
+									<DataGrid
+								ItemsSource="{Binding SelectedPathOperation.Operation.QueryParameters}"
+								IsReadOnly="True"
+								GridLinesVisibility="Horizontal">
+										<DataGrid.Columns>
+											<DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+											<DataGridCheckBoxColumn Header="Required" Binding="{Binding IsRequired}"/>
+											<DataGridTemplateColumn Header="Value">
+												<DataGridTemplateColumn.CellTemplate>
+													<DataTemplate DataType="vm:ParameterViewModel">
+														<TextBox Text="{Binding Value}"/>
+													</DataTemplate>
+												</DataGridTemplateColumn.CellTemplate>
+											</DataGridTemplateColumn>
+											<DataGridTextColumn Header="Type" Binding="{Binding Type}"/>
+										</DataGrid.Columns>
+									</DataGrid>
+								</StackPanel>
+							</controls:Card>
+						</StackPanel>
+					</ScrollViewer>
+				</TabItem>
+				<TabItem Header="Body">
+					<avalonEdit:TextEditor
+						Name="EndpointRequestEditor"
+						HorizontalScrollBarVisibility="Auto"
+						VerticalScrollBarVisibility="Visible"
+						Text=""
+						ShowLineNumbers="True"
+						FontSize="12"/>
+				</TabItem>
+				<TabItem Header="Auth">
+					<Grid RowDefinitions="auto,auto,auto,*" ColumnDefinitions="*,4*">
+						<TextBlock FontSize="12"
+								   Grid.Row="0"
+								   Grid.Column="0"
+								   VerticalAlignment="Center">
+							Username
+						</TextBlock>
+						<TextBox FontSize="12"
+								 Grid.Row="0"
+								 Grid.Column="1"
+								 Margin="0 0 0 8"
+								 IsReadOnly="True"
+								 Text="{Binding SelectedPathOperation.Response.Value.Username}" />
+						<TextBlock FontSize="12"
+								   Grid.Row="1"
+								   Grid.Column="0"
+								   VerticalAlignment="Center">
+							Password
+						</TextBlock>
+						<TextBox FontSize="12"
+								 Grid.Row="1"
+								 Grid.Column="1"
+								 Margin="0 0 0 8"
+								 IsReadOnly="True"
+								 Text="{Binding SelectedPathOperation.Response.Value.Password}"/>
+						<TextBlock FontSize="12"
+								   Grid.Row="2"
+								   Grid.Column="0"
+								   VerticalAlignment="Center">
+							Authorization
+						</TextBlock>
+						<TextBox FontSize="12"
+								 Grid.Row="2"
+								 Grid.Column="1"
+								 IsReadOnly="True"
+								 Text="{Binding SelectedPathOperation.Response.Value.Authorization}"/>
+					</Grid>
+				</TabItem>
+				<TabItem Header="Schemas">
+					<ScrollViewer>
+						<StackPanel>
+							<controls:Card Margin="0 4" IsVisible="{Binding SelectedPathOperation.Operation.RequestBodyType, Converter={StaticResource NullBoolConverter}}">
+								<TextBlock>
+									<Run Text="Request body: " FontWeight="DemiBold" FontSize="12"/>
+									<Run Text="{Binding SelectedPathOperation.Operation.RequestBodyType}" FontSize="12"/>
+								</TextBlock>
+							</controls:Card>
+							<Border Margin="0 4" IsVisible="{Binding SelectedPathOperation.Operation.RequestClasses, Converter={StaticResource EnumerableBoolConverter}}">
+								<StackPanel>
+									<TextBlock FontSize="14" FontWeight="DemiBold" Margin="0 0 0 4">Request Classes</TextBlock>
+									<ItemsRepeater ItemsSource="{Binding SelectedPathOperation.Operation.RequestClasses}">
+										<ItemsRepeater.ItemTemplate>
+											<DataTemplate>
+												<StackPanel Margin="0 4 0 8">
+													<TextBlock FontSize="12" FontWeight="DemiBold" Text="{Binding Id}"/>
+													<controls:Card IsVisible="{Binding PropertyFields, Converter={StaticResource EnumerableBoolConverter}}">
+														<DataGrid
+																ItemsSource="{Binding PropertyFields}"
+																AutoGenerateColumns="True"
+																IsReadOnly="True"
+																GridLinesVisibility="Horizontal">
+														</DataGrid>
+													</controls:Card>
+													<controls:Card Margin="0 0 0 8" IsVisible="{Binding PropertyEnums, Converter={StaticResource EnumerableBoolConverter}}">
+														<DataGrid
+															ItemsSource="{Binding PropertyEnums}"
+															AutoGenerateColumns="True"
+															IsReadOnly="True"
+															GridLinesVisibility="Horizontal">
+														</DataGrid>
+													</controls:Card>
+												</StackPanel>
+											</DataTemplate>
+										</ItemsRepeater.ItemTemplate>
+									</ItemsRepeater>
+								</StackPanel>
+							</Border>
+							<controls:Card Margin="0 4">
+								<TextBlock>
+									<Run Text="Return value: " FontWeight="DemiBold" FontSize="12"/>
+									<Run Text="{Binding SelectedPathOperation.Operation.ReturnType}" FontSize="12"/>
+								</TextBlock>
+							</controls:Card>
+							<Border Margin="0 4" IsVisible="{Binding SelectedPathOperation.Operation.ResponseClasses, Converter={StaticResource EnumerableBoolConverter}}">
+								<StackPanel>
+									<TextBlock FontSize="14" FontWeight="DemiBold">Response Classes</TextBlock>
+									<ItemsRepeater ItemsSource="{Binding SelectedPathOperation.Operation.ResponseClasses}">
+										<ItemsRepeater.ItemTemplate>
+											<DataTemplate>
+												<StackPanel Margin="0 4 0 8">
+													<TextBlock FontSize="12" FontWeight="DemiBold" Text="{Binding Id}" Margin="0 0 0 4"/>
+													<controls:Card IsVisible="{Binding PropertyFields, Converter={StaticResource EnumerableBoolConverter}}">
+														<DataGrid
+														ItemsSource="{Binding PropertyFields}"
+														AutoGenerateColumns="True"
+														IsReadOnly="True"
+														GridLinesVisibility="Horizontal">
+														</DataGrid>
+													</controls:Card>
+													<controls:Card Margin="0 0 0 8" IsVisible="{Binding PropertyEnums, Converter={StaticResource EnumerableBoolConverter}}">
+														<DataGrid
+															ItemsSource="{Binding PropertyEnums}"
+															AutoGenerateColumns="True"
+															IsReadOnly="True"
+															GridLinesVisibility="Horizontal">
+														</DataGrid>
+													</controls:Card>
+												</StackPanel>
+											</DataTemplate>
+										</ItemsRepeater.ItemTemplate>
+									</ItemsRepeater>
+								</StackPanel>
+							</Border>
+						</StackPanel>
+					</ScrollViewer>
+				</TabItem>
+			</TabControl>
+		</Grid>
+		<GridSplitter Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Background="Gray"
+					  Margin="8 0 8 0"/>
+		<StackPanel Grid.Row="0" Grid.Column="4" Orientation="Horizontal">
+			<Button HorizontalAlignment="Left"
+					VerticalAlignment="Center"
+					Margin="4"
+					FontSize="10"
+					Padding="12 4 12 4"
+					Classes="Flat"
+					Content="{Binding SelectedPathOperation.Response.Value.Status}"/>
+					
+		</StackPanel>
+		<Grid Grid.Row="1" Grid.Column="4">
+			<controls:BusyArea BusyText="Loading..."
+							   IsBusy="{Binding SelectedPathOperation.IsBusy}">
+				<TabControl>
+					<TabItem Header="Preview">
+						<avalonEdit:TextEditor
+							Name="EndpointResponseEditor"
+							HorizontalScrollBarVisibility="Auto"
+							VerticalScrollBarVisibility="Visible"
+							ShowLineNumbers="True"
+							IsReadOnly="True"
+							Text=""
+							FontSize="12"/>
+					</TabItem>
+				</TabControl>
+			</controls:BusyArea>
+		</Grid>
+	</Grid>
+</UserControl>

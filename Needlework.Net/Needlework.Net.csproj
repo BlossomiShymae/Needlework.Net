@@ -52,7 +52,10 @@
     <Compile Update="Controls\BusyArea.axaml.cs">
       <DependentUpon>BusyArea.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\EndpointView.axaml.cs">
+    <Compile Update="Views\MainWindow\MainWindowView.axaml.cs">
+      <DependentUpon>MainWindowView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Pages\EndpointView.axaml.cs">
       <DependentUpon>EndpointView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>

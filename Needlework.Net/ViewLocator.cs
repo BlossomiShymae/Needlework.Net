@@ -3,6 +3,8 @@ using Avalonia.Controls.Templates;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 
 namespace Needlework.Net
 {
@@ -12,17 +14,21 @@ namespace Needlework.Net
 
         public Control Build(object? data)
         {
-            var fullName = data?.GetType().FullName;
-            if (fullName is null)
+            var name = data?.GetType().Name;
+            if (name is null)
             {
                 return new TextBlock { Text = "Data is null or has no name." };
             }
 
-            var name = fullName.Replace("ViewModel", "View");
-            var type = Type.GetType(name);
+            name = name.Replace("ViewModel", "View");
+            var type = Assembly.GetExecutingAssembly()
+                .GetTypes()
+                .Where(t => t.Name == name)
+                .FirstOrDefault();
+
             if (type is null)
             {
-                return new TextBlock { Text = $"No View For {name}." };
+                return new TextBlock { Text = $"No view for {name}." };
             }
 
             if (!_controlCache.TryGetValue(data!, out var res))

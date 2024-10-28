@@ -2,7 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Needlework.Net.Extensions;
 using Needlework.Net.Services;
-using Needlework.Net.ViewModels;
+using Needlework.Net.ViewModels.MainWindow;
+using Needlework.Net.ViewModels.Pages;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
 using System;

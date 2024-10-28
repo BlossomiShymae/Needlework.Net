@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging.Messages;
-using Needlework.Net.ViewModels;
+using Needlework.Net.ViewModels.MainWindow;
 
 namespace Needlework.Net.Messages
 {

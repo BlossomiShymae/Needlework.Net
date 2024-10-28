@@ -3,8 +3,8 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
-using Needlework.Net.ViewModels;
-using Needlework.Net.Views;
+using Needlework.Net.ViewModels.MainWindow;
+using Needlework.Net.Views.MainWindow;
 using System;
 using System.Text.Json;
 
@@ -33,7 +33,7 @@ public partial class App(IServiceProvider serviceProvider) : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindow()
+            desktop.MainWindow = new MainWindowView()
             {
                 DataContext = _serviceProvider.GetRequiredService<MainWindowViewModel>()
             };

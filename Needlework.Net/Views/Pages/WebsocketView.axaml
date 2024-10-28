@@ -1,0 +1,79 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:avaloniaEdit="https://github.com/avaloniaui/avaloniaedit"
+			 xmlns:vm="using:Needlework.Net.ViewModels.Pages.Websocket"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Needlework.Net.Views.Pages.WebsocketView"
+			 x:DataType="vm:WebsocketViewModel">
+	<Grid RowDefinitions="*,auto,*"  Margin="16">
+		<Border Grid.Row="0"
+				Padding="0 0 0 8">
+			<Grid RowDefinitions="auto,*" ColumnDefinitions="*">
+				<Grid
+					Grid.Row="0"
+					Grid.Column="0"
+					RowDefinitions="*"
+					ColumnDefinitions="auto,*,auto,auto">
+					<Button Margin="0 0 8 0"
+							Grid.Row="0"
+							Grid.Column="0"
+							Command="{Binding ClearCommand}">Clear</Button>
+					<TextBox Grid.Row="0"
+							 Grid.Column="1"
+							 Text="{Binding Search}"
+							 MaxLines="1"
+							 Margin="0 0 8 0"/>
+					<CheckBox 
+								  Margin="0 0 8 0"
+								  Grid.Row="0"
+								  Grid.Column="2"
+								  Content="Attach"
+								  IsChecked="{Binding IsAttach}"/>
+					<CheckBox 
+								  Grid.Row="0"
+								  Grid.Column="3"
+								  Content="Tail"
+								  IsChecked="{Binding IsTail}"/>
+				</Grid>
+				<ListBox Grid.Row="1"
+						 Grid.Column="0"
+						 Name="EventViewer"
+						 Margin="0 8 0 0"
+						 ItemsSource="{Binding FilteredEventLog}"
+						 SelectedItem="{Binding SelectedEventLog}"
+						 ScrollViewer.HorizontalScrollBarVisibility="Auto">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<Grid ColumnDefinitions="auto,auto,*">
+								<TextBlock Text="{Binding Time}"
+										   Margin="0 0 4 0"
+										   Grid.Column="0"
+										   Foreground="#8be9fd"/>
+								<TextBlock Text="{Binding Type}"
+										   Grid.Column="1"
+										   Margin="0 0 4 0"
+										   Foreground="#ffb86c"/>
+								<TextBlock Text="{Binding Uri}"
+										   Grid.Column="2"
+										   Foreground="#f8f8f2"/>
+							</Grid>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</Grid>
+		</Border>
+		<GridSplitter Grid.Row="1" ResizeDirection="Rows" Background="Gray"/>
+		<Border Grid.Row="2"
+				Padding="0 8 0 0">
+			<avaloniaEdit:TextEditor
+				Name="ResponseEditor"
+				ShowLineNumbers="True"
+				HorizontalScrollBarVisibility="Auto"
+				VerticalScrollBarVisibility="Visible"
+				Text=""
+				FontSize="12"/>
+		</Border>
+	</Grid>
+</UserControl>
