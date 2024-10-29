@@ -1,13 +1,9 @@
 ﻿using Avalonia.Collections;
-using BlossomiShymae.GrrrLCU;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Needlework.Net.Messages;
-using Needlework.Net.ViewModels.MainWindow;
-using System;
-using System.Net.Http;
-using System.Text.Json;
+using Needlework.Net.ViewModels.Shared;
 using System.Threading.Tasks;
 
 namespace Needlework.Net.ViewModels.Pages;
@@ -18,13 +14,7 @@ public partial class ConsoleViewModel : PageBase, IRecipient<DataReadyMessage>
     public IAvaloniaList<string> RequestPaths { get; } = new AvaloniaList<string>();
 
     [ObservableProperty] private bool _isBusy = true;
-    [ObservableProperty] private bool _isRequestBusy = false;
-    [ObservableProperty] private string? _requestMethodSelected = "GET";
-    [ObservableProperty] private string? _requestPath = null;
-    [ObservableProperty] private string? _requestBody = null;
-    [ObservableProperty] private string? _responsePath = null;
-    [ObservableProperty] private string? _responseStatus = null;
-    [ObservableProperty] private string? _responseAuthorization = null;
+    [ObservableProperty] private LcuRequestViewModel _lcuRequest = new();
 
     public ConsoleViewModel() : base("Console", "terminal", -200)
     {
@@ -34,56 +24,7 @@ public partial class ConsoleViewModel : PageBase, IRecipient<DataReadyMessage>
     [RelayCommand]
     private async Task SendRequest()
     {
-        try
-        {
-            IsRequestBusy = true;
-            if (string.IsNullOrEmpty(RequestPath)) throw new Exception("Path is empty.");
-
-            var method = RequestMethodSelected switch
-            {
-                "GET" => HttpMethod.Get,
-                "POST" => HttpMethod.Post,
-                "PUT" => HttpMethod.Put,
-                "DELETE" => HttpMethod.Delete,
-                "HEAD" => HttpMethod.Head,
-                "PATCH" => HttpMethod.Patch,
-                "OPTIONS" => HttpMethod.Options,
-                "TRACE" => HttpMethod.Trace,
-                _ => throw new Exception("Method is not selected."),
-            };
-
-            var processInfo = ProcessFinder.Get();
-            var requestBody = WeakReferenceMessenger.Default.Send(new ContentRequestMessage(), "ConsoleRequestEditor").Response;
-            var content = new StringContent(requestBody, new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
-            var client = Connector.GetLcuHttpClientInstance();
-            var response = await client.SendAsync(new(method, RequestPath) { Content = content });
-            var riotAuthentication = new RiotAuthentication(processInfo.RemotingAuthToken);
-            var responseBody = await response.Content.ReadAsByteArrayAsync();
-
-            var body = responseBody.Length > 0 ? JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(responseBody), App.JsonSerializerOptions) : string.Empty;
-            if (body.Length >= App.MaxCharacters)
-            {
-                WeakReferenceMessenger.Default.Send(new OopsiesDialogRequestedMessage(body));
-                WeakReferenceMessenger.Default.Send(new ResponseUpdatedMessage(string.Empty), nameof(ConsoleViewModel));
-            }
-            else WeakReferenceMessenger.Default.Send(new ResponseUpdatedMessage(body), nameof(ConsoleViewModel));
-
-            ResponseStatus = $"{(int)response.StatusCode} {response.StatusCode.ToString()}";
-            ResponsePath = $"https://127.0.0.1:{processInfo.AppPort}{RequestPath}";
-            ResponseAuthorization = $"Basic {riotAuthentication.Value}";
-        }
-        catch (Exception ex)
-        {
-            WeakReferenceMessenger.Default.Send(new InfoBarUpdateMessage(new InfoBarViewModel("Request Failed", true, ex.Message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error, TimeSpan.FromSeconds(5))));
-            ResponseStatus = null;
-            ResponsePath = null;
-            ResponseAuthorization = null;
-            WeakReferenceMessenger.Default.Send(new ResponseUpdatedMessage(string.Empty), nameof(ConsoleViewModel));
-        }
-        finally
-        {
-            IsRequestBusy = false;
-        }
+        await LcuRequest.ExecuteAsync();
     }
 
     public void Receive(DataReadyMessage message)

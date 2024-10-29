@@ -19,6 +19,8 @@ public partial class EndpointViewModel : ObservableObject
     [ObservableProperty] private string? _search;
     public IAvaloniaList<PathOperationViewModel> FilteredPathOperations { get; }
 
+    public event EventHandler<string>? PathOperationSelected;
+
     public EndpointViewModel(string endpoint)
     {
         Endpoint = endpoint;
@@ -43,6 +45,6 @@ public partial class EndpointViewModel : ObservableObject
     partial void OnSelectedPathOperationChanged(PathOperationViewModel? value)
     {
         if (value == null) return;
-        WeakReferenceMessenger.Default.Send(new EditorUpdateMessage(new(value.Operation.RequestTemplate ?? string.Empty, "EndpointRequestEditor")));
+        PathOperationSelected?.Invoke(this, value.Operation.RequestTemplate ?? string.Empty);
     }
 }

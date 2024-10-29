@@ -2,18 +2,18 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Styling;
 using AvaloniaEdit;
-using CommunityToolkit.Mvvm.Messaging;
 using Needlework.Net.Extensions;
-using Needlework.Net.Messages;
 using Needlework.Net.ViewModels.Pages.Endpoints;
+using Needlework.Net.ViewModels.Shared;
 using TextMateSharp.Grammars;
 
 namespace Needlework.Net.Views.Pages;
 
-public partial class EndpointView : UserControl, IRecipient<EditorUpdateMessage>, IRecipient<ContentRequestMessage>
+public partial class EndpointView : UserControl
 {
     private TextEditor? _requestEditor;
     private TextEditor? _responseEditor;
+    private LcuRequestViewModel? _lcuRequestVm;
 
     public EndpointView()
     {
@@ -24,23 +24,54 @@ public partial class EndpointView : UserControl, IRecipient<EditorUpdateMessage>
     {
         base.OnAttachedToVisualTree(e);
 
-        var vm = (EndpointViewModel)DataContext!;
         _requestEditor = this.FindControl<TextEditor>("EndpointRequestEditor");
         _responseEditor = this.FindControl<TextEditor>("EndpointResponseEditor");
         _requestEditor?.ApplyJsonEditorSettings();
         _responseEditor?.ApplyJsonEditorSettings();
 
-        WeakReferenceMessenger.Default.Register<EditorUpdateMessage>(this);
-        WeakReferenceMessenger.Default.Register<ContentRequestMessage, string>(this, "EndpointRequestEditor");
+        var vm = (EndpointViewModel)DataContext!;
+        vm.PathOperationSelected += Vm_PathOperationSelected;
+
+        if (vm.SelectedPathOperation != null)
+        {
+            _lcuRequestVm = vm.SelectedPathOperation.LcuRequest.Value;
+            vm.SelectedPathOperation.LcuRequest.Value.RequestText += LcuRequest_RequestText;
+            vm.SelectedPathOperation.LcuRequest.Value.UpdateText += LcuRequest_UpdateText;
+        }
 
         OnBaseThemeChanged(Application.Current!.ActualThemeVariant);
+    }
+
+    private void Vm_PathOperationSelected(object? sender, string e)
+    {
+        var vm = (EndpointViewModel)DataContext!;
+        if (vm.SelectedPathOperation != null)
+        {
+            _requestEditor!.Text = e;
+            if (_lcuRequestVm != null)
+            {
+                _lcuRequestVm.RequestText -= LcuRequest_RequestText;
+                _lcuRequestVm.UpdateText -= LcuRequest_UpdateText;
+            }
+            vm.SelectedPathOperation.LcuRequest.Value.RequestText += LcuRequest_RequestText;
+            vm.SelectedPathOperation.LcuRequest.Value.UpdateText += LcuRequest_UpdateText;
+            _lcuRequestVm = vm.SelectedPathOperation.LcuRequest.Value;
+        }
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnDetachedFromVisualTree(e);
 
-        WeakReferenceMessenger.Default.UnregisterAll(this);
+        var vm = (EndpointViewModel)DataContext!;
+        vm.PathOperationSelected -= Vm_PathOperationSelected;
+
+        if (_lcuRequestVm != null)
+        {
+            _lcuRequestVm.RequestText -= LcuRequest_RequestText;
+            _lcuRequestVm.UpdateText -= LcuRequest_UpdateText;
+            _lcuRequestVm = null;
+        }
     }
 
     private void OnBaseThemeChanged(ThemeVariant currentTheme)
@@ -49,23 +80,14 @@ public partial class EndpointView : UserControl, IRecipient<EditorUpdateMessage>
           currentTheme == ThemeVariant.Dark ? ThemeName.DarkPlus : ThemeName.LightPlus);
     }
 
-    public void Receive(EditorUpdateMessage message)
+    private void LcuRequest_RequestText(object? sender, LcuRequestViewModel e)
     {
-        switch (message.Value.Key)
-        {
-            case "EndpointRequestEditor":
-                _requestEditor!.Text = message.Value.Text;
-                break;
-            case "EndpointResponseEditor":
-                _responseEditor!.Text = message.Value.Text;
-                break;
-            default:
-                break;
-        }
+        e.RequestBody = _requestEditor!.Text;
     }
 
-    public void Receive(ContentRequestMessage message)
+    private void LcuRequest_UpdateText(object? sender, string e)
     {
-        message.Reply(_requestEditor!.Text);
+        _responseEditor!.Text = e;
     }
+
 }

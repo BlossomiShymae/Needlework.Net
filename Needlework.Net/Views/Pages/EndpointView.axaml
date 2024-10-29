@@ -59,8 +59,8 @@
 								VerticalAlignment="Center"
 								TextAlignment="Center"
 								Margin="0 0 8 0"
-								Text="{Binding Method}"
-								Background="{Binding Color}"
+								Text="{Binding LcuRequest.Value.Method}"
+								Background="{Binding LcuRequest.Value.Color}"
 								FontSize="8"
 								Width="50"
 								Padding="10 2 10 2"
@@ -88,14 +88,14 @@
 			  ColumnDefinitions="auto,*,auto">
 			<TextBox Grid.Row="0" 
 					 Grid.Column="0" 
-					 Text="{Binding SelectedPathOperation.Method}"
+					 Text="{Binding SelectedPathOperation.LcuRequest.Value.Method}"
 					 FontSize="12"
 					 IsReadOnly="True"
 					 Margin="0 0 8 0"/>
 			<TextBox Grid.Row="0" 
 					 Grid.Column="1" 
 					 FontSize="12"
-					 Text="{Binding SelectedPathOperation.Response.Value.Path}"
+					 Text="{Binding SelectedPathOperation.LcuRequest.Value.ResponsePath}"
 					 IsReadOnly="True"/>
 			<StackPanel Grid.Row="0" 
 						Grid.Column="2" 
@@ -189,7 +189,7 @@
 								 Grid.Column="1"
 								 Margin="0 0 0 8"
 								 IsReadOnly="True"
-								 Text="{Binding SelectedPathOperation.Response.Value.Username}" />
+								 Text="{Binding SelectedPathOperation.LcuRequest.Value.ResponseUsername}" />
 						<TextBlock FontSize="12"
 								   Grid.Row="1"
 								   Grid.Column="0"
@@ -201,7 +201,7 @@
 								 Grid.Column="1"
 								 Margin="0 0 0 8"
 								 IsReadOnly="True"
-								 Text="{Binding SelectedPathOperation.Response.Value.Password}"/>
+								 Text="{Binding SelectedPathOperation.LcuRequest.Value.ResponsePassword}"/>
 						<TextBlock FontSize="12"
 								   Grid.Row="2"
 								   Grid.Column="0"
@@ -212,7 +212,7 @@
 								 Grid.Row="2"
 								 Grid.Column="1"
 								 IsReadOnly="True"
-								 Text="{Binding SelectedPathOperation.Response.Value.Authorization}"/>
+								 Text="{Binding SelectedPathOperation.LcuRequest.Value.ResponseAuthorization}"/>
 					</Grid>
 				</TabItem>
 				<TabItem Header="Schemas">
@@ -304,7 +304,7 @@
 					FontSize="10"
 					Padding="12 4 12 4"
 					Classes="Flat"
-					Content="{Binding SelectedPathOperation.Response.Value.Status}"/>
+					Content="{Binding SelectedPathOperation.LcuRequest.Value.ResponseStatus}"/>
 					
 		</StackPanel>
 		<Grid Grid.Row="1" Grid.Column="4">
