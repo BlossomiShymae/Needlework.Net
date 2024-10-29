@@ -56,6 +56,7 @@ public partial class EndpointView : UserControl
             vm.SelectedPathOperation.LcuRequest.Value.RequestText += LcuRequest_RequestText;
             vm.SelectedPathOperation.LcuRequest.Value.UpdateText += LcuRequest_UpdateText;
             _lcuRequestVm = vm.SelectedPathOperation.LcuRequest.Value;
+            _responseEditor!.Text = vm.SelectedPathOperation.LcuRequest.Value.ResponseBody ?? string.Empty;
         }
     }
 

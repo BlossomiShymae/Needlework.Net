@@ -26,6 +26,7 @@ public partial class LcuRequestViewModel : ObservableObject
     [ObservableProperty] private string? _responseUsername = null;
     [ObservableProperty] private string? _responsePassword = null;
     [ObservableProperty] private string? _responseAuthorization = null;
+    [ObservableProperty] private string? _responseBody = null;
 
     public event EventHandler<LcuRequestViewModel>? RequestText;
     public event EventHandler<string>? UpdateText;
@@ -72,7 +73,11 @@ public partial class LcuRequestViewModel : ObservableObject
                 WeakReferenceMessenger.Default.Send(new OopsiesDialogRequestedMessage(body));
                 UpdateText?.Invoke(this, string.Empty);
             }
-            UpdateText?.Invoke(this, body);
+            else
+            {
+                ResponseBody = body;
+                UpdateText?.Invoke(this, body);
+            }
 
             ResponseStatus = $"{(int)response.StatusCode} {response.StatusCode.ToString()}";
             ResponsePath = $"https://127.0.0.1:{processInfo.AppPort}{RequestPath}";
@@ -92,6 +97,7 @@ public partial class LcuRequestViewModel : ObservableObject
             ResponseAuthorization = null;
             ResponseUsername = null;
             ResponsePassword = null;
+            ResponseBody = null;
         }
         finally
         {
