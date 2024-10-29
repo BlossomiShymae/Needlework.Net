@@ -37,6 +37,8 @@
 		<ui:NavigationView AlwaysShowHeader="False"
 						   PaneDisplayMode="Left"
 						   IsSettingsVisible="False"
+						   IsPaneOpen="False"
+						   OpenPaneLength="200"
 						   Grid.Row="1"
 						   MenuItemsSource="{Binding MenuItems}"
 						   SelectedItem="{Binding SelectedMenuItem}">
