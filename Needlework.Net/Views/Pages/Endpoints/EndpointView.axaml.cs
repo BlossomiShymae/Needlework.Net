@@ -7,7 +7,7 @@ using Needlework.Net.ViewModels.Pages.Endpoints;
 using Needlework.Net.ViewModels.Shared;
 using TextMateSharp.Grammars;
 
-namespace Needlework.Net.Views.Pages;
+namespace Needlework.Net.Views.Pages.Endpoints;
 
 public partial class EndpointView : UserControl
 {

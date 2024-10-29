@@ -6,7 +6,7 @@
 			xmlns:avalonEdit="https://github.com/avaloniaui/avaloniaedit"
 			xmlns:i="https://github.com/projektanker/icons.avalonia"
 			mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-			x:Class="Needlework.Net.Views.Pages.EndpointsContainerView"
+			x:Class="Needlework.Net.Views.Pages.Endpoints.EndpointsContainerView"
 			x:DataType="vm:EndpointsContainerViewModel">
 	<Grid RowDefinitions="auto,*"
 		  ColumnDefinitions="*"

@@ -7,7 +7,7 @@
 		xmlns:avalonEdit="https://github.com/avaloniaui/avaloniaedit"
 		xmlns:controls="using:Needlework.Net.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="Needlework.Net.Views.Pages.EndpointView"
+        x:Class="Needlework.Net.Views.Pages.Endpoints.EndpointView"
 		x:DataType="vm:EndpointViewModel">
 	<UserControl.Styles>
 		<Style Selector="DataGrid">

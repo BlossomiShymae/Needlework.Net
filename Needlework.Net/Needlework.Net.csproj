@@ -55,7 +55,7 @@
     <Compile Update="Views\MainWindow\MainWindowView.axaml.cs">
       <DependentUpon>MainWindowView.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\Pages\EndpointView.axaml.cs">
+    <Compile Update="Views\Pages\Endpoints\EndpointView.axaml.cs">
       <DependentUpon>EndpointView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>

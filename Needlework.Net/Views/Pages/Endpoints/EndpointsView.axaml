@@ -6,7 +6,7 @@
 		xmlns:controls="using:Needlework.Net.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 		Name="EndpointsControl"
-        x:Class="Needlework.Net.Views.Pages.EndpointsView"
+        x:Class="Needlework.Net.Views.Pages.Endpoints.EndpointsView"
 		x:DataType="vm:EndpointsViewModel">
 	<controls:BusyArea IsBusy="{Binding IsBusy}"
 					   BusyText="Loading...">
