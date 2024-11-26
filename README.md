@@ -4,7 +4,14 @@
 
 Needlework.Net is an open-source helper tool for the LCU that provides documented endpoints and can send requests without any code setup. Created using .NET! 🌠
 
+# Features
+
+- Interactive OpenAPI documentation
+- REST data transfer console
+- JSON event data viewer
+
 # Requirements
+
 - Windows x64
 - .NET 8 runtime. [It can be downloaded here.](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.7-windows-x64-installer)
 
@@ -21,6 +28,7 @@ Needlework.Net is an open-source helper tool for the LCU that provides documente
 ## Credits
 
 ### GrrrLCU
+
 A simple wrapper for the LCU.
 - [Repository](https://github.com/BlossomiShymae/GrrrLCU)
 
