@@ -50,7 +50,7 @@ public partial class WebsocketViewModel : PageBase
                 client.ReconnectionHappened.Subscribe(OnReconnection);
 
                 client.Start();
-                client.Send(new EventMessage(RequestType.Subscribe, EventMessage.Kinds.OnJsonApiEvent));
+                client.Send(new EventMessage(EventRequestType.Subscribe, EventKinds.OnJsonApiEvent));
                 Client = client;
                 return;
             }

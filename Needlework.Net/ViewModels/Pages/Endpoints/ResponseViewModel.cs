@@ -28,7 +28,7 @@ public partial class ResponseViewModel : ObservableObject
 
     private static ProcessInfo? GetProcessInfo()
     {
-        if (ProcessFinder.IsActive()) return ProcessFinder.Get();
+        if (ProcessFinder.IsActive()) return ProcessFinder.GetProcessInfo();
         return null;
     }
 }

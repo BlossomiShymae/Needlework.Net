@@ -59,7 +59,7 @@ public partial class LcuRequestViewModel : ObservableObject
                 _ => throw new Exception("Method is not selected or missing."),
             };
 
-            var processInfo = ProcessFinder.Get();
+            var processInfo = ProcessFinder.GetProcessInfo();
             RequestText?.Invoke(this, this);
             var content = new StringContent(RequestBody ?? string.Empty, new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
             var client = Connector.GetLcuHttpClientInstance();
