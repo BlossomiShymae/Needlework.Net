@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:i="https://github.com/projektanker/icons.avalonia"
+			 xmlns:vm="using:Needlework.Net.ViewModels.Pages.Endpoints"
+			 xmlns:ui="using:FluentAvalonia.UI.Controls"             
+			 xmlns:controls="using:Needlework.Net.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Needlework.Net.Views.Pages.Endpoints.EndpointsTabView"
+			 x:DataType="vm:EndpointsTabViewModel">
+	<controls:BusyArea IsBusy="{Binding IsBusy}"
+						   BusyText="Loading...">
+		<Grid>
+			<ui:TabView TabItems="{Binding Endpoints}"
+						AddTabButtonCommand="{Binding AddEndpointCommand}"
+						TabCloseRequested="TabView_TabCloseRequested">
+				<ui:TabView.TabItemTemplate>
+					<DataTemplate DataType="vm:EndpointItem">
+						<ui:TabViewItem Header="{Binding Header}"
+										IconSource="{Binding IconSource}"
+										IsSelected="{Binding Selected}"
+										Content="{Binding}">
+							<ui:TabViewItem.ContentTemplate>
+								<DataTemplate DataType="vm:EndpointItem">
+									<ContentControl Content="{Binding Content}"/>
+								</DataTemplate>
+							</ui:TabViewItem.ContentTemplate>
+						</ui:TabViewItem>
+					</DataTemplate>
+				</ui:TabView.TabItemTemplate>
+			</ui:TabView>
+		</Grid>
+	</controls:BusyArea>
+</UserControl>

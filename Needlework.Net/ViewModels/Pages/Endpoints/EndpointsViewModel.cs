@@ -1,42 +1,26 @@
 ﻿using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
-using Needlework.Net.Messages;
 using System;
 using System.Linq;
-using System.Net.Http;
 
 namespace Needlework.Net.ViewModels.Pages.Endpoints;
 
-public partial class EndpointsViewModel : ObservableObject, IRecipient<DataReadyMessage>
+public partial class EndpointsViewModel : ObservableObject
 {
-    public HttpClient HttpClient { get; }
+    public IAvaloniaList<string> Plugins { get; }
+    public IAvaloniaList<string> Query { get; }
 
-    public string Title => "Endpoints";
-    public Action<ObservableObject> OnClicked;
-    public IAvaloniaList<string> Plugins { get; } = new AvaloniaList<string>();
-    public IAvaloniaList<string> Query { get; } = new AvaloniaList<string>();
-
-    [ObservableProperty] private bool _isBusy = true;
     [ObservableProperty] private string _search = string.Empty;
     [ObservableProperty] private string? _selectedQuery = string.Empty;
 
-    public EndpointsViewModel(HttpClient httpClient, Action<ObservableObject> onClicked)
+    public Action<ObservableObject> OnClicked { get; }
+
+    public EndpointsViewModel(IAvaloniaList<string> plugins, Action<ObservableObject> onClicked)
     {
-        HttpClient = httpClient;
+        Plugins = plugins;
+        Query = plugins;
         OnClicked = onClicked;
-
-        WeakReferenceMessenger.Default.Register(this);
-    }
-
-    public void Receive(DataReadyMessage message)
-    {
-        IsBusy = false;
-        Plugins.Clear();
-        Plugins.AddRange(message.Value.Plugins.Keys);
-        Query.Clear();
-        Query.AddRange(Plugins);
     }
 
     partial void OnSearchChanged(string value)

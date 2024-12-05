@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace Needlework.Net.Views.Pages.Endpoints;
 
-public partial class EndpointsContainerView : UserControl
+public partial class EndpointsNavigationView : UserControl
 {
-    public EndpointsContainerView()
+    public EndpointsNavigationView()
     {
         InitializeComponent();
     }

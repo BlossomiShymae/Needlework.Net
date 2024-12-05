@@ -19,6 +19,10 @@ namespace Needlework.Net
             {
                 return new TextBlock { Text = "Data is null or has no name." };
             }
+            if (!name.Contains("ViewModel"))
+            {
+                return new TextBlock { Text = "Data name must end with ViewModel." };
+            }
 
             name = name.Replace("ViewModel", "View");
             var type = Assembly.GetExecutingAssembly()

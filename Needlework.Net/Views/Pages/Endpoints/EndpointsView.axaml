@@ -8,9 +8,7 @@
 		Name="EndpointsControl"
         x:Class="Needlework.Net.Views.Pages.Endpoints.EndpointsView"
 		x:DataType="vm:EndpointsViewModel">
-	<controls:BusyArea IsBusy="{Binding IsBusy}"
-					   BusyText="Loading...">
-		<Grid RowDefinitions="auto,auto,*" ColumnDefinitions="*">
+	<Grid RowDefinitions="auto,auto,*" ColumnDefinitions="*">
 		<TextBox Watermark="Search" Margin="0 4" Text="{Binding Search}" Grid.Row="1" Grid.Column="0"/>
 		<ScrollViewer Grid.Row="2" Grid.Column="0">
 			<ItemsRepeater ItemsSource="{Binding Query}">
@@ -28,5 +26,4 @@
 			</ItemsRepeater>
 		</ScrollViewer>
 	</Grid>
-	</controls:BusyArea>
 </UserControl>
