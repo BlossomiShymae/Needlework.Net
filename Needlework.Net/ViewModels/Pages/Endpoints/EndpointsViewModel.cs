@@ -18,8 +18,8 @@ public partial class EndpointsViewModel : ObservableObject
 
     public EndpointsViewModel(IAvaloniaList<string> plugins, Action<ObservableObject> onClicked)
     {
-        Plugins = plugins;
-        Query = plugins;
+        Plugins = new AvaloniaList<string>(plugins);
+        Query = new AvaloniaList<string>(plugins);
         OnClicked = onClicked;
     }
 
