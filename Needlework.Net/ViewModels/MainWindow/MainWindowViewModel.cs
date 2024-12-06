@@ -70,7 +70,7 @@ public partial class MainWindowViewModel
         {
             Task.Run(CheckLatestVersionAsync);
 
-            Thread.Sleep(TimeSpan.FromSeconds(60));
+            Thread.Sleep(TimeSpan.FromMinutes(10)); // Avoid tripping unauthenticated rate limits
         }
     }
 
