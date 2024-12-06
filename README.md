@@ -8,7 +8,7 @@ Needlework.Net is an open-source helper tool for the LCU that provides documente
 
 - Interactive OpenAPI documentation
 - REST data transfer console
-- JSON event data viewer
+- WebSocket event data viewer
 
 # Requirements
 
