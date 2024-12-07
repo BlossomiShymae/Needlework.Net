@@ -76,6 +76,7 @@
 			<Grid>
 				<TransitioningContentControl Content="{Binding CurrentPage}"/>
 				<Button Content="{Binding Version}"
+						Background="RoyalBlue"
 						HorizontalAlignment="Right"
 						VerticalAlignment="Bottom"
 						Margin="16"/>
