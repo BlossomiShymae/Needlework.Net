@@ -10,12 +10,22 @@
 	<Grid RowDefinitions="*,auto,*"  Margin="16">
 		<Border Grid.Row="0"
 				Padding="0 0 0 8">
-			<Grid RowDefinitions="auto,*" ColumnDefinitions="*">
+			<Grid RowDefinitions="auto,auto,*" ColumnDefinitions="*">
+				<Grid Grid.Row="0"
+					  Grid.Column="0"
+					  RowDefinitions="*">
+					<ComboBox ItemsSource="{Binding EventTypes}"
+							  SelectedItem="{Binding EventType}"
+							  Grid.Row="0"
+							  HorizontalAlignment="Stretch"
+							  HorizontalContentAlignment="Left"/>
+				</Grid>
 				<Grid
-					Grid.Row="0"
+					Grid.Row="1"
 					Grid.Column="0"
 					RowDefinitions="*"
-					ColumnDefinitions="auto,*,auto,auto">
+					ColumnDefinitions="auto,*,auto,auto"
+					Margin="0 8 0 0">
 					<Button Margin="0 0 8 0"
 							Grid.Row="0"
 							Grid.Column="0"
@@ -37,7 +47,7 @@
 								  Content="Tail"
 								  IsChecked="{Binding IsTail}"/>
 				</Grid>
-				<ListBox Grid.Row="1"
+				<ListBox Grid.Row="2"
 						 Grid.Column="0"
 						 Name="EventViewer"
 						 Margin="0 8 0 0"

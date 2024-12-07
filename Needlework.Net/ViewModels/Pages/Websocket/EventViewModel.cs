@@ -15,7 +15,7 @@ public class EventViewModel : ObservableObject
     public EventViewModel(EventData eventData)
     {
         Time = $"{DateTime.Now:HH:mm:ss.fff}";
-        Type = eventData?.EventType.ToUpper() ?? string.Empty;
+        Type = eventData?.EventType?.ToUpper() ?? string.Empty;
         Uri = eventData?.Uri ?? string.Empty;
     }
 }
