@@ -58,9 +58,16 @@ public partial class WebsocketViewModel : PageBase
 
     private async Task InitializeEventTypes()
     {
-        var file = await HttpClient.GetStringAsync("https://raw.githubusercontent.com/dysolix/hasagi-types/refs/heads/main/lcu-events.d.ts");
-        var matches = EventTypesRegex().Matches(file);
-        Avalonia.Threading.Dispatcher.UIThread.Invoke(() => EventTypes.AddRange(matches.Select(m => m.Groups[1].Value)));
+        try
+        {
+            var file = await HttpClient.GetStringAsync("https://raw.githubusercontent.com/dysolix/hasagi-types/refs/heads/main/dist/lcu-events.d.ts");
+            var matches = EventTypesRegex().Matches(file);
+            Avalonia.Threading.Dispatcher.UIThread.Invoke(() => EventTypes.AddRange(matches.Select(m => m.Groups[1].Value)));
+        }
+        catch (HttpRequestException ex)
+        {
+            WeakReferenceMessenger.Default.Send(new InfoBarUpdateMessage(new("Failed to get event types", true, ex.Message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error, TimeSpan.FromSeconds(10))));
+        }
     }
 
     private void InitializeWebsocket()
