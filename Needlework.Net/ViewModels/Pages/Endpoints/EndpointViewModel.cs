@@ -1,7 +1,9 @@
 ﻿using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.Logging;
 using Needlework.Net.Messages;
+using Needlework.Net.ViewModels.Shared;
 using System;
 using System.Linq;
 
@@ -21,12 +23,12 @@ public partial class EndpointViewModel : ObservableObject
 
     public event EventHandler<string>? PathOperationSelected;
 
-    public EndpointViewModel(string endpoint)
+    public EndpointViewModel(string endpoint, ILogger<LcuRequestViewModel> lcuRequestViewModelLogger)
     {
         Endpoint = endpoint;
 
         var handler = WeakReferenceMessenger.Default.Send<DataRequestMessage>().Response;
-        PathOperations = new AvaloniaList<PathOperationViewModel>(handler.Plugins[endpoint].Select(x => new PathOperationViewModel(x)));
+        PathOperations = new AvaloniaList<PathOperationViewModel>(handler.Plugins[endpoint].Select(x => new PathOperationViewModel(x, lcuRequestViewModelLogger)));
         FilteredPathOperations = new AvaloniaList<PathOperationViewModel>(PathOperations);
     }
 

@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Needlework.Net.Messages;
 using Needlework.Net.Models;
@@ -42,8 +43,12 @@ public partial class MainWindowViewModel
 
     [ObservableProperty] private ObservableCollection<InfoBarViewModel> _infoBarItems = [];
 
-    public MainWindowViewModel(IEnumerable<PageBase> pages, HttpClient httpClient, DialogService dialogService)
+    private readonly ILogger<MainWindowViewModel> _logger;
+
+    public MainWindowViewModel(IEnumerable<PageBase> pages, HttpClient httpClient, DialogService dialogService, ILogger<MainWindowViewModel> logger)
     {
+        _logger = logger;
+
         MenuItems = new AvaloniaList<NavigationViewItem>(pages
             .OrderBy(p => p.Index)
             .ThenBy(p => p.DisplayName)
@@ -83,7 +88,11 @@ public partial class MainWindowViewModel
 
             var response = await HttpClient.SendAsync(request);
             var release = await response.Content.ReadFromJsonAsync<GithubRelease>();
-            if (release == null) return;
+            if (release == null)
+            {
+                _logger.LogWarning("Release response is null");
+                return;
+            }
 
             var currentVersion = int.Parse(Version.Replace(".", ""));
 
@@ -101,18 +110,28 @@ public partial class MainWindowViewModel
                 });
             }
         }
-        catch (Exception) { }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to check for latest version");
+        }
     }
 
     private async Task FetchDataAsync()
     {
-        var document = await Resources.GetOpenApiDocumentAsync(HttpClient);
-        HostDocument = document;
-        var handler = new OpenApiDocumentWrapper(document);
-        OpenApiDocumentWrapper = handler;
+        try
+        {
+            var document = await Resources.GetOpenApiDocumentAsync(HttpClient);
+            HostDocument = document;
+            var handler = new OpenApiDocumentWrapper(document);
+            OpenApiDocumentWrapper = handler;
 
-        WeakReferenceMessenger.Default.Send(new DataReadyMessage(handler));
-        IsBusy = false;
+            WeakReferenceMessenger.Default.Send(new DataReadyMessage(handler));
+            IsBusy = false;
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "Failed to fetch OpenAPI data");
+        }
     }
 
     public void Receive(DataRequestMessage message)

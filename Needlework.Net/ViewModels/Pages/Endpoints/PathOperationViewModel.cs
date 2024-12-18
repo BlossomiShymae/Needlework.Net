@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 using Needlework.Net.Models;
 using Needlework.Net.ViewModels.Shared;
 using System;
@@ -16,11 +17,11 @@ public partial class PathOperationViewModel : ObservableObject
     [ObservableProperty] private bool _isBusy;
     [ObservableProperty] private Lazy<LcuRequestViewModel> _lcuRequest;
 
-    public PathOperationViewModel(PathOperation pathOperation)
+    public PathOperationViewModel(PathOperation pathOperation, ILogger<LcuRequestViewModel> lcuRequestViewModelLogger)
     {
         Path = pathOperation.Path;
         Operation = new OperationViewModel(pathOperation.Operation);
-        LcuRequest = new(() => new LcuRequestViewModel()
+        LcuRequest = new(() => new LcuRequestViewModel(lcuRequestViewModelLogger)
         {
             Method = pathOperation.Method.ToUpper()
         });

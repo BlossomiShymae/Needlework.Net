@@ -4,7 +4,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
+using Microsoft.Extensions.Logging;
 using Needlework.Net.Messages;
+using Needlework.Net.ViewModels.Shared;
 using System;
 
 namespace Needlework.Net.ViewModels.Pages.Endpoints;
@@ -16,8 +18,11 @@ public partial class EndpointsTabViewModel : PageBase, IRecipient<DataReadyMessa
 
     [ObservableProperty] private bool _isBusy = true;
 
-    public EndpointsTabViewModel() : base("Endpoints", "list-alt", -500)
+    private readonly ILogger<LcuRequestViewModel> _lcuRequestViewModelLogger;
+
+    public EndpointsTabViewModel(ILogger<LcuRequestViewModel> lcuRequestViewModelLogger) : base("Endpoints", "list-alt", -500)
     {
+        _lcuRequestViewModelLogger = lcuRequestViewModelLogger;
         WeakReferenceMessenger.Default.RegisterAll(this);
     }
 
@@ -35,7 +40,7 @@ public partial class EndpointsTabViewModel : PageBase, IRecipient<DataReadyMessa
     {
         Endpoints.Add(new()
         {
-            Content = new EndpointsNavigationViewModel(Plugins, OnEndpointNavigation),
+            Content = new EndpointsNavigationViewModel(Plugins, OnEndpointNavigation, _lcuRequestViewModelLogger),
             Selected = true
         });
     }

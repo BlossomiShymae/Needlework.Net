@@ -6,8 +6,10 @@ using Needlework.Net.ViewModels.MainWindow;
 using Needlework.Net.ViewModels.Pages;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
+using Serilog;
 using System;
 using System.IO;
+using System.Reflection;
 
 namespace Needlework.Net;
 
@@ -44,8 +46,15 @@ class Program
         builder.AddSingleton<MainWindowViewModel>();
         builder.AddSingleton<DialogService>();
         builder.AddSingletonsFromAssemblies<PageBase>();
-
         builder.AddHttpClient();
+
+        var logger = new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .WriteTo.File("Logs/NeedleworkDotNet.log", rollingInterval: RollingInterval.Day, shared: true)
+            .CreateLogger();
+        logger.Debug("NeedleworkDotNet version: {Version}", Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "0.0.0.0");
+        logger.Debug("OS description: {Description}", System.Runtime.InteropServices.RuntimeInformation.OSDescription);
+        builder.AddLogging(builder => builder.AddSerilog(logger));
 
         var services = builder.BuildServiceProvider();
         return services;

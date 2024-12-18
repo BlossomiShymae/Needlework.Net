@@ -1,6 +1,8 @@
 ﻿using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
+using Needlework.Net.ViewModels.Shared;
 using System;
 
 namespace Needlework.Net.ViewModels.Pages.Endpoints;
@@ -15,9 +17,9 @@ public partial class EndpointsNavigationViewModel : ObservableObject
 
     private readonly Action<string?, Guid> _onEndpointNavigation;
 
-    public EndpointsNavigationViewModel(IAvaloniaList<string> plugins, Action<string?, Guid> onEndpointNavigation)
+    public EndpointsNavigationViewModel(IAvaloniaList<string> plugins, Action<string?, Guid> onEndpointNavigation, ILogger<LcuRequestViewModel> lcuRequestViewModelLogger)
     {
-        _activeViewModel = _endpointsViewModel = new EndpointsViewModel(plugins, OnClicked);
+        _activeViewModel = _endpointsViewModel = new EndpointsViewModel(plugins, OnClicked, lcuRequestViewModelLogger);
         _onEndpointNavigation = onEndpointNavigation;
     }
 

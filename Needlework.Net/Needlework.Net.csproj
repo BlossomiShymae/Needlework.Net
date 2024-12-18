@@ -41,7 +41,6 @@
     <PackageReference Include="Serilog" Version="4.2.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
-    <PackageReference Include="Serilog.Sinks.ObservableCollection" Version="1.0.0" />
     <PackageReference Include="TextMateSharp.Grammars" Version="1.0.65" />
   </ItemGroup>
   

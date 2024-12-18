@@ -2,6 +2,7 @@
 using BlossomiShymae.GrrrLCU;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.Logging;
 using Needlework.Net.Messages;
 using Needlework.Net.ViewModels.MainWindow;
 using System;
@@ -31,6 +32,13 @@ public partial class LcuRequestViewModel : ObservableObject
     public event EventHandler<LcuRequestViewModel>? RequestText;
     public event EventHandler<string>? UpdateText;
 
+    private readonly ILogger<LcuRequestViewModel> _logger;
+
+    public LcuRequestViewModel(ILogger<LcuRequestViewModel> logger)
+    {
+        _logger = logger;
+    }
+
     partial void OnMethodChanged(string? oldValue, string? newValue)
     {
         if (newValue == null) return;
@@ -58,6 +66,8 @@ public partial class LcuRequestViewModel : ObservableObject
                 "TRACE" => HttpMethod.Trace,
                 _ => throw new Exception("Method is not selected or missing."),
             };
+
+            _logger.LogDebug("Sending request: {Tuple}", (Method, RequestPath));
 
             var processInfo = ProcessFinder.GetProcessInfo();
             RequestText?.Invoke(this, this);
@@ -88,6 +98,7 @@ public partial class LcuRequestViewModel : ObservableObject
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Request failed: {Tuple}", (Method, RequestPath));
             WeakReferenceMessenger.Default.Send(new InfoBarUpdateMessage(new InfoBarViewModel("Request Failed", true, ex.Message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error, TimeSpan.FromSeconds(5))));
             UpdateText?.Invoke(this, string.Empty);
 

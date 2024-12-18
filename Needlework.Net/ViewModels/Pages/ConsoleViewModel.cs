@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.Logging;
 using Needlework.Net.Messages;
 using Needlework.Net.ViewModels.Shared;
 using System.Threading.Tasks;
@@ -14,10 +15,11 @@ public partial class ConsoleViewModel : PageBase, IRecipient<DataReadyMessage>
     public IAvaloniaList<string> RequestPaths { get; } = new AvaloniaList<string>();
 
     [ObservableProperty] private bool _isBusy = true;
-    [ObservableProperty] private LcuRequestViewModel _lcuRequest = new();
+    [ObservableProperty] private LcuRequestViewModel _lcuRequest;
 
-    public ConsoleViewModel() : base("Console", "terminal", -200)
+    public ConsoleViewModel(ILogger<LcuRequestViewModel> lcuRequestViewModelLogger) : base("Console", "terminal", -200)
     {
+        _lcuRequest = new(lcuRequestViewModelLogger);
         WeakReferenceMessenger.Default.Register<DataReadyMessage>(this);
     }
 

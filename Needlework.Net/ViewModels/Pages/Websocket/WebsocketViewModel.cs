@@ -3,11 +3,11 @@ using BlossomiShymae.GrrrLCU;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.Logging;
 using Needlework.Net.Messages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
@@ -45,8 +45,11 @@ public partial class WebsocketViewModel : PageBase
 
     public IReadOnlyList<EventViewModel> FilteredEventLog => string.IsNullOrWhiteSpace(Search) ? EventLog : [.. EventLog.Where(x => x.Key.Contains(Search, StringComparison.InvariantCultureIgnoreCase))];
 
-    public WebsocketViewModel(HttpClient httpClient) : base("Event Viewer", "plug", -100)
+    private readonly ILogger<WebsocketViewModel> _logger;
+
+    public WebsocketViewModel(HttpClient httpClient, ILogger<WebsocketViewModel> logger) : base("Event Viewer", "plug", -100)
     {
+        _logger = logger;
         HttpClient = httpClient;
         EventLog.CollectionChanged += (s, e) => OnPropertyChanged(nameof(FilteredEventLog));
         Task.Run(async () =>
@@ -66,6 +69,7 @@ public partial class WebsocketViewModel : PageBase
         }
         catch (HttpRequestException ex)
         {
+            _logger.LogError(ex, "Failed to get event types");
             WeakReferenceMessenger.Default.Send(new InfoBarUpdateMessage(new("Failed to get event types", true, ex.Message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error, TimeSpan.FromSeconds(10))));
         }
     }
@@ -76,6 +80,7 @@ public partial class WebsocketViewModel : PageBase
         {
             if (Client != null)
             {
+                _logger.LogDebug("Disposing old connection");
                 foreach (var disposable in ClientDisposables)
                     disposable.Dispose();
                 ClientDisposables.Clear();
@@ -105,6 +110,7 @@ public partial class WebsocketViewModel : PageBase
             })
             { IsBackground = true };
             thread.Start();
+            _logger.LogDebug("Initialized new connection: {EventType}", EventType);
             TokenSource = tokenSource;
         }
     }
@@ -129,12 +135,12 @@ public partial class WebsocketViewModel : PageBase
 
     private void OnReconnection(ReconnectionInfo info)
     {
-        Trace.WriteLine($"-- Reconnection --\nType{info.Type}");
+        _logger.LogTrace("Reconnected: {Type}", info.Type);
     }
 
     private void OnDisconnection(DisconnectionInfo info)
     {
-        Trace.WriteLine($"-- Disconnection --\nType:{info.Type}\nSubProtocol:{info.SubProtocol}\nCloseStatus:{info.CloseStatus}\nCloseStatusDescription:{info.CloseStatusDescription}\nExceptionMessage:{info?.Exception?.Message}\n:InnerException:{info?.Exception?.InnerException}");
+        _logger.LogTrace("Disconnected: {Type}", info.Type);
         InitializeWebsocket();
     }
 
