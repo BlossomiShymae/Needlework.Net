@@ -55,11 +55,16 @@
 									   Theme="{StaticResource SubtitleTextBlockStyle}"
 									   Margin="0 0 0 8">Resources</TextBlock>
 							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-								<Button CommandParameter="https://hextechdocs.dev/tag/lcu/" Margin="0 0 8 0">
+								<Button CommandParameter="https://hextechdocs.dev/tag/lcu/" Margin="4">
 									Hextech Docs
 								</Button>
-								<Button CommandParameter="https://hextechdocs.dev/getting-started-with-the-lcu-api/">
+								<Button CommandParameter="https://hextechdocs.dev/getting-started-with-the-lcu-api/" Margin="4">
 									Getting Started
+								</Button>
+							</StackPanel>
+							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+								<Button CommandParameter="https://discord.com/channels/187652476080488449/516802588805431296" Margin="4">
+									#lcu-api
 								</Button>
 							</StackPanel>
 						</StackPanel>
