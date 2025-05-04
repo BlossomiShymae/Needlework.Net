@@ -15,6 +15,27 @@
 			<ui:TabView TabItems="{Binding Endpoints}"
 						AddTabButtonCommand="{Binding AddEndpointCommand}"
 						TabCloseRequested="TabView_TabCloseRequested">
+				<!--Need to override Tab header for Mica theme...-->
+				<ui:TabView.Resources>
+					<ResourceDictionary>
+						<SolidColorBrush x:Key="TabViewItemHeaderBackgroundSelected" Color="{DynamicResource ControlFillColorTransparent}"/>
+					</ResourceDictionary>
+				</ui:TabView.Resources>
+				<!--We need to hack this style for Mica theme since there is no way to explicity set style priority in Avalonia...-->
+				<ui:TabView.Styles>
+					<Style Selector="Grid > ContentPresenter#TabContentPresenter">
+						<Style.Animations>
+							<Animation IterationCount="1" Duration="0:0:1" FillMode="Both">
+								<KeyFrame Cue="0%">
+									<Setter Property="Background" Value="{DynamicResource ControlFillColorTransparent}"/>
+								</KeyFrame>
+								<KeyFrame Cue="100%">
+									<Setter Property="Background" Value="{DynamicResource ControlFillColorTransparent}"/>
+								</KeyFrame>
+							</Animation>
+						</Style.Animations>
+					</Style>
+				</ui:TabView.Styles>
 				<ui:TabView.TabItemTemplate>
 					<DataTemplate DataType="vm:EndpointItem">
 						<ui:TabViewItem Header="{Binding Header}"

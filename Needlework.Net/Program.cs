@@ -36,7 +36,11 @@ class Program
         return AppBuilder.Configure(() => new App(BuildServices()))
                 .UsePlatformDetect()
                 .WithInterFont()
-                .LogToTrace();
+                .LogToTrace()
+                .With(new Win32PlatformOptions
+                {
+                    CompositionMode = [ Win32CompositionMode.WinUIComposition, Win32CompositionMode.DirectComposition ]
+                });
     }
 
     private static IServiceProvider BuildServices()
