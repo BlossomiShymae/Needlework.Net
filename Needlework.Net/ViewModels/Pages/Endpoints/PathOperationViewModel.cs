@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Needlework.Net.Models;
@@ -14,6 +15,8 @@ public partial class PathOperationViewModel : ObservableObject
     public string Path { get; }
     public OperationViewModel Operation { get; }
 
+    public string Url { get; }
+
     [ObservableProperty] private bool _isBusy;
     [ObservableProperty] private Lazy<LcuRequestViewModel> _lcuRequest;
 
@@ -25,6 +28,7 @@ public partial class PathOperationViewModel : ObservableObject
         {
             Method = pathOperation.Method.ToUpper()
         });
+        Url = $"https://swagger.dysolix.dev/lcu/#/{pathOperation.Tag}/{pathOperation.Operation.OperationId}";
     }
 
     [RelayCommand]
@@ -49,5 +53,11 @@ public partial class PathOperationViewModel : ObservableObject
 
         LcuRequest.Value.RequestPath = sb.ToString();
         await LcuRequest.Value.ExecuteAsync();
+    }
+
+    [RelayCommand]
+    private void CopyUrl()
+    {
+        App.MainWindow?.Clipboard?.SetTextAsync(Url);
     }
 }

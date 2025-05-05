@@ -36,10 +36,10 @@ public class OpenApiDocumentWrapper
                 {
                     pluginsKey = "default";
                     if (plugins.TryGetValue(pluginsKey, out var p))
-                        p.Add(new(method.ToString(), path, operation));
+                        p.Add(new(method.ToString(), path, pluginsKey, operation));
                     else
                     {
-                        operations.Add(new(method.ToString(), path, operation));
+                        operations.Add(new(method.ToString(), path, pluginsKey, operation));
                         plugins[pluginsKey] = operations;
                     }
                 }
@@ -53,10 +53,10 @@ public class OpenApiDocumentWrapper
                             pluginsKey = tag.Name;
 
                         if (plugins.TryGetValue(pluginsKey, out var p))
-                            p.Add(new(method.ToString(), path, operation));
+                            p.Add(new(method.ToString(), path, tag.Name, operation));
                         else
                         {
-                            operations.Add(new(method.ToString(), path, operation));
+                            operations.Add(new(method.ToString(), path, tag.Name, operation));
                             plugins[pluginsKey] = operations;
                         }
                     }
