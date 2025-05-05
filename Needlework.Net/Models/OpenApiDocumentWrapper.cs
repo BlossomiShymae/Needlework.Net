@@ -46,13 +46,10 @@ public class OpenApiDocumentWrapper
                 {
                     foreach (var tag in operation.Tags)
                     {
-                        var lowercaseTag = tag.Name.ToLower();
-                        if (lowercaseTag == "plugins")
+                        if (tag.Name == "plugins")
                             continue;
-                        else if (lowercaseTag.Contains("plugin "))
-                            pluginsKey = lowercaseTag.Replace("plugin ", "");
                         else
-                            pluginsKey = lowercaseTag;
+                            pluginsKey = tag.Name;
 
                         if (plugins.TryGetValue(pluginsKey, out var p))
                             p.Add(new(method.ToString(), path, operation));
