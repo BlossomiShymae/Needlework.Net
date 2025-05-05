@@ -71,7 +71,7 @@
 					</controls:Card>
 					<controls:Card Margin="12" Width="300">
 						<StackPanel>
-							<TextBlock>© 2024 - Blossomi Shymae</TextBlock>
+							<TextBlock>© 2025 - Blossomi Shymae</TextBlock>
 							<TextBlock>MIT License</TextBlock>
 						</StackPanel>
 					</controls:Card>
