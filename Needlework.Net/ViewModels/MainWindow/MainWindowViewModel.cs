@@ -1,4 +1,5 @@
 ﻿using Avalonia.Collections;
+using BlossomiShymae.GrrrLCU;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -18,8 +19,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Reflection;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace Needlework.Net.ViewModels.MainWindow;
 
@@ -34,6 +37,9 @@ public partial class MainWindowViewModel
     public string Version { get; } = Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "0.0.0.0";
     [ObservableProperty] private bool _isUpdateShown = false;
 
+    [ObservableProperty] private string _schemaVersion = "N/A";
+    [ObservableProperty] private string _schemaVersionLatest = "N/A";
+
     public HttpClient HttpClient { get; }
     public DialogService DialogService { get; }
     public OpenApiDocumentWrapper? OpenApiDocumentWrapper { get; set; }
@@ -44,6 +50,19 @@ public partial class MainWindowViewModel
     [ObservableProperty] private ObservableCollection<InfoBarViewModel> _infoBarItems = [];
 
     private readonly ILogger<MainWindowViewModel> _logger;
+
+    private readonly System.Timers.Timer _latestUpdateTimer = new()
+    {
+        Interval = TimeSpan.FromMinutes(10).TotalMilliseconds,
+        Enabled = true
+    };
+
+    private readonly System.Timers.Timer _schemaVersionTimer = new()
+    {
+        Interval = TimeSpan.FromSeconds(5).TotalMilliseconds,
+        Enabled = true
+    };
+    private bool _isSchemaVersionChecked = false;
 
     public MainWindowViewModel(IEnumerable<PageBase> pages, HttpClient httpClient, DialogService dialogService, ILogger<MainWindowViewModel> logger)
     {
@@ -66,20 +85,60 @@ public partial class MainWindowViewModel
         WeakReferenceMessenger.Default.RegisterAll(this);
 
         Task.Run(FetchDataAsync);
-        new Thread(ProcessEvents) { IsBackground = true }.Start();
+
+        _latestUpdateTimer.Elapsed += OnLatestUpdateTimerElapsed;
+        _schemaVersionTimer.Elapsed += OnSchemaVersionTimerElapsed;
+        _latestUpdateTimer.Start();
+        _schemaVersionTimer.Start();
+        OnLatestUpdateTimerElapsed(null, null);
+        OnSchemaVersionTimerElapsed(null, null);
+
     }
 
-    private void ProcessEvents(object? obj)
+    private async void OnSchemaVersionTimerElapsed(object? sender, ElapsedEventArgs? e)
     {
-        while (!IsUpdateShown)
-        {
-            Task.Run(CheckLatestVersionAsync);
+        if (OpenApiDocumentWrapper == null) return;
+        if (!ProcessFinder.IsPortOpen()) return;
 
-            Thread.Sleep(TimeSpan.FromMinutes(10)); // Avoid tripping unauthenticated rate limits
+        try
+        {
+            var client = Connector.GetLcuHttpClientInstance();
+
+            var currentSemVer = OpenApiDocumentWrapper.Info.Version.Split('.');
+            var systemBuild = await client.GetFromJsonAsync<SystemBuild>("/system/v1/builds") ?? throw new NullReferenceException();
+            var latestSemVer = systemBuild.Version.Split('.');
+
+            if (!_isSchemaVersionChecked)
+            {
+                _logger.LogInformation("LCU Schema (current): {Version}", OpenApiDocumentWrapper.Info.Version);
+                _logger.LogInformation("LCU Schema (latest): {Version}", systemBuild.Version);
+                _isSchemaVersionChecked = true;
+            }
+
+            bool isVersionMatching = currentSemVer[0] == latestSemVer[0] && currentSemVer[1] == latestSemVer[1]; // Compare major and minor versions
+            if (!isVersionMatching)
+            {
+                Avalonia.Threading.Dispatcher.UIThread.Post(async () =>
+                {
+                    await ShowInfoBarAsync(new("Newer System Build", true, $"LCU Schema is possibly outdated compared to latest system build. Consider submitting a pull request on dysolix/hasagi-types.\nCurrent: {string.Join(".", currentSemVer)}\nLatest: {string.Join(".", latestSemVer)}", InfoBarSeverity.Warning, TimeSpan.FromSeconds(60), new Avalonia.Controls.Button()
+                    {
+                        Command = OpenUrlCommand,
+                        CommandParameter = "https://github.com/dysolix/hasagi-types#updating-the-types",
+                        Content = "Submit PR"
+                    }));
+                });
+
+                _schemaVersionTimer.Elapsed -= OnSchemaVersionTimerElapsed;
+                _schemaVersionTimer.Stop();
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Schema version check failed");
         }
     }
 
-    private async Task CheckLatestVersionAsync()
+    private async void OnLatestUpdateTimerElapsed(object? sender, ElapsedEventArgs? e)
     {
         try
         {
@@ -100,14 +159,16 @@ public partial class MainWindowViewModel
             {
                 Avalonia.Threading.Dispatcher.UIThread.Post(async () =>
                 {
-                    await ShowInfoBarAsync(new("Needlework.Net Update", true, $"There is a new version available: {release.TagName}.", InfoBarSeverity.Informational, TimeSpan.FromSeconds(10), new Avalonia.Controls.Button()
+                    await ShowInfoBarAsync(new("Needlework.Net Update", true, $"There is a new version available: {release.TagName}.", InfoBarSeverity.Informational, TimeSpan.FromSeconds(30), new Avalonia.Controls.Button()
                     {
                         Command = OpenUrlCommand,
                         CommandParameter = "https://github.com/BlossomiShymae/Needlework.Net/releases",
                         Content = "Download"
                     }));
-                    IsUpdateShown = true;
                 });
+
+                _latestUpdateTimer.Elapsed -= OnLatestUpdateTimerElapsed;
+                _latestUpdateTimer.Stop();
             }
         }
         catch (Exception ex)
