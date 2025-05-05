@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.OpenApi.Models;
 
 namespace Needlework.Net.Models;
@@ -62,6 +63,10 @@ public class OpenApiDocumentWrapper
                 }
             }
         }
+
+        plugins = new(plugins.ToDictionary(
+            kvp => kvp.Key,
+            kvp => kvp.Value.OrderBy(x => x.Path).ToList()));
 
         Plugins = plugins;
     }
