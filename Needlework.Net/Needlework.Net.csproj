@@ -47,6 +47,13 @@
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />	
   </ItemGroup>
+  
+  <ItemGroup>
+    <AvaloniaXaml Remove="Utilities\**" />
+    <Compile Remove="Utilities\**" />
+    <EmbeddedResource Remove="Utilities\**" />
+    <None Remove="Utilities\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\AboutView.axaml" />
@@ -69,6 +76,5 @@
 
   <ItemGroup>
     <Folder Include="Assets\Users\" />
-    <Folder Include="Utilities\" />
   </ItemGroup>
 </Project>

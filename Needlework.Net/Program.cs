@@ -51,14 +51,7 @@ class Program
         builder.AddSingleton<DialogService>();
         builder.AddSingletonsFromAssemblies<PageBase>();
         builder.AddHttpClient();
-
-        var logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
-            .WriteTo.File("Logs/NeedleworkDotNet.log", rollingInterval: RollingInterval.Day, shared: true)
-            .CreateLogger();
-        logger.Debug("NeedleworkDotNet version: {Version}", Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "0.0.0.0");
-        logger.Debug("OS description: {Description}", System.Runtime.InteropServices.RuntimeInformation.OSDescription);
-        builder.AddLogging(builder => builder.AddSerilog(logger));
+        builder.AddLogging(Logger.Setup);
 
         var services = builder.BuildServiceProvider();
         return services;
@@ -66,6 +59,6 @@ class Program
 
     private static void Program_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
-        File.WriteAllText($"errorlog-{DateTime.Now:HHmmssfff}", e.ExceptionObject.ToString());
+        Logger.LogFatal(e);
     }
 }
