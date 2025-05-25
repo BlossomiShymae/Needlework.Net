@@ -5,13 +5,13 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
 using Microsoft.Extensions.Logging;
-using Needlework.Net.Messages;
 using Needlework.Net.ViewModels.Shared;
 using System;
+using System.Threading.Tasks;
 
 namespace Needlework.Net.ViewModels.Pages.Endpoints;
 
-public partial class EndpointsTabViewModel : PageBase, IRecipient<DataReadyMessage>
+public partial class EndpointsTabViewModel : PageBase
 {
     public IAvaloniaList<string> Plugins { get; } = new AvaloniaList<string>();
     public IAvaloniaList<EndpointItem> Endpoints { get; } = new AvaloniaList<EndpointItem>();
@@ -19,28 +19,31 @@ public partial class EndpointsTabViewModel : PageBase, IRecipient<DataReadyMessa
     [ObservableProperty] private bool _isBusy = true;
 
     private readonly ILogger<LcuRequestViewModel> _lcuRequestViewModelLogger;
+    private readonly DataSource _dataSource;
 
-    public EndpointsTabViewModel(ILogger<LcuRequestViewModel> lcuRequestViewModelLogger) : base("Endpoints", "list-alt", -500)
+    public EndpointsTabViewModel(ILogger<LcuRequestViewModel> lcuRequestViewModelLogger, DataSource dataSource) : base("Endpoints", "list-alt", -500)
     {
         _lcuRequestViewModelLogger = lcuRequestViewModelLogger;
+        _dataSource = dataSource;
         WeakReferenceMessenger.Default.RegisterAll(this);
     }
-
-    public void Receive(DataReadyMessage message)
+    public override async Task InitializeAsync()
     {
-        IsBusy = false;
+        var document = await _dataSource.GetLcuSchemaDocumentAsync();
         Plugins.Clear();
-        Plugins.AddRange(message.Value.Plugins.Keys);
-
-        Dispatcher.UIThread.Post(AddEndpoint);
+        Plugins.AddRange(document.Plugins.Keys);
+        await Dispatcher.UIThread.Invoke(AddEndpoint);
+        IsBusy = false;
+        IsInitialized = true;
     }
 
     [RelayCommand]
-    private void AddEndpoint()
+    private async Task AddEndpoint()
     {
+        var lcuSchemaDocument = await _dataSource.GetLcuSchemaDocumentAsync();
         Endpoints.Add(new()
         {
-            Content = new EndpointsNavigationViewModel(Plugins, OnEndpointNavigation, _lcuRequestViewModelLogger),
+            Content = new EndpointsNavigationViewModel(Plugins, OnEndpointNavigation, _lcuRequestViewModelLogger, lcuSchemaDocument),
             Selected = true
         });
     }

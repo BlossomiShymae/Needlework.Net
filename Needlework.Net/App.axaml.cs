@@ -40,8 +40,6 @@ public partial class App(IServiceProvider serviceProvider) : Application
             MainWindow = desktop.MainWindow;
         }
 
-
-
         base.OnFrameworkInitializationCompleted();
     }
 }

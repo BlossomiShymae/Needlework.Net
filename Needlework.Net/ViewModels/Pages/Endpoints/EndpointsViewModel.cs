@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
+using Needlework.Net.Models;
 using Needlework.Net.ViewModels.Shared;
 using System;
 using System.Linq;
@@ -19,13 +20,15 @@ public partial class EndpointsViewModel : ObservableObject
     public Action<ObservableObject> OnClicked { get; }
 
     private readonly ILogger<LcuRequestViewModel> _lcuRequestViewModelLogger;
+    private readonly Document _lcuSchemaDocument;
 
-    public EndpointsViewModel(IAvaloniaList<string> plugins, Action<ObservableObject> onClicked, ILogger<LcuRequestViewModel> lcuRequestViewModelLogger)
+    public EndpointsViewModel(IAvaloniaList<string> plugins, Action<ObservableObject> onClicked, ILogger<LcuRequestViewModel> lcuRequestViewModelLogger, Models.Document lcuSchemaDocument)
     {
         Plugins = new AvaloniaList<string>(plugins);
         Query = new AvaloniaList<string>(plugins);
         OnClicked = onClicked;
         _lcuRequestViewModelLogger = lcuRequestViewModelLogger;
+        _lcuSchemaDocument = lcuSchemaDocument;
     }
 
     partial void OnSearchChanged(string value)
@@ -42,6 +45,6 @@ public partial class EndpointsViewModel : ObservableObject
     {
         if (string.IsNullOrEmpty(value)) return;
 
-        OnClicked.Invoke(new EndpointViewModel(value, _lcuRequestViewModelLogger));
+        OnClicked.Invoke(new EndpointViewModel(value, _lcuRequestViewModelLogger, _lcuSchemaDocument));
     }
 }

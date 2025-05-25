@@ -6,10 +6,8 @@ using Needlework.Net.ViewModels.MainWindow;
 using Needlework.Net.ViewModels.Pages;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
-using Serilog;
 using System;
-using System.IO;
-using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Needlework.Net;
 
@@ -32,15 +30,23 @@ class Program
     {
         IconProvider.Current
             .Register<FontAwesomeIconProvider>();
+        var services = BuildServices();
+        Task.Run(async () => await InitializeDataSourceAsync(services));
 
-        return AppBuilder.Configure(() => new App(BuildServices()))
+        return AppBuilder.Configure(() => new App(services))
                 .UsePlatformDetect()
                 .WithInterFont()
                 .LogToTrace()
                 .With(new Win32PlatformOptions
                 {
-                    CompositionMode = [ Win32CompositionMode.WinUIComposition, Win32CompositionMode.DirectComposition ]
+                    CompositionMode = [Win32CompositionMode.WinUIComposition, Win32CompositionMode.DirectComposition]
                 });
+    }
+
+    private static async Task InitializeDataSourceAsync(IServiceProvider services)
+    {
+        var dataSource = services.GetRequiredService<DataSource>();
+        await dataSource.InitializeAsync();
     }
 
     private static IServiceProvider BuildServices()
@@ -49,6 +55,7 @@ class Program
 
         builder.AddSingleton<MainWindowViewModel>();
         builder.AddSingleton<DialogService>();
+        builder.AddSingleton<DataSource>();
         builder.AddSingletonsFromAssemblies<PageBase>();
         builder.AddHttpClient();
         builder.AddLogging(Logger.Setup);

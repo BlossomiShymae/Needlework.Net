@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using System.Diagnostics;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Needlework.Net.ViewModels.Pages;
 
@@ -11,6 +12,12 @@ public partial class AboutViewModel : PageBase
     public AboutViewModel(HttpClient httpClient) : base("About", "info-circle")
     {
         HttpClient = httpClient;
+    }
+
+    public override Task InitializeAsync()
+    {
+        IsInitialized = true;
+        return Task.CompletedTask;
     }
 
     [RelayCommand]

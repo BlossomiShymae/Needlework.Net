@@ -1,5 +1,4 @@
-﻿using Avalonia.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Needlework.Net.Models;
@@ -20,10 +19,10 @@ public partial class PathOperationViewModel : ObservableObject
     [ObservableProperty] private bool _isBusy;
     [ObservableProperty] private Lazy<LcuRequestViewModel> _lcuRequest;
 
-    public PathOperationViewModel(PathOperation pathOperation, ILogger<LcuRequestViewModel> lcuRequestViewModelLogger)
+    public PathOperationViewModel(PathOperation pathOperation, ILogger<LcuRequestViewModel> lcuRequestViewModelLogger, Document lcuSchemaDocument)
     {
         Path = pathOperation.Path;
-        Operation = new OperationViewModel(pathOperation.Operation);
+        Operation = new OperationViewModel(pathOperation.Operation, lcuSchemaDocument);
         LcuRequest = new(() => new LcuRequestViewModel(lcuRequestViewModelLogger)
         {
             Method = pathOperation.Method.ToUpper()

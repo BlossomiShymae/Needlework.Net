@@ -59,6 +59,12 @@ public partial class WebsocketViewModel : PageBase
         });
     }
 
+    public override Task InitializeAsync()
+    {
+        IsInitialized = true;
+        return Task.CompletedTask;
+    }
+
     private async Task InitializeEventTypes()
     {
         try

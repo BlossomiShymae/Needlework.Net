@@ -17,9 +17,9 @@ public partial class EndpointsNavigationViewModel : ObservableObject
 
     private readonly Action<string?, Guid> _onEndpointNavigation;
 
-    public EndpointsNavigationViewModel(IAvaloniaList<string> plugins, Action<string?, Guid> onEndpointNavigation, ILogger<LcuRequestViewModel> lcuRequestViewModelLogger)
+    public EndpointsNavigationViewModel(IAvaloniaList<string> plugins, Action<string?, Guid> onEndpointNavigation, ILogger<LcuRequestViewModel> lcuRequestViewModelLogger, Models.Document lcuSchemaDocument)
     {
-        _activeViewModel = _endpointsViewModel = new EndpointsViewModel(plugins, OnClicked, lcuRequestViewModelLogger);
+        _activeViewModel = _endpointsViewModel = new EndpointsViewModel(plugins, OnClicked, lcuRequestViewModelLogger, lcuSchemaDocument);
         _onEndpointNavigation = onEndpointNavigation;
     }
 

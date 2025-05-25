@@ -19,20 +19,17 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Reflection;
-using System.Text.Json.Nodes;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 
 namespace Needlework.Net.ViewModels.MainWindow;
 
 public partial class MainWindowViewModel
-    : ObservableObject, IRecipient<DataRequestMessage>, IRecipient<HostDocumentRequestMessage>, IRecipient<InfoBarUpdateMessage>, IRecipient<OopsiesDialogRequestedMessage>
+    : ObservableObject, IRecipient<InfoBarUpdateMessage>, IRecipient<OopsiesDialogRequestedMessage>
 {
     public IAvaloniaReadOnlyList<NavigationViewItem> MenuItems { get; }
-    [NotifyPropertyChangedFor(nameof(CurrentPage))]
     [ObservableProperty] private NavigationViewItem _selectedMenuItem;
-    public PageBase CurrentPage => (PageBase)SelectedMenuItem.Tag!;
+    [ObservableProperty] private PageBase _currentPage;
 
     public string Version { get; } = Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "0.0.0.0";
     [ObservableProperty] private bool _isUpdateShown = false;
@@ -42,7 +39,7 @@ public partial class MainWindowViewModel
 
     public HttpClient HttpClient { get; }
     public DialogService DialogService { get; }
-    public OpenApiDocumentWrapper? OpenApiDocumentWrapper { get; set; }
+    public Document? OpenApiDocumentWrapper { get; set; }
     public OpenApiDocument? HostDocument { get; set; }
 
     [ObservableProperty] private bool _isBusy = true;
@@ -78,13 +75,12 @@ public partial class MainWindowViewModel
                 IconSource = new BitmapIconSource() { UriSource = new Uri($"avares://NeedleworkDotNet/Assets/Icons/{p.Icon}.png") }
             }));
         SelectedMenuItem = MenuItems[0];
+        CurrentPage = (PageBase)MenuItems[0].Tag!;
 
         HttpClient = httpClient;
         DialogService = dialogService;
 
         WeakReferenceMessenger.Default.RegisterAll(this);
-
-        Task.Run(FetchDataAsync);
 
         _latestUpdateTimer.Elapsed += OnLatestUpdateTimerElapsed;
         _schemaVersionTimer.Elapsed += OnSchemaVersionTimerElapsed;
@@ -93,6 +89,18 @@ public partial class MainWindowViewModel
         OnLatestUpdateTimerElapsed(null, null);
         OnSchemaVersionTimerElapsed(null, null);
 
+    }
+
+    partial void OnSelectedMenuItemChanged(NavigationViewItem value)
+    {
+        if (value.Tag is PageBase page)
+        {
+            CurrentPage = page;
+            if (!page.IsInitialized)
+            {
+                Task.Run(page.InitializeAsync);
+            }
+        }
     }
 
     private async void OnSchemaVersionTimerElapsed(object? sender, ElapsedEventArgs? e)
@@ -175,34 +183,6 @@ public partial class MainWindowViewModel
         {
             _logger.LogError(ex, "Failed to check for latest version");
         }
-    }
-
-    private async Task FetchDataAsync()
-    {
-        try
-        {
-            var document = await Resources.GetOpenApiDocumentAsync(HttpClient);
-            HostDocument = document;
-            var handler = new OpenApiDocumentWrapper(document);
-            OpenApiDocumentWrapper = handler;
-
-            WeakReferenceMessenger.Default.Send(new DataReadyMessage(handler));
-            IsBusy = false;
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "Failed to fetch OpenAPI data");
-        }
-    }
-
-    public void Receive(DataRequestMessage message)
-    {
-        message.Reply(OpenApiDocumentWrapper!);
-    }
-
-    public void Receive(HostDocumentRequestMessage message)
-    {
-        message.Reply(HostDocument!);
     }
 
     [RelayCommand]

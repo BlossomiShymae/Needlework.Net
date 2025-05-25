@@ -4,7 +4,7 @@ using Microsoft.OpenApi.Models;
 
 namespace Needlework.Net.Models;
 
-public class OpenApiDocumentWrapper
+public class Document
 {
     internal OpenApiDocument OpenApiDocument { get; }
 
@@ -14,7 +14,7 @@ public class OpenApiDocumentWrapper
 
     public List<string> Paths => [.. OpenApiDocument.Paths.Keys];
 
-    public OpenApiDocumentWrapper(OpenApiDocument openApiDocument)
+    public Document(OpenApiDocument openApiDocument)
     {
         OpenApiDocument = openApiDocument;
         var plugins = new SortedDictionary<string, List<PathOperation>>();
