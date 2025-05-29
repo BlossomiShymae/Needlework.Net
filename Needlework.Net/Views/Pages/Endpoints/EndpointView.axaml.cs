@@ -13,7 +13,7 @@ public partial class EndpointView : UserControl
 {
     private TextEditor? _requestEditor;
     private TextEditor? _responseEditor;
-    private LcuRequestViewModel? _lcuRequestVm;
+    private RequestViewModel? _lcuRequestVm;
 
     public EndpointView()
     {
@@ -34,9 +34,9 @@ public partial class EndpointView : UserControl
 
         if (vm.SelectedPathOperation != null)
         {
-            _lcuRequestVm = vm.SelectedPathOperation.LcuRequest.Value;
-            vm.SelectedPathOperation.LcuRequest.Value.RequestText += LcuRequest_RequestText;
-            vm.SelectedPathOperation.LcuRequest.Value.UpdateText += LcuRequest_UpdateText;
+            _lcuRequestVm = vm.SelectedPathOperation.Request.Value;
+            vm.SelectedPathOperation.Request.Value.RequestText += LcuRequest_RequestText;
+            vm.SelectedPathOperation.Request.Value.UpdateText += LcuRequest_UpdateText;
         }
 
         OnBaseThemeChanged(Application.Current!.ActualThemeVariant);
@@ -53,10 +53,10 @@ public partial class EndpointView : UserControl
                 _lcuRequestVm.RequestText -= LcuRequest_RequestText;
                 _lcuRequestVm.UpdateText -= LcuRequest_UpdateText;
             }
-            vm.SelectedPathOperation.LcuRequest.Value.RequestText += LcuRequest_RequestText;
-            vm.SelectedPathOperation.LcuRequest.Value.UpdateText += LcuRequest_UpdateText;
-            _lcuRequestVm = vm.SelectedPathOperation.LcuRequest.Value;
-            _responseEditor!.Text = vm.SelectedPathOperation.LcuRequest.Value.ResponseBody ?? string.Empty;
+            vm.SelectedPathOperation.Request.Value.RequestText += LcuRequest_RequestText;
+            vm.SelectedPathOperation.Request.Value.UpdateText += LcuRequest_UpdateText;
+            _lcuRequestVm = vm.SelectedPathOperation.Request.Value;
+            _responseEditor!.Text = vm.SelectedPathOperation.Request.Value.ResponseBody ?? string.Empty;
         }
     }
 
@@ -81,7 +81,7 @@ public partial class EndpointView : UserControl
           currentTheme == ThemeVariant.Dark ? ThemeName.DarkPlus : ThemeName.LightPlus);
     }
 
-    private void LcuRequest_RequestText(object? sender, LcuRequestViewModel e)
+    private void LcuRequest_RequestText(object? sender, RequestViewModel e)
     {
         e.RequestBody = _requestEditor!.Text;
     }

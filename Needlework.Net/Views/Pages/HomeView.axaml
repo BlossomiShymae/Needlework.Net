@@ -40,7 +40,7 @@
 							<TextBlock Theme="{StaticResource TitleTextBlockStyle}">
 								Welcome to Needlework.Net
 							</TextBlock>
-							<TextBlock>Get started with LCU development by clicking on the endpoints tab in the left panel.</TextBlock>
+							<TextBlock>Get started with LCU or Game Client development by clicking on the endpoints tab in the left panel.</TextBlock>
 						</StackPanel>
 					</Border>
 					<controls:Card Margin="12">

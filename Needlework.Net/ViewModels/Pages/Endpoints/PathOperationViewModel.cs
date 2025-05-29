@@ -17,13 +17,13 @@ public partial class PathOperationViewModel : ObservableObject
     public string Url { get; }
 
     [ObservableProperty] private bool _isBusy;
-    [ObservableProperty] private Lazy<LcuRequestViewModel> _lcuRequest;
+    [ObservableProperty] private Lazy<RequestViewModel> _request;
 
-    public PathOperationViewModel(PathOperation pathOperation, ILogger<LcuRequestViewModel> lcuRequestViewModelLogger, Document lcuSchemaDocument)
+    public PathOperationViewModel(PathOperation pathOperation, ILogger<RequestViewModel> requestViewModelLogger, Document document, Tab tab, System.Net.Http.HttpClient httpClient)
     {
         Path = pathOperation.Path;
-        Operation = new OperationViewModel(pathOperation.Operation, lcuSchemaDocument);
-        LcuRequest = new(() => new LcuRequestViewModel(lcuRequestViewModelLogger)
+        Operation = new OperationViewModel(pathOperation.Operation, document);
+        Request = new(() => new RequestViewModel(requestViewModelLogger, tab, httpClient)
         {
             Method = pathOperation.Method.ToUpper()
         });
@@ -50,8 +50,8 @@ public partial class PathOperationViewModel : ObservableObject
             }
         }
 
-        LcuRequest.Value.RequestPath = sb.ToString();
-        await LcuRequest.Value.ExecuteAsync();
+        Request.Value.RequestPath = sb.ToString();
+        await Request.Value.ExecuteAsync();
     }
 
     [RelayCommand]

@@ -28,13 +28,13 @@ public partial class ConsoleView : UserControl
         _requestEditor?.ApplyJsonEditorSettings();
 
         var vm = (ConsoleViewModel)DataContext!;
-        vm.LcuRequest.RequestText += LcuRequest_RequestText; ;
-        vm.LcuRequest.UpdateText += LcuRequest_UpdateText;
+        vm.Request.RequestText += LcuRequest_RequestText; ;
+        vm.Request.UpdateText += LcuRequest_UpdateText;
 
         OnBaseThemeChanged(Application.Current!.ActualThemeVariant);
     }
 
-    private void LcuRequest_RequestText(object? sender, ViewModels.Shared.LcuRequestViewModel e)
+    private void LcuRequest_RequestText(object? sender, ViewModels.Shared.RequestViewModel e)
     {
         e.RequestBody = _requestEditor!.Text;
     }
@@ -49,8 +49,8 @@ public partial class ConsoleView : UserControl
         base.OnDetachedFromVisualTree(e);
 
         var vm = (ConsoleViewModel)DataContext!;
-        vm.LcuRequest.RequestText -= LcuRequest_RequestText;
-        vm.LcuRequest.UpdateText -= LcuRequest_UpdateText;
+        vm.Request.RequestText -= LcuRequest_RequestText;
+        vm.Request.UpdateText -= LcuRequest_UpdateText;
     }
 
     private void OnBaseThemeChanged(ThemeVariant currentTheme)

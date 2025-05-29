@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using Needlework.Net.Messages;
 using Needlework.Net.ViewModels.MainWindow;
+using Needlework.Net.ViewModels.Pages.Endpoints;
 using System;
 using System.Net.Http;
 using System.Text.Json;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Needlework.Net.ViewModels.Shared;
 
-public partial class LcuRequestViewModel : ObservableObject
+public partial class RequestViewModel : ObservableObject
 {
     [ObservableProperty] private string? _method = "GET";
     [ObservableProperty] private SolidColorBrush _color = new(GetColor("GET"));
@@ -29,14 +30,18 @@ public partial class LcuRequestViewModel : ObservableObject
     [ObservableProperty] private string? _responseAuthorization = null;
     [ObservableProperty] private string? _responseBody = null;
 
-    public event EventHandler<LcuRequestViewModel>? RequestText;
+    public event EventHandler<RequestViewModel>? RequestText;
     public event EventHandler<string>? UpdateText;
 
-    private readonly ILogger<LcuRequestViewModel> _logger;
+    private readonly ILogger<RequestViewModel> _logger;
+    private readonly Tab _tab;
+    private readonly HttpClient _httpClient;
 
-    public LcuRequestViewModel(ILogger<LcuRequestViewModel> logger)
+    public RequestViewModel(ILogger<RequestViewModel> logger, Pages.Endpoints.Tab tab, HttpClient httpClient)
     {
         _logger = logger;
+        _tab = tab;
+        _httpClient = httpClient;
     }
 
     partial void OnMethodChanged(string? oldValue, string? newValue)
@@ -48,24 +53,79 @@ public partial class LcuRequestViewModel : ObservableObject
 
     public async Task ExecuteAsync()
     {
+        switch (_tab)
+        {
+            case Tab.LCU:
+                await ExecuteLcuAsync();
+                break;
+            case Tab.GameClient:
+                await ExecuteGameClientAsync();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private async Task ExecuteGameClientAsync()
+    {
         try
         {
             IsRequestBusy = true;
             if (string.IsNullOrEmpty(RequestPath))
                 throw new Exception("Path is empty.");
+            var method = GetMethod();
 
-            var method = Method switch
+            _logger.LogDebug("Sending request: {Tuple}", (Method, RequestPath));
+            RequestText?.Invoke(this, this);
+            var content = new StringContent(RequestBody ?? string.Empty, new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
+            var responsePath = $"https://127.0.0.1:2999{RequestPath}";
+            var response = await _httpClient.SendAsync(new HttpRequestMessage(method, responsePath) { Content = content });
+            var responseBody = await response.Content.ReadAsByteArrayAsync();
+
+            var body = responseBody.Length > 0 ? JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(responseBody), App.JsonSerializerOptions) : string.Empty;
+            if (body.Length > App.MaxCharacters)
             {
-                "GET" => HttpMethod.Get,
-                "POST" => HttpMethod.Post,
-                "PUT" => HttpMethod.Put,
-                "DELETE" => HttpMethod.Delete,
-                "HEAD" => HttpMethod.Head,
-                "PATCH" => HttpMethod.Patch,
-                "OPTIONS" => HttpMethod.Options,
-                "TRACE" => HttpMethod.Trace,
-                _ => throw new Exception("Method is not selected or missing."),
-            };
+                WeakReferenceMessenger.Default.Send(new OopsiesDialogRequestedMessage(body));
+                UpdateText?.Invoke(this, string.Empty);
+            }
+            else
+            {
+                ResponseBody = body;
+                UpdateText?.Invoke(this, body);
+            }
+
+            ResponseStatus = $"{(int)response.StatusCode} {response.StatusCode.ToString()}";
+            ResponsePath = responsePath;
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Request failed: {Tuple}", (Method, RequestPath));
+            WeakReferenceMessenger.Default.Send(new InfoBarUpdateMessage(new InfoBarViewModel("Request Failed", true, ex.Message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error, TimeSpan.FromSeconds(5))));
+            UpdateText?.Invoke(this, string.Empty);
+
+            ResponseStatus = null;
+            ResponsePath = null;
+            ResponseAuthentication = null;
+            ResponseAuthorization = null;
+            ResponseUsername = null;
+            ResponsePassword = null;
+            ResponseBody = null;
+        }
+        finally
+        {
+            IsRequestBusy = false;
+        }
+    }
+
+    private async Task ExecuteLcuAsync()
+    {
+        try
+        {
+            IsRequestBusy = true;
+            if (string.IsNullOrEmpty(RequestPath))
+                throw new Exception("Path is empty.");
+            var method = GetMethod();
 
             _logger.LogDebug("Sending request: {Tuple}", (Method, RequestPath));
 
@@ -114,6 +174,22 @@ public partial class LcuRequestViewModel : ObservableObject
         {
             IsRequestBusy = false;
         }
+    }
+
+    private HttpMethod GetMethod()
+    {
+        return Method switch
+        {
+            "GET" => HttpMethod.Get,
+            "POST" => HttpMethod.Post,
+            "PUT" => HttpMethod.Put,
+            "DELETE" => HttpMethod.Delete,
+            "HEAD" => HttpMethod.Head,
+            "PATCH" => HttpMethod.Patch,
+            "OPTIONS" => HttpMethod.Options,
+            "TRACE" => HttpMethod.Trace,
+            _ => throw new Exception("Method is not selected or missing."),
+        };
     }
 
     private static Color GetColor(string method) => method switch

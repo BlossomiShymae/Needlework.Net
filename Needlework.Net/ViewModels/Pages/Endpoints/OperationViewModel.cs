@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.OpenApi.Models;
 using Needlework.Net.Models;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
 
@@ -21,23 +22,23 @@ public partial class OperationViewModel : ObservableObject
     public IAvaloniaReadOnlyList<ParameterViewModel> QueryParameters { get; }
     public string? RequestTemplate { get; }
 
-    public OperationViewModel(OpenApiOperation operation, Models.Document lcuSchemaDocument)
+    public OperationViewModel(OpenApiOperation operation, Models.Document document)
     {
         Summary = operation.Summary ?? string.Empty;
         Description = operation.Description ?? string.Empty;
         IsRequestBody = operation.RequestBody != null;
         ReturnType = GetReturnType(operation.Responses);
-        RequestClasses = GetRequestClasses(operation.RequestBody, lcuSchemaDocument);
-        ResponseClasses = GetResponseClasses(operation.Responses, lcuSchemaDocument);
+        RequestClasses = GetRequestClasses(operation.RequestBody, document);
+        ResponseClasses = GetResponseClasses(operation.Responses, document);
         PathParameters = GetParameters(operation.Parameters, ParameterLocation.Path);
         QueryParameters = GetParameters(operation.Parameters, ParameterLocation.Query);
         RequestBodyType = GetRequestBodyType(operation.RequestBody);
-        RequestTemplate = GetRequestTemplate(operation.RequestBody, lcuSchemaDocument);
+        RequestTemplate = GetRequestTemplate(operation.RequestBody, document);
     }
 
-    private string? GetRequestTemplate(OpenApiRequestBody? requestBody, Document lcuSchemaDocument)
+    private string? GetRequestTemplate(OpenApiRequestBody? requestBody, Document document)
     {
-        var requestClasses = GetRequestClasses(requestBody, lcuSchemaDocument);
+        var requestClasses = GetRequestClasses(requestBody, document);
         if (requestClasses.Count == 0)
         {
             var type = GetRequestBodyType(requestBody);
@@ -132,17 +133,40 @@ public partial class OperationViewModel : ObservableObject
         return pathParameters;
     }
 
-    private AvaloniaList<PropertyClassViewModel> GetResponseClasses(OpenApiResponses responses, Document lcuSchemaDocument)
+    private bool TryGetResponse(OpenApiResponses responses, [NotNullWhen(true)] out OpenApiResponse? response)
     {
-        if (responses.TryGetValue("2XX", out var response)
-            && response.Content.TryGetValue("application/json", out var media))
+        response = null;
+        var flag = false;
+        if (responses.TryGetValue("2XX", out var x))
         {
-            var document = lcuSchemaDocument.OpenApiDocument;
+            response = x;
+            flag = true;
+        }
+        else if (responses.TryGetValue("200", out var y))
+        {
+            response = y;
+            flag = true;
+        }
+        return flag;
+
+    }
+
+    private AvaloniaList<PropertyClassViewModel> GetResponseClasses(OpenApiResponses responses, Document document)
+    {
+        if (!TryGetResponse(responses, out var response))
+            return [];
+
+        if (response.Content.TryGetValue("application/json", out var media))
+        {
+            var rawDocument = document.OpenApiDocument;
             var schema = media.Schema;
+            if (schema == null) return [];
+
             AvaloniaList<PropertyClassViewModel> propertyClasses = [];
-            WalkSchema(schema, propertyClasses, document);
+            WalkSchema(schema, propertyClasses, rawDocument);
             return propertyClasses;
         }
+
         return [];
     }
 
@@ -185,12 +209,12 @@ public partial class OperationViewModel : ObservableObject
                             || type.Contains("number"));
     }
 
-    private AvaloniaList<PropertyClassViewModel> GetRequestClasses(OpenApiRequestBody? requestBody, Document lcuSchemaDocument)
+    private AvaloniaList<PropertyClassViewModel> GetRequestClasses(OpenApiRequestBody? requestBody, Document document)
     {
         if (requestBody == null) return [];
         if (requestBody.Content.TryGetValue("application/json", out var media))
         {
-            var document = lcuSchemaDocument.OpenApiDocument;
+            var rawDocument = document.OpenApiDocument;
             var schema = media.Schema;
             if (schema == null) return [];
 
@@ -198,9 +222,9 @@ public partial class OperationViewModel : ObservableObject
             if (IsComponent(type))
             {
                 var componentId = GetComponentId(schema);
-                var componentSchema = document.Components.Schemas[componentId];
+                var componentSchema = rawDocument.Components.Schemas[componentId];
                 AvaloniaList<PropertyClassViewModel> propertyClasses = [];
-                WalkSchema(componentSchema, propertyClasses, document);
+                WalkSchema(componentSchema, propertyClasses, rawDocument);
                 return propertyClasses;
             }
         }
@@ -209,12 +233,15 @@ public partial class OperationViewModel : ObservableObject
 
     private string GetReturnType(OpenApiResponses responses)
     {
-        if (responses.TryGetValue("2XX", out var response)
-            && response.Content.TryGetValue("application/json", out var media))
+        if (!TryGetResponse(responses, out var response))
+            return "none";
+
+        if (response.Content.TryGetValue("application/json", out var media))
         {
             var schema = media.Schema;
             return GetSchemaType(schema);
         }
+
         return "none";
     }
 
@@ -223,6 +250,7 @@ public partial class OperationViewModel : ObservableObject
         if (schema.Reference != null) return schema.Reference.Id;
         if (schema.Type == "object" && schema.AdditionalProperties?.Reference != null) return schema.AdditionalProperties.Reference.Id;
         if (schema.Type == "integer" || schema.Type == "number") return $"{schema.Type}:{schema.Format}";
+        if (schema.Type == "array" && schema.AdditionalProperties?.Reference != null) return schema.AdditionalProperties.Reference.Id;
         if (schema.Type == "array" && schema.Items.Reference != null) return $"{schema.Items.Reference.Id}[]";
         if (schema.Type == "array" && (schema.Items.Type == "integer" || schema.Items.Type == "number")) return $"{schema.Items.Type}:{schema.Items.Format}[]";
         if (schema.Type == "array") return $"{schema.Items.Type}[]";

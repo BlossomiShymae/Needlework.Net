@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:i="https://github.com/projektanker/icons.avalonia"
+			 Name="EndpointsTab"
 			 xmlns:vm="using:Needlework.Net.ViewModels.Pages.Endpoints"
 			 xmlns:ui="using:FluentAvalonia.UI.Controls"             
 			 xmlns:controls="using:Needlework.Net.Controls"
@@ -14,6 +15,7 @@
 		<Grid>
 			<ui:TabView TabItems="{Binding Endpoints}"
 						AddTabButtonCommand="{Binding AddEndpointCommand}"
+						AddTabButtonCommandParameter="{x:Static vm:Tab.LCU}"
 						TabCloseRequested="TabView_TabCloseRequested">
 				<!--Need to override Tab header for Mica theme...-->
 				<ui:TabView.Resources>
@@ -44,7 +46,24 @@
 										Content="{Binding}">
 							<ui:TabViewItem.ContentTemplate>
 								<DataTemplate DataType="vm:EndpointItem">
-									<ContentControl Content="{Binding Content}"/>
+									<Grid RowDefinitions="auto,auto,*" ColumnDefinitions="*">
+										<Menu Grid.Row="0"
+											  Grid.Column="0">
+											<MenuItem Header="_New tab">
+												<MenuItem Header="LCU"
+														  Command="{Binding #EndpointsTab.((vm:EndpointsTabViewModel)DataContext).AddEndpointCommand}"
+														  CommandParameter="{x:Static vm:Tab.LCU}"/>
+												<MenuItem Header="Game Client"
+														  Command="{Binding #EndpointsTab.((vm:EndpointsTabViewModel)DataContext).AddEndpointCommand}"
+														  CommandParameter="{x:Static vm:Tab.GameClient}"/>
+											</MenuItem>
+										</Menu>
+										<Separator Grid.Row="1"
+												   Grid.Column="0"/>
+										<ContentControl Grid.Row="2"
+														Grid.Column="0"
+														Content="{Binding Content}"/>
+									</Grid>
 								</DataTemplate>
 							</ui:TabViewItem.ContentTemplate>
 						</ui:TabViewItem>

@@ -43,7 +43,7 @@ namespace Needlework.Net
                 var lcuSchemaRaw = reader.Read(lcuSchemaStream, out var _);
                 _lcuSchemaDocument = new Document(lcuSchemaRaw);
 
-                var lolClientStream = await _httpClient.GetStreamAsync("https://raw.githubusercontent.com/BlossomiShymae/poroschema/refs/heads/main/schemas/lolclient.json");
+                var lolClientStream = await _httpClient.GetStreamAsync("https://raw.githubusercontent.com/AlsoSylv/Irelia/refs/heads/master/schemas/game_schema.json");
                 var lolClientRaw = reader.Read(lolClientStream, out var _);
                 _lolClientDocument = new Document(lolClientRaw);
             }

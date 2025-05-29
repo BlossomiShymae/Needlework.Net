@@ -2,14 +2,21 @@
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
 using Microsoft.Extensions.Logging;
+using Needlework.Net.Models;
 using Needlework.Net.ViewModels.Shared;
 using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Needlework.Net.ViewModels.Pages.Endpoints;
+
+public enum Tab
+{
+    LCU,
+    GameClient
+}
 
 public partial class EndpointsTabViewModel : PageBase
 {
@@ -18,32 +25,41 @@ public partial class EndpointsTabViewModel : PageBase
 
     [ObservableProperty] private bool _isBusy = true;
 
-    private readonly ILogger<LcuRequestViewModel> _lcuRequestViewModelLogger;
+    private readonly ILogger<RequestViewModel> _requestViewModelLogger;
     private readonly DataSource _dataSource;
+    private readonly HttpClient _httpClient;
 
-    public EndpointsTabViewModel(ILogger<LcuRequestViewModel> lcuRequestViewModelLogger, DataSource dataSource) : base("Endpoints", "list-alt", -500)
+    public EndpointsTabViewModel(ILogger<RequestViewModel> requestViewModelLogger, DataSource dataSource, HttpClient httpClient) : base("Endpoints", "list-alt", -500)
     {
-        _lcuRequestViewModelLogger = lcuRequestViewModelLogger;
+        _requestViewModelLogger = requestViewModelLogger;
         _dataSource = dataSource;
-        WeakReferenceMessenger.Default.RegisterAll(this);
+        _httpClient = httpClient;
     }
     public override async Task InitializeAsync()
     {
-        var document = await _dataSource.GetLcuSchemaDocumentAsync();
-        Plugins.Clear();
-        Plugins.AddRange(document.Plugins.Keys);
-        await Dispatcher.UIThread.Invoke(AddEndpoint);
+        await Dispatcher.UIThread.Invoke(async () => await AddEndpoint(Tab.LCU));
         IsBusy = false;
         IsInitialized = true;
     }
 
     [RelayCommand]
-    private async Task AddEndpoint()
+    private async Task AddEndpoint(Tab tab)
     {
-        var lcuSchemaDocument = await _dataSource.GetLcuSchemaDocumentAsync();
+        Document document = tab switch
+        {
+            Tab.LCU => await _dataSource.GetLcuSchemaDocumentAsync(),
+            Tab.GameClient => await _dataSource.GetLolClientDocumentAsync(),
+            _ => throw new NotImplementedException(),
+        };
+
+        Plugins.Clear();
+        Plugins.AddRange(document.Plugins.Keys);
+
+        var vm = new EndpointsNavigationViewModel(Plugins, OnEndpointNavigation, _requestViewModelLogger, document, tab, _httpClient);
         Endpoints.Add(new()
         {
-            Content = new EndpointsNavigationViewModel(Plugins, OnEndpointNavigation, _lcuRequestViewModelLogger, lcuSchemaDocument),
+            Content = vm,
+            Header = vm.Title,
             Selected = true
         });
     }
@@ -54,7 +70,7 @@ public partial class EndpointsTabViewModel : PageBase
         {
             if (endpoint.Content.Guid.Equals(guid))
             {
-                endpoint.Header = title ?? "Endpoints";
+                endpoint.Header = endpoint.Content.Title;
                 break;
             }
         }
@@ -63,7 +79,7 @@ public partial class EndpointsTabViewModel : PageBase
 
 public partial class EndpointItem : ObservableObject
 {
-    [ObservableProperty] private string _header = "Endpoints";
+    [ObservableProperty] private string _header = string.Empty;
     public IconSource IconSource { get; set; } = new SymbolIconSource() { Symbol = Symbol.Document, FontSize = 20.0, Foreground = Avalonia.Media.Brushes.White };
     public bool Selected { get; set; } = false;
     public required EndpointsNavigationViewModel Content { get; init; }

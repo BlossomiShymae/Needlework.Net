@@ -19,13 +19,13 @@
 				<StackPanel Margin="0 0 0 16">
 					<Grid RowDefinitions="auto" ColumnDefinitions="auto,*,auto">
 						<ComboBox ItemsSource="{Binding RequestMethods}"
-								  SelectedItem="{Binding LcuRequest.Method}"
+								  SelectedItem="{Binding Request.Method}"
 								  Margin="0 0 8 0"
 								  Grid.Row="0"
 								  Grid.Column="0"/>
 						<AutoCompleteBox
 								 ItemsSource="{Binding RequestPaths}"
-								 Text="{Binding LcuRequest.RequestPath}"
+								 Text="{Binding Request.RequestPath}"
 								 MaxDropDownHeight="400"
 								 FilterMode="StartsWith"
 								 Grid.Row="0"
@@ -49,7 +49,7 @@
 				<TextBox IsReadOnly="True"
 						 Grid.Row="0"
 						 Grid.Column="0"
-						 Text="{Binding LcuRequest.ResponsePath}"/>
+						 Text="{Binding Request.ResponsePath}"/>
 				<avaloniaEdit:TextEditor
 								 Name="RequestEditor"
 								 Text=""
@@ -69,7 +69,7 @@
 				<StackPanel Orientation="Horizontal"
 							Grid.Row="0"
 							Grid.Column="0">
-					<Button Content="{Binding LcuRequest.ResponseStatus}"
+					<Button Content="{Binding Request.ResponseStatus}"
 							FontSize="12"
 							VerticalAlignment="Center"/>
 				</StackPanel>
