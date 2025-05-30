@@ -2,11 +2,11 @@
 
 ![App preview](app-preview.png)
 
-Needlework.Net is an open-source helper tool for the LCU that provides documented endpoints and can send requests without any code setup. Created using .NET! 🌠
+Needlework.Net is an open-source helper tool for the LCU and Game Client that provides documented endpoints and can send requests without any code setup. Created using .NET! 🌠
 
 # Features
 
-- Interactive OpenAPI documentation
+- Interactive OpenAPI documentations
 - REST data transfer console
 - WebSocket event data viewer
 
@@ -39,8 +39,13 @@ This project was inspired by LCU Explorer, an application created by the Hextech
 
 ### hasagi-types
 
-Endpoints and schemas are provided by dysolix's [generated OpenAPI file.](https://raw.githubusercontent.com/dysolix/hasagi-types/main/swagger.json) Thank you!
+LCU Schema endpoints are provided by dysolix's [generated OpenAPI file.](https://raw.githubusercontent.com/dysolix/hasagi-types/main/swagger.json) Thank you!
 - [Repository](https://github.com/dysolix/hasagi-types)
+
+### Irelia
+
+Game Client endpoints are provided by AlsoSylv's [fixed OpenAPI file.](https://raw.githubusercontent.com/AlsoSylv/Irelia/refs/heads/master/schemas/game_schema.json) Thank you despite not wanting to receive credit. :pout:
+- [Repository](https://github.com/AlsoSylv/Irelia)
 
 ## Disclaimer
 
