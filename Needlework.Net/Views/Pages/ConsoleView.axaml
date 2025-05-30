@@ -16,7 +16,7 @@
 			<Grid Grid.Row="0"
 				  Grid.Column="0"
 				  Grid.ColumnSpan="2">
-				<StackPanel Margin="0 0 0 16">
+				<StackPanel Margin="0 0 0 8">
 					<Grid RowDefinitions="auto" ColumnDefinitions="auto,*,auto">
 						<ComboBox ItemsSource="{Binding RequestMethods}"
 								  SelectedItem="{Binding Request.Method}"
