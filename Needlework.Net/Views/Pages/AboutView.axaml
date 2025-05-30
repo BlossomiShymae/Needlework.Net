@@ -43,6 +43,11 @@
 							   UserGithub="cuppachino">
 				For encouraging me to publish Needlework.Net and other ideas.
 			</controls:UserCard>
+			<controls:UserCard UserImage="/Assets/Users/aoshiw.png"
+							   UserName="AoshiW"
+							   UserGithub="AoshiW">
+				For PR.
+			</controls:UserCard>
 		</WrapPanel>
 	</ScrollViewer>
 </UserControl>
