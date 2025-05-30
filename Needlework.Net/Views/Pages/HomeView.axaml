@@ -66,6 +66,9 @@
 								<Button CommandParameter="https://discord.com/channels/187652476080488449/516802588805431296" Margin="4">
 									#lcu-api
 								</Button>
+								<Button CommandParameter="https://discord.com/channels/187652476080488449/543112946402721832" Margin="4">
+									#ingame-api
+								</Button>
 							</StackPanel>
 						</StackPanel>
 					</controls:Card>
