@@ -15,6 +15,7 @@
 		<sty:FluentAvaloniaTheme PreferSystemTheme="False" PreferUserAccentColor="False" />
 		<materialIcons:MaterialIconStyles />
 		<StyleInclude Source="Controls/Card.axaml"/>
+		<StyleInclude Source="Controls/UserCard.axaml"/>
 		<StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
 		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
 	</Application.Styles>

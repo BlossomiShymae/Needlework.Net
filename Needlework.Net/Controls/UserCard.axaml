@@ -1,0 +1,71 @@
+<Styles xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:i="https://github.com/projektanker/icons.avalonia"
+			 xmlns:controls="using:Needlework.Net.Controls">
+	<Design.PreviewWith>
+		<WrapPanel>
+			<controls:UserCard
+					Width="300"
+					Height="400"
+					UserImage="/Assets/Users/blossomishymae.png"
+					UserName="estrogen elf"
+					UserGithub="BlossomiShymae">
+				Needlework.Net is the .NET rewrite of Needlework. This tool was made to help others with LCU and Game Client development. Feel free to ask any questions
+				or help contribute to the project! Made with love. 💜
+			</controls:UserCard>
+		</WrapPanel>
+	</Design.PreviewWith>
+	<Style Selector="controls|UserCard">
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Grid>
+					<Border CornerRadius="16,16,16,16"
+							Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+							Margin="0 50 0 0"
+							Padding="16 66 16 16">
+						<Grid RowDefinitions="auto,auto,auto"
+							  ColumnDefinitions="*">
+							<TextBlock Grid.Row="0"
+									   Grid.Column="0"
+									   Theme="{StaticResource SubtitleTextBlockStyle}"
+									   Margin="0 0 0 4"
+									   Text="{TemplateBinding UserName}"/>
+							<Grid Grid.Row="1"
+								  Grid.Column="0"
+								  RowDefinitions="*"
+								  ColumnDefinitions="auto,auto"
+								  Margin="0 0 0 16">
+								<Button Grid.Row="0"
+										Grid.Column="0"
+										Theme="{StaticResource TransparentButton}"
+										FontSize="20"
+										Name="PART_GithubButton">
+									<i:Icon Value="fa-github"/>
+								</Button>
+								<TextBlock Grid.Row="0"
+										   Grid.Column="1"
+										   Margin="8 0 0 0"
+										   VerticalAlignment="Center"
+										   Text="{TemplateBinding UserGithub}"/>
+							</Grid>
+							<TextBlock Grid.Row="2"
+									   Grid.Column="0"
+									   TextWrapping="WrapWithOverflow"
+									   Text="{TemplateBinding Content}"/>
+						</Grid>
+					</Border>
+					<Border CornerRadius="100"
+						Width="100"
+						Height="100"
+						Margin="{TemplateBinding UserImageMargin}"
+						ClipToBounds="True">
+						<Image Source="{TemplateBinding UserImage}"
+						   RenderOptions.BitmapInterpolationMode="HighQuality"/>
+					</Border>
+				</Grid>
+			</ControlTemplate>
+		</Setter>
+	</Style>
+</Styles>
