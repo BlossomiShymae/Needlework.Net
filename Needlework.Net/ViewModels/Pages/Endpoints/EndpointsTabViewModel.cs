@@ -29,11 +29,11 @@ public partial class EndpointsTabViewModel : PageBase
     private readonly DataSource _dataSource;
     private readonly HttpClient _httpClient;
 
-    public EndpointsTabViewModel(ILogger<RequestViewModel> requestViewModelLogger, DataSource dataSource, HttpClient httpClient) : base("Endpoints", "list-alt", -500)
+    public EndpointsTabViewModel(ILogger<RequestViewModel> requestViewModelLogger, DataSource dataSource, IHttpClientFactory httpClientFactory) : base("Endpoints", "list-alt", -500)
     {
         _requestViewModelLogger = requestViewModelLogger;
         _dataSource = dataSource;
-        _httpClient = httpClient;
+        _httpClient = httpClientFactory.CreateClient(nameof(EndpointsTabViewModel));
     }
     public override async Task InitializeAsync()
     {
