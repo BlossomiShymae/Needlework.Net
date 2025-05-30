@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
 using Needlework.Net.Messages;
 using Needlework.Net.Models;
 using Needlework.Net.Services;
@@ -39,8 +38,8 @@ public partial class MainWindowViewModel
 
     public HttpClient HttpClient { get; }
     public DialogService DialogService { get; }
-    public Document? OpenApiDocumentWrapper { get; set; }
-    public OpenApiDocument? HostDocument { get; set; }
+
+    private readonly DataSource _dataSource;
 
     [ObservableProperty] private bool _isBusy = true;
 
@@ -61,9 +60,10 @@ public partial class MainWindowViewModel
     };
     private bool _isSchemaVersionChecked = false;
 
-    public MainWindowViewModel(IEnumerable<PageBase> pages, HttpClient httpClient, DialogService dialogService, ILogger<MainWindowViewModel> logger)
+    public MainWindowViewModel(IEnumerable<PageBase> pages, HttpClient httpClient, DialogService dialogService, ILogger<MainWindowViewModel> logger, DataSource dataSource)
     {
         _logger = logger;
+        _dataSource = dataSource;
 
         MenuItems = new AvaloniaList<NavigationViewItem>(pages
             .OrderBy(p => p.Index)
@@ -105,20 +105,20 @@ public partial class MainWindowViewModel
 
     private async void OnSchemaVersionTimerElapsed(object? sender, ElapsedEventArgs? e)
     {
-        if (OpenApiDocumentWrapper == null) return;
         if (!ProcessFinder.IsPortOpen()) return;
+        var lcuSchemaDocument = await _dataSource.GetLcuSchemaDocumentAsync();
 
         try
         {
             var client = Connector.GetLcuHttpClientInstance();
 
-            var currentSemVer = OpenApiDocumentWrapper.Info.Version.Split('.');
+            var currentSemVer = lcuSchemaDocument.Info.Version.Split('.');
             var systemBuild = await client.GetFromJsonAsync<SystemBuild>("/system/v1/builds") ?? throw new NullReferenceException();
             var latestSemVer = systemBuild.Version.Split('.');
 
             if (!_isSchemaVersionChecked)
             {
-                _logger.LogInformation("LCU Schema (current): {Version}", OpenApiDocumentWrapper.Info.Version);
+                _logger.LogInformation("LCU Schema (current): {Version}", lcuSchemaDocument.Info.Version);
                 _logger.LogInformation("LCU Schema (latest): {Version}", systemBuild.Version);
                 _isSchemaVersionChecked = true;
             }
