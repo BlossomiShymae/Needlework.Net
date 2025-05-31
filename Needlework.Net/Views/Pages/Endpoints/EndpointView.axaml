@@ -58,6 +58,7 @@
 							<Grid.ContextFlyout>
 								<MenuFlyout>
 									<MenuItem Header="Copy Swagger URL" Command="{Binding CopyUrlCommand}"/>
+									<MenuItem Header="Copy Markdown" Command="{Binding CopyMarkdownCommand}"/>
 								</MenuFlyout>
 							</Grid.ContextFlyout>
 								<TextBlock

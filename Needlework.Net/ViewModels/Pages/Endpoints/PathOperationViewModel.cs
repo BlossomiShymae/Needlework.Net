@@ -15,6 +15,7 @@ public partial class PathOperationViewModel : ObservableObject
     public OperationViewModel Operation { get; }
 
     public string Url { get; }
+    public string Markdown { get; }
 
     [ObservableProperty] private bool _isBusy;
     [ObservableProperty] private Lazy<RequestViewModel> _request;
@@ -27,7 +28,8 @@ public partial class PathOperationViewModel : ObservableObject
         {
             Method = pathOperation.Method.ToUpper()
         });
-        Url = $"https://swagger.dysolix.dev/lcu/#/{pathOperation.Tag}/{pathOperation.Operation.OperationId}";
+        Url = $"https://swagger.dysolix.dev/lcu/#/{Uri.EscapeDataString(pathOperation.Tag)}/{pathOperation.Operation.OperationId}";
+        Markdown = $"[{pathOperation.Method.ToUpper()} {Path}]({Url})";
     }
 
     [RelayCommand]
@@ -58,5 +60,11 @@ public partial class PathOperationViewModel : ObservableObject
     private void CopyUrl()
     {
         App.MainWindow?.Clipboard?.SetTextAsync(Url);
+    }
+
+    [RelayCommand]
+    private void CopyMarkdown()
+    {
+        App.MainWindow?.Clipboard?.SetTextAsync(Markdown);
     }
 }
