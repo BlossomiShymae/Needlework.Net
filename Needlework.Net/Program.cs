@@ -36,11 +36,15 @@ class Program
         return AppBuilder.Configure(() => new App(services))
                 .UsePlatformDetect()
                 .WithInterFont()
-                .LogToTrace()
                 .With(new Win32PlatformOptions
                 {
                     CompositionMode = [Win32CompositionMode.WinUIComposition, Win32CompositionMode.DirectComposition]
-                });
+                })
+                .With(new MacOSPlatformOptions
+                {
+                    ShowInDock = true,
+                })
+                .LogToTrace();
     }
 
     private static async Task InitializeDataSourceAsync(IServiceProvider services)
