@@ -1,5 +1,6 @@
 ﻿using Avalonia.Collections;
-using BlossomiShymae.GrrrLCU;
+using BlossomiShymae.Briar;
+using BlossomiShymae.Briar.Utils;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;

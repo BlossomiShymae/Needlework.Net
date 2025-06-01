@@ -1,4 +1,4 @@
-﻿using BlossomiShymae.GrrrLCU;
+﻿using BlossomiShymae.Briar.Utils;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Needlework.Net.ViewModels.Pages.Endpoints;

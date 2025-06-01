@@ -1,5 +1,6 @@
 ﻿using Avalonia.Media;
-using BlossomiShymae.GrrrLCU;
+using BlossomiShymae.Briar;
+using BlossomiShymae.Briar.Utils;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
@@ -35,13 +36,11 @@ public partial class RequestViewModel : ObservableObject
 
     private readonly ILogger<RequestViewModel> _logger;
     private readonly Tab _tab;
-    private readonly HttpClient _httpClient;
 
-    public RequestViewModel(ILogger<RequestViewModel> logger, Pages.Endpoints.Tab tab, HttpClient httpClient)
+    public RequestViewModel(ILogger<RequestViewModel> logger, Pages.Endpoints.Tab tab)
     {
         _logger = logger;
         _tab = tab;
-        _httpClient = httpClient;
     }
 
     partial void OnMethodChanged(string? oldValue, string? newValue)
@@ -78,8 +77,8 @@ public partial class RequestViewModel : ObservableObject
             _logger.LogDebug("Sending request: {Tuple}", (Method, RequestPath));
             RequestText?.Invoke(this, this);
             var content = new StringContent(RequestBody ?? string.Empty, new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
-            var responsePath = $"https://127.0.0.1:2999{RequestPath}";
-            var response = await _httpClient.SendAsync(new HttpRequestMessage(method, responsePath) { Content = content });
+            var client = Connector.GetGameHttpClientInstance();
+            var response = await client.SendAsync(new HttpRequestMessage(method, RequestPath) { Content = content });
             var responseBody = await response.Content.ReadAsByteArrayAsync();
 
             var body = responseBody.Length > 0 ? JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(responseBody), App.JsonSerializerOptions) : string.Empty;
@@ -95,7 +94,7 @@ public partial class RequestViewModel : ObservableObject
             }
 
             ResponseStatus = $"{(int)response.StatusCode} {response.StatusCode.ToString()}";
-            ResponsePath = responsePath;
+            ResponsePath = $"https://127.0.0.1:2999{RequestPath}";
 
         }
         catch (Exception ex)

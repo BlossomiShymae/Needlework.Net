@@ -4,11 +4,9 @@ using Needlework.Net.Extensions;
 using Needlework.Net.Services;
 using Needlework.Net.ViewModels.MainWindow;
 using Needlework.Net.ViewModels.Pages;
-using Needlework.Net.ViewModels.Pages.Endpoints;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Needlework.Net;
@@ -60,14 +58,6 @@ class Program
         builder.AddSingleton<DataSource>();
         builder.AddSingletonsFromAssemblies<PageBase>();
         builder.AddHttpClient();
-        builder.AddHttpClient(nameof(EndpointsTabViewModel)).ConfigurePrimaryHttpMessageHandler(() => // Insecure SSL for Game Client API
-        {
-            var handler = new HttpClientHandler
-            {
-                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-            };
-            return handler;
-        });
         builder.AddLogging(Logger.Setup);
 
         var services = builder.BuildServiceProvider();

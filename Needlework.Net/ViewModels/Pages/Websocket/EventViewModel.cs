@@ -1,4 +1,4 @@
-﻿using BlossomiShymae.GrrrLCU;
+﻿using BlossomiShymae.Briar.WebSocket.Events;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 

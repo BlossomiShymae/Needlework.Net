@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using Needlework.Net.Models;
 using Needlework.Net.ViewModels.Shared;
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Needlework.Net.ViewModels.Pages.Endpoints;
@@ -27,13 +26,11 @@ public partial class EndpointsTabViewModel : PageBase
 
     private readonly ILogger<RequestViewModel> _requestViewModelLogger;
     private readonly DataSource _dataSource;
-    private readonly HttpClient _httpClient;
 
-    public EndpointsTabViewModel(ILogger<RequestViewModel> requestViewModelLogger, DataSource dataSource, IHttpClientFactory httpClientFactory) : base("Endpoints", "list-alt", -500)
+    public EndpointsTabViewModel(ILogger<RequestViewModel> requestViewModelLogger, DataSource dataSource) : base("Endpoints", "list-alt", -500)
     {
         _requestViewModelLogger = requestViewModelLogger;
         _dataSource = dataSource;
-        _httpClient = httpClientFactory.CreateClient(nameof(EndpointsTabViewModel));
     }
     public override async Task InitializeAsync()
     {
@@ -55,7 +52,7 @@ public partial class EndpointsTabViewModel : PageBase
         Plugins.Clear();
         Plugins.AddRange(document.Plugins.Keys);
 
-        var vm = new EndpointsNavigationViewModel(Plugins, OnEndpointNavigation, _requestViewModelLogger, document, tab, _httpClient);
+        var vm = new EndpointsNavigationViewModel(Plugins, OnEndpointNavigation, _requestViewModelLogger, document, tab);
         Endpoints.Add(new()
         {
             Content = vm,

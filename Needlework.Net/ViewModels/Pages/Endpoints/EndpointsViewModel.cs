@@ -6,7 +6,6 @@ using Needlework.Net.Models;
 using Needlework.Net.ViewModels.Shared;
 using System;
 using System.Linq;
-using System.Net.Http;
 
 namespace Needlework.Net.ViewModels.Pages.Endpoints;
 
@@ -23,9 +22,8 @@ public partial class EndpointsViewModel : ObservableObject
     private readonly ILogger<RequestViewModel> _requestViewModelLogger;
     private readonly Document _document;
     private readonly Tab _tab;
-    private readonly HttpClient _httpClient;
 
-    public EndpointsViewModel(IAvaloniaList<string> plugins, Action<ObservableObject> onClicked, ILogger<RequestViewModel> requestViewModelLogger, Models.Document document, Tab tab, System.Net.Http.HttpClient httpClient)
+    public EndpointsViewModel(IAvaloniaList<string> plugins, Action<ObservableObject> onClicked, ILogger<RequestViewModel> requestViewModelLogger, Models.Document document, Tab tab)
     {
         Plugins = new AvaloniaList<string>(plugins);
         Query = new AvaloniaList<string>(plugins);
@@ -33,7 +31,6 @@ public partial class EndpointsViewModel : ObservableObject
         _requestViewModelLogger = requestViewModelLogger;
         _document = document;
         _tab = tab;
-        _httpClient = httpClient;
     }
 
     partial void OnSearchChanged(string value)
@@ -50,6 +47,6 @@ public partial class EndpointsViewModel : ObservableObject
     {
         if (string.IsNullOrEmpty(value)) return;
 
-        OnClicked.Invoke(new EndpointViewModel(value, _requestViewModelLogger, _document, _tab, _httpClient));
+        OnClicked.Invoke(new EndpointViewModel(value, _requestViewModelLogger, _document, _tab));
     }
 }

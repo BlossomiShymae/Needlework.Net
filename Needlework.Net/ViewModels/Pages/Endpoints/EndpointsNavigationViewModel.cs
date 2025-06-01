@@ -18,9 +18,9 @@ public partial class EndpointsNavigationViewModel : ObservableObject
     private readonly Action<string?, Guid> _onEndpointNavigation;
     private readonly Tab _tab;
 
-    public EndpointsNavigationViewModel(IAvaloniaList<string> plugins, Action<string?, Guid> onEndpointNavigation, ILogger<RequestViewModel> requestViewModelLogger, Models.Document document, Tab tab, System.Net.Http.HttpClient httpClient)
+    public EndpointsNavigationViewModel(IAvaloniaList<string> plugins, Action<string?, Guid> onEndpointNavigation, ILogger<RequestViewModel> requestViewModelLogger, Models.Document document, Tab tab)
     {
-        _activeViewModel = _endpointsViewModel = new EndpointsViewModel(plugins, OnClicked, requestViewModelLogger, document, tab, httpClient);
+        _activeViewModel = _endpointsViewModel = new EndpointsViewModel(plugins, OnClicked, requestViewModelLogger, document, tab);
         _onEndpointNavigation = onEndpointNavigation;
         _tab = tab;
         _title = GetTitle(tab);

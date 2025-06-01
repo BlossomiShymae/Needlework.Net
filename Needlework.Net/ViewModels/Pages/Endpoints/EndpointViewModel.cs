@@ -21,10 +21,10 @@ public partial class EndpointViewModel : ObservableObject
 
     public event EventHandler<string>? PathOperationSelected;
 
-    public EndpointViewModel(string endpoint, ILogger<RequestViewModel> requestViewModelLogger, Models.Document document, Tab tab, System.Net.Http.HttpClient httpClient)
+    public EndpointViewModel(string endpoint, ILogger<RequestViewModel> requestViewModelLogger, Models.Document document, Tab tab)
     {
         Endpoint = endpoint;
-        PathOperations = new AvaloniaList<PathOperationViewModel>(document.Plugins[endpoint].Select(x => new PathOperationViewModel(x, requestViewModelLogger, document, tab, httpClient)));
+        PathOperations = new AvaloniaList<PathOperationViewModel>(document.Plugins[endpoint].Select(x => new PathOperationViewModel(x, requestViewModelLogger, document, tab)));
         FilteredPathOperations = new AvaloniaList<PathOperationViewModel>(PathOperations);
     }
 

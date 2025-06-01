@@ -20,11 +20,11 @@ public partial class PathOperationViewModel : ObservableObject
     [ObservableProperty] private bool _isBusy;
     [ObservableProperty] private Lazy<RequestViewModel> _request;
 
-    public PathOperationViewModel(PathOperation pathOperation, ILogger<RequestViewModel> requestViewModelLogger, Document document, Tab tab, System.Net.Http.HttpClient httpClient)
+    public PathOperationViewModel(PathOperation pathOperation, ILogger<RequestViewModel> requestViewModelLogger, Document document, Tab tab)
     {
         Path = pathOperation.Path;
         Operation = new OperationViewModel(pathOperation.Operation, document);
-        Request = new(() => new RequestViewModel(requestViewModelLogger, tab, httpClient)
+        Request = new(() => new RequestViewModel(requestViewModelLogger, tab)
         {
             Method = pathOperation.Method.ToUpper()
         });
