@@ -1,84 +1,93 @@
-﻿using Avalonia.Collections;
-using BlossomiShymae.Briar;
+﻿using BlossomiShymae.Briar;
 using BlossomiShymae.Briar.WebSocket.Events;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
+using Flurl.Http;
+using Flurl.Http.Configuration;
 using Microsoft.Extensions.Logging;
-using Needlework.Net.Messages;
+using ReactiveUI;
+using ReactiveUI.SourceGenerators;
+using Splat;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net.Http;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Websocket.Client;
 
-namespace Needlework.Net.ViewModels.Pages.Websocket;
+namespace Needlework.Net.ViewModels.Pages.WebSocket;
 
-public partial class WebsocketViewModel : PageBase
+public partial class WebSocketViewModel : PageBase, IEnableLogger
 {
-    public ObservableCollection<EventViewModel> EventLog { get; } = [];
-    public SemaphoreSlim EventLogLock { get; } = new(1, 1);
-
-    [NotifyPropertyChangedFor(nameof(FilteredEventLog))]
-    [ObservableProperty] private string _search = string.Empty;
-    [ObservableProperty] private bool _isAttach = true;
-    [ObservableProperty] private bool _isTail = false;
-    [ObservableProperty] private EventViewModel? _selectedEventLog = null;
-
-    [ObservableProperty] private IAvaloniaList<string> _eventTypes = new AvaloniaList<string>();
-    [ObservableProperty] private string _eventType = "OnJsonApiEvent";
-
     private Dictionary<string, EventMessage> _events = [];
+
+    private readonly object _tokenLock = new();
+
+    private readonly IFlurlClient _githubUserContentClient;
+
+    // public IReadOnlyList<EventViewModel> FilteredEventLog => string.IsNullOrWhiteSpace(Search) ? EventLog : [.. EventLog.Where(x => x.Key.Contains(Search, StringComparison.InvariantCultureIgnoreCase))];
+
+
+    public WebSocketViewModel(IScreen? screen = null, IFlurlClientCache? clients = null) : base("Event Viewer", "plug", -100)
+    {
+        _githubUserContentClient = clients?.Get("GithubUserContentClient") ?? Locator.Current.GetService<IFlurlClientCache>()?.Get("GithubUserContentClient")!;
+
+        HostScreen = screen ?? Locator.Current.GetService<IScreen>()!;
+
+        //EventLog.CollectionChanged += (s, e) => OnPropertyChanged(nameof(FilteredEventLog));
+        //Task.Run(async () =>
+        //{
+        //    await InitializeEventTypes();
+        //    InitializeWebsocket();
+        //});
+    }
+
+    public override string? UrlPathSegment => "websocket";
+
+    public override ReactiveUI.IScreen HostScreen { get; }
+
+
+    public CancellationTokenSource TokenSource { get; set; } = new();
 
     public WebsocketClient? Client { get; set; }
 
     public List<IDisposable> ClientDisposables = [];
 
-    private readonly object _tokenLock = new();
-    public CancellationTokenSource TokenSource { get; set; } = new();
+    public SemaphoreSlim EventLogLock { get; } = new(1, 1);
 
-    public HttpClient HttpClient { get; }
+    [Reactive]
+    public ObservableCollection<EventViewModel> EventLog { get; } = [];
 
-    public IReadOnlyList<EventViewModel> FilteredEventLog => string.IsNullOrWhiteSpace(Search) ? EventLog : [.. EventLog.Where(x => x.Key.Contains(Search, StringComparison.InvariantCultureIgnoreCase))];
+    [Reactive]
+    private string _search = string.Empty;
 
-    private readonly ILogger<WebsocketViewModel> _logger;
+    [Reactive]
+    private bool _isAttach = true;
 
-    public WebsocketViewModel(HttpClient httpClient, ILogger<WebsocketViewModel> logger) : base("Event Viewer", "plug", -100)
+    [Reactive]
+    private bool _isTail;
+
+    [Reactive]
+    private EventViewModel? _selectedEventLog;
+
+    [Reactive]
+    private ObservableCollection<string> _eventTypes = [];
+
+    [Reactive]
+    private string _eventType = "OnJsonApiEvent";
+
+    [ObservableAsProperty]
+    private ObservableCollection<EventViewModel> _filteredEventLog = [];
+
+    [ReactiveCommand]
+    private async Task<List<string>> GetEventTypesAsync()
     {
-        _logger = logger;
-        HttpClient = httpClient;
-        EventLog.CollectionChanged += (s, e) => OnPropertyChanged(nameof(FilteredEventLog));
-        Task.Run(async () =>
-        {
-            await InitializeEventTypes();
-            InitializeWebsocket();
-        });
-    }
-
-    public override Task InitializeAsync()
-    {
-        IsInitialized = true;
-        return Task.CompletedTask;
-    }
-
-    private async Task InitializeEventTypes()
-    {
-        try
-        {
-            var file = await HttpClient.GetStringAsync("https://raw.githubusercontent.com/dysolix/hasagi-types/refs/heads/main/dist/lcu-events.d.ts");
-            var matches = EventTypesRegex().Matches(file);
-            Avalonia.Threading.Dispatcher.UIThread.Invoke(() => EventTypes.AddRange(matches.Select(m => m.Groups[1].Value)));
-        }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "Failed to get event types");
-            WeakReferenceMessenger.Default.Send(new InfoBarUpdateMessage(new("Failed to get event types", true, ex.Message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error, TimeSpan.FromSeconds(10))));
-        }
+        var file = await _githubUserContentClient.Request("/dysolix/hasagi-types/refs/heads/main/dist/lcu-events.d.ts")
+            .GetStringAsync();
+        var matches = EventTypesRegex().Matches(file);
+        var eventTypes = matches.Select(m => m.Groups[1].Value)
+            .ToList();
+        return eventTypes;
     }
 
     private void InitializeWebsocket()
@@ -87,7 +96,8 @@ public partial class WebsocketViewModel : PageBase
         {
             if (Client != null)
             {
-                _logger.LogDebug("Disposing old connection");
+                this.Log()
+                    .Debug("Disposing old connection");
                 foreach (var disposable in ClientDisposables)
                     disposable.Dispose();
                 ClientDisposables.Clear();
@@ -117,23 +127,24 @@ public partial class WebsocketViewModel : PageBase
             })
             { IsBackground = true };
             thread.Start();
-            _logger.LogDebug("Initialized new connection: {EventType}", EventType);
+            this.Log()
+                .Debug("Initialized new connection: {EventType}", EventType);
             TokenSource = tokenSource;
         }
     }
 
-    partial void OnSelectedEventLogChanged(EventViewModel? value)
-    {
-        if (value == null) return;
-        if (_events.TryGetValue(value.Key, out var message))
-        {
-            var text = JsonSerializer.Serialize(message, App.JsonSerializerOptions);
-            if (text.Length >= App.MaxCharacters) WeakReferenceMessenger.Default.Send(new OopsiesDialogRequestedMessage(text));
-            else WeakReferenceMessenger.Default.Send(new ResponseUpdatedMessage(text), nameof(WebsocketViewModel));
-        }
-    }
+    //partial void OnSelectedEventLogChanged(EventViewModel? value)
+    //{
+    //    if (value == null) return;
+    //    if (_events.TryGetValue(value.Key, out var message))
+    //    {
+    //        var text = JsonSerializer.Serialize(message, App.JsonSerializerOptions);
+    //        if (text.Length >= App.MaxCharacters) WeakReferenceMessenger.Default.Send(new OopsiesDialogRequestedMessage(text));
+    //        else WeakReferenceMessenger.Default.Send(new ResponseUpdatedMessage(text), nameof(WebSocketViewModel));
+    //    }
+    //}
 
-    [RelayCommand]
+    [ReactiveCommand]
     private void Clear()
     {
         _events.Clear();
@@ -142,19 +153,21 @@ public partial class WebsocketViewModel : PageBase
 
     private void OnReconnection(ReconnectionInfo info)
     {
-        _logger.LogTrace("Reconnected: {Type}", info.Type);
+        this.Log()
+            .Debug("Reconnected: {Type}", info.Type);
     }
 
     private void OnDisconnection(DisconnectionInfo info)
     {
-        _logger.LogTrace("Disconnected: {Type}", info.Type);
+        this.Log()
+            .Debug("Disconnected: {Type}", info.Type);
         InitializeWebsocket();
     }
 
-    partial void OnEventTypeChanged(string value)
-    {
-        InitializeWebsocket();
-    }
+    //partial void OnEventTypeChanged(string value)
+    //{
+    //    InitializeWebsocket();
+    //}
 
     private void OnMessage(EventMessage message)
     {

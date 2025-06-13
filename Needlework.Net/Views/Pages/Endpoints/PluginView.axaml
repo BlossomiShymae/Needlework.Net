@@ -1,0 +1,253 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+		xmlns:vm="using:Needlework.Net.ViewModels.Pages.Endpoints"
+		xmlns:avalonEdit="https://github.com/avaloniaui/avaloniaedit"
+		xmlns:controls="using:Needlework.Net.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Needlework.Net.Views.Pages.Endpoints.PluginView"
+		x:DataType="vm:PluginViewModel">
+	<UserControl.Styles>
+		<Style Selector="DataGrid">
+			<Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource ControlElevationBorderBrush}"/>
+		</Style>
+		<Style Selector="DataGridColumnHeader TextBlock">
+			<Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+		</Style>
+		<Style Selector="DataGridRow DataGridCell">
+			<Setter Property="FontSize" Value="12"></Setter>
+		</Style>
+		<Style Selector="DataGridRow">
+			<Setter Property="Margin" Value="0 0 0 4"></Setter>
+		</Style>
+		<Style Selector="TabItem > TextBlock">
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="FontWeight" Value="DemiBold"/>
+		</Style>
+		<Style Selector="ListBox ListBoxItem">
+			<Setter Property="MinHeight" Value="30"/>
+		</Style>
+	</UserControl.Styles>
+	<Grid RowDefinitions="auto,*" ColumnDefinitions="3*,auto,4*,auto,4*">
+		<Grid Grid.Row="0"
+			  Grid.Column="0"
+			  RowDefinitions="*"
+			  ColumnDefinitions="auto,*">
+			<TextBox Name="SearchTextBox"
+					 Grid.Row="0"
+					 Grid.Column="0"
+					 Grid.ColumnSpan="2"/>
+		</Grid>
+		<Grid Grid.Row="1"
+			  Grid.Column="0"
+			  RowDefinitions="*"
+			  ColumnDefinitions="*">
+			<ListBox Name="PathOperationListBox"
+					 ScrollViewer.HorizontalScrollBarVisibility="Visible"
+					 Margin="0 0 0 0"
+					 Grid.Row="1"
+					 Grid.Column="0"/>
+		</Grid>
+		<GridSplitter Background="Gray"
+					  Margin="8 0 8 0"
+						  Grid.Row="0"
+						  Grid.RowSpan="2"
+						  Grid.Column="1"/>
+		<Grid Grid.Row="0"
+			  Grid.Column="2"
+			  RowDefinitions="*"
+			  ColumnDefinitions="auto,*,auto">
+			<TextBox Name="RequestMethodTextBox" 
+					 Grid.Row="0" 
+					 Grid.Column="0" 
+					 FontSize="12"
+					 IsReadOnly="True"
+					 Margin="0 0 8 0"/>
+			<TextBox Name="RequestResponsePathTextBox" 
+					 Grid.Row="0" 
+					 Grid.Column="1" 
+					 FontSize="12"
+					 IsReadOnly="True"/>
+			<StackPanel Grid.Row="0" 
+						Grid.Column="2" 
+						Orientation="Horizontal">
+				<Button Name="SendRequestButton" 
+						Classes="Flat"
+						Margin="4"
+						FontSize="12"
+						HorizontalAlignment="Right"
+						Padding="12 4 12 4"
+						VerticalAlignment="Center">Send</Button>
+			</StackPanel>
+		</Grid>
+		<Grid Grid.Row="1" Grid.Column="2">
+			<TabControl>
+				<TabItem Header="Params">
+					<ScrollViewer>
+						<StackPanel Name="ParamsStackPanel">
+							<controls:Card Name="PathParametersCard"
+										   Margin="0 4">
+								<StackPanel>
+									<TextBlock FontSize="14" 
+											   FontWeight="DemiBold">Path Parameters</TextBlock>
+									<DataGrid Name="PathParametersDataGrid"
+											  IsReadOnly="True"
+											  GridLinesVisibility="All"
+											  x:DataType="vm:ParameterViewModel">
+										<DataGrid.Columns>
+											<DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+											<DataGridCheckBoxColumn Header="Required" Binding="{Binding IsRequired}"/>
+											<DataGridTemplateColumn Header="Value">
+												<DataGridTemplateColumn.CellTemplate>
+													<DataTemplate DataType="vm:ParameterViewModel">
+														<TextBox Text="{Binding Value}"/>
+													</DataTemplate>
+												</DataGridTemplateColumn.CellTemplate>
+											</DataGridTemplateColumn>
+											<DataGridTextColumn Header="Type" Binding="{Binding Type}"/>
+										</DataGrid.Columns>
+									</DataGrid>
+								</StackPanel>
+							</controls:Card>
+							<controls:Card Name="QueryParametersCard"
+										   Margin="0 4">
+								<StackPanel>
+									<TextBlock FontSize="14"
+											   FontWeight="DemiBold">Query Parameters</TextBlock>
+									<DataGrid Name="QueryParametersDataGrid"
+											  IsReadOnly="True"
+											  GridLinesVisibility="Horizontal"
+											  x:DataType="vm:ParameterViewModel">
+										<DataGrid.Columns>
+											<DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+											<DataGridCheckBoxColumn Header="Required" Binding="{Binding IsRequired}"/>
+											<DataGridTemplateColumn Header="Value">
+												<DataGridTemplateColumn.CellTemplate>
+													<DataTemplate DataType="vm:ParameterViewModel">
+														<TextBox Text="{Binding Value}"/>
+													</DataTemplate>
+												</DataGridTemplateColumn.CellTemplate>
+											</DataGridTemplateColumn>
+											<DataGridTextColumn Header="Type" Binding="{Binding Type}"/>
+										</DataGrid.Columns>
+									</DataGrid>
+								</StackPanel>
+							</controls:Card>
+						</StackPanel>
+					</ScrollViewer>
+				</TabItem>
+				<TabItem Header="Body">
+					<avalonEdit:TextEditor
+						Name="EndpointRequestEditor"
+						HorizontalScrollBarVisibility="Auto"
+						VerticalScrollBarVisibility="Visible"
+						Text=""
+						ShowLineNumbers="True"
+						FontSize="12"/>
+				</TabItem>
+				<TabItem Header="Auth">
+					<Grid RowDefinitions="auto,auto,auto,*" ColumnDefinitions="*,4*">
+						<TextBlock FontSize="12"
+								   Grid.Row="0"
+								   Grid.Column="0"
+								   VerticalAlignment="Center">
+							Username
+						</TextBlock>
+						<TextBox Name="UsernameTextBox" 
+								 FontSize="12"
+								 Grid.Row="0"
+								 Grid.Column="1"
+								 Margin="0 0 0 8"
+								 IsReadOnly="True"/>
+						<TextBlock FontSize="12"
+								   Grid.Row="1"
+								   Grid.Column="0"
+								   VerticalAlignment="Center">
+							Password
+						</TextBlock>
+						<TextBox Name="PasswordTextBox" 
+								 FontSize="12"
+								 Grid.Row="1"
+								 Grid.Column="1"
+								 Margin="0 0 0 8"
+								 IsReadOnly="True"/>
+						<TextBlock FontSize="12"
+								   Grid.Row="2"
+								   Grid.Column="0"
+								   VerticalAlignment="Center">
+							Authorization
+						</TextBlock>
+						<TextBox Name="AuthorizationTextBox" FontSize="12"
+								 Grid.Row="2"
+								 Grid.Column="1"
+								 IsReadOnly="True"/>
+					</Grid>
+				</TabItem>
+				<TabItem Header="Schemas">
+					<ScrollViewer>
+						<StackPanel>
+							<controls:Card Name="RequestBodyTypeCard" 
+										   Margin="0 4">
+								<TextBlock>
+									<Run Text="Request body: " FontWeight="DemiBold" FontSize="12"/>
+									<Run Name="RequestBodyTypeRun" FontSize="12"/>
+								</TextBlock>
+							</controls:Card>
+							<Border Name="RequestClassesBorder" Margin="0 4">
+								<StackPanel>
+									<TextBlock FontSize="14" FontWeight="DemiBold" Margin="0 0 0 4">Request Classes</TextBlock>
+									<ItemsControl Name="RequestClassItemsControl"
+												  Margin="0 4 0 8"/>
+								</StackPanel>
+							</Border>
+							<controls:Card Margin="0 4">
+								<TextBlock>
+									<Run Text="Return value: " FontWeight="DemiBold" FontSize="12"/>
+									<Run Name="ReturnTypeRun" FontSize="12"/>
+								</TextBlock>
+							</controls:Card>
+							<Border Name="ResponseClassesBorder" Margin="0 4">
+								<StackPanel>
+									<TextBlock FontSize="14" FontWeight="DemiBold">Response Classes</TextBlock>
+									<ItemsControl Name="ResponseClassItemsControl"
+												  Margin="0 4 0 8"/>
+								</StackPanel>
+							</Border>
+						</StackPanel>
+					</ScrollViewer>
+				</TabItem>
+			</TabControl>
+		</Grid>
+		<GridSplitter Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Background="Gray"
+					  Margin="8 0 8 0"/>
+		<StackPanel Grid.Row="0" Grid.Column="4" Orientation="Horizontal">
+			<Button Name="ResponseStatusButton" 
+					HorizontalAlignment="Left"
+					VerticalAlignment="Center"
+					Margin="4"
+					FontSize="10"
+					Padding="12 4 12 4"
+					Classes="Flat"/>
+					
+		</StackPanel>
+		<Grid Grid.Row="1" Grid.Column="4">
+			<controls:BusyArea Name="SelectedPathOperationBusyArea" 
+							   BusyText="Loading...">
+				<TabControl>
+					<TabItem Header="Preview">
+						<avalonEdit:TextEditor
+							Name="EndpointResponseEditor"
+							HorizontalScrollBarVisibility="Auto"
+							VerticalScrollBarVisibility="Visible"
+							ShowLineNumbers="True"
+							IsReadOnly="True"
+							Text=""
+							FontSize="12"/>
+					</TabItem>
+				</TabControl>
+			</controls:BusyArea>
+		</Grid>
+	</Grid>
+</UserControl>

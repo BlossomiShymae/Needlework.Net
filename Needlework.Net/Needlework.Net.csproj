@@ -30,6 +30,7 @@
     <PackageReference Include="AvaloniaEdit.TextMate" Version="11.3.0" />
     <PackageReference Include="BlossomiShymae.Briar" Version="0.2.0" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+    <PackageReference Include="FastCache.Cached" Version="1.8.2" />
     <PackageReference Include="FluentAvaloniaUI" Version="2.3.0" />
     <PackageReference Include="Flurl" Version="4.0.0" />
     <PackageReference Include="Flurl.Http" Version="4.0.2" />
@@ -71,14 +72,32 @@
     <Compile Update="Controls\BusyArea.axaml.cs">
       <DependentUpon>BusyArea.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\MainWindow\MainWindowView.axaml.cs">
-      <DependentUpon>MainWindowView.axaml</DependentUpon>
+    <Compile Update="Views\MainWindow\MainWindow.axaml.cs">
+      <DependentUpon>MainWindow.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\Pages\Endpoints\EndpointsNavigationView.axaml.cs">
-      <DependentUpon>EndpointsNavigationView.axaml</DependentUpon>
+    <Compile Update="Views\Pages\About\AboutPage.axaml.cs">
+      <DependentUpon>AboutPage.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\Pages\Endpoints\EndpointView.axaml.cs">
-      <DependentUpon>EndpointView.axaml</DependentUpon>
+    <Compile Update="Views\Pages\Console\ConsolePage.axaml.cs">
+      <DependentUpon>ConsolePage.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Pages\Endpoints\EndpointTabListView.axaml.cs">
+      <DependentUpon>EndpointTabListView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Pages\Endpoints\EndpointTabItemContentView.axaml.cs">
+      <DependentUpon>EndpointTabItemContentView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Pages\Endpoints\EndpointsPage.axaml.cs">
+      <DependentUpon>EndpointsPage.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Pages\Endpoints\PluginView.axaml.cs">
+      <DependentUpon>PluginView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Pages\Home\HomePage.axaml.cs">
+      <DependentUpon>HomePage.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Pages\WebSocket\WebSocketPage.axaml.cs">
+      <DependentUpon>WebSocketPage.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 

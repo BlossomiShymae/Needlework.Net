@@ -7,12 +7,8 @@
 			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
 			 RequestedThemeVariant="Dark">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-	<Application.DataTemplates>
-		<local:ViewLocator/>
-	</Application.DataTemplates>
-	
 	<Application.Styles>
-		<sty:FluentAvaloniaTheme PreferSystemTheme="False" PreferUserAccentColor="False" />
+		<sty:FluentAvaloniaTheme />
 		<materialIcons:MaterialIconStyles />
 		<StyleInclude Source="Controls/Card.axaml"/>
 		<StyleInclude Source="Controls/UserCard.axaml"/>

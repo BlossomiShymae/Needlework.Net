@@ -1,0 +1,84 @@
+<Window
+		xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:ui="using:FluentAvalonia.UI.Controls"             
+        xmlns:uip="using:FluentAvalonia.UI.Controls.Primitives"
+		xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+		xmlns:reactiveUi="http://reactiveui.net"
+		xmlns:i="https://github.com/projektanker/icons.avalonia"
+		xmlns:vm="using:Needlework.Net.ViewModels.MainWindow"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Needlework.Net.Views.MainWindow.MainWindow"
+		x:DataType="vm:MainWindowViewModel"
+        Title="Needlework.Net"
+		Icon="/Assets/app.ico"
+        Width="1280"
+        Height="720">	
+	<Grid RowDefinitions="auto,*">
+		<Grid ColumnDefinitions="auto,auto,*,auto"
+			  Background="Transparent"
+			  Height="40"
+			  Grid.Row="0">
+			<Image Margin="12 4"
+				   IsHitTestVisible="False"
+				   Source="/Assets/app.png"
+				   Width="18"
+				   Height="18"
+				   DockPanel.Dock="Left"
+				   Grid.Column="0"/>
+			<TextBlock FontSize="12"
+					   IsHitTestVisible="False"
+					   VerticalAlignment="Center"
+					   Grid.Column="1">
+				Needlework.Net
+			</TextBlock>
+		</Grid>
+		<ui:NavigationView Name="NavigationView"
+						   AlwaysShowHeader="False"
+						   PaneDisplayMode="Left"
+						   IsSettingsVisible="False"
+						   IsPaneOpen="False"
+						   OpenPaneLength="200"
+						   Grid.Row="1">
+			<ui:NavigationView.PaneFooter>
+				<StackPanel Orientation="Vertical">
+					<StackPanel.Styles>
+						<Style Selector="materialIcons|MaterialIcon">
+							<Setter Property="Width" Value="20" />
+							<Setter Property="Height" Value="20" />
+						</Style>
+						<Style Selector="i|Icon">
+							<Setter Property="FontSize" Value="20" />
+						</Style>
+					</StackPanel.Styles>
+					<Button Name="GithubButton"
+							Theme="{StaticResource TransparentButton}"
+							VerticalAlignment="Center"
+							ToolTip.Tip="Open on GitHub."
+							Margin="4">
+						<materialIcons:MaterialIcon Kind="Github" />
+					</Button>
+					<Button Name="DiscordButton"
+							Theme="{StaticResource TransparentButton}"
+							VerticalAlignment="Center"
+							ToolTip.Tip="Open Discord server."
+							Margin="4">
+						<i:Icon Value="fa-brand fa-discord" />
+					</Button>
+				</StackPanel>
+			</ui:NavigationView.PaneFooter>
+			<Grid>
+				<reactiveUi:RoutedViewHost Name="RoutedViewHost"/>
+				<Button Name="VersionButton"
+						Background="RoyalBlue"
+						HorizontalAlignment="Right"
+						VerticalAlignment="Bottom"
+						Margin="16"/>
+				<ItemsControl Name="NotificationItemsControl"
+							  VerticalAlignment="Bottom"/>
+			</Grid>
+		</ui:NavigationView>
+	</Grid>
+</Window>

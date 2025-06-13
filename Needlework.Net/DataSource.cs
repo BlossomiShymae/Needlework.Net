@@ -1,60 +1,53 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using FastCache;
+using Flurl.Http;
+using Flurl.Http.Configuration;
 using Microsoft.OpenApi.Readers;
 using Needlework.Net.Models;
+using Splat;
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Needlework.Net
 {
-    public class DataSource
+    public class DataSource : IEnableLogger
     {
-        private readonly ILogger<DataSource> _logger;
-        private readonly HttpClient _httpClient;
-        private Document? _lcuSchemaDocument;
-        private Document? _lolClientDocument;
-        private readonly TaskCompletionSource<bool> _taskCompletionSource = new();
+        private readonly OpenApiStreamReader _reader = new();
 
+        private readonly IFlurlClient _githubUserContentClient;
 
-        public DataSource(HttpClient httpClient, ILogger<DataSource> logger)
+        public DataSource(IFlurlClientCache? clients = null)
         {
-            _httpClient = httpClient;
-            _logger = logger;
+            _githubUserContentClient = clients?.Get("GithubUserContentClient") ?? Locator.Current.GetService<IFlurlClientCache>()!.Get("GithubUserContentClient")!;
         }
 
         public async Task<Document> GetLcuSchemaDocumentAsync()
         {
-            await _taskCompletionSource.Task;
-            return _lcuSchemaDocument ?? throw new InvalidOperationException();
+            if (Cached<Document>.TryGet(nameof(GetLcuSchemaDocumentAsync), out var cached))
+            {
+                return cached;
+            }
+
+            var lcuSchemaStream = await _githubUserContentClient.Request("/dysolix/hasagi-types/main/swagger.json")
+                .GetStreamAsync();
+            var lcuSchemaRaw = _reader.Read(lcuSchemaStream, out var _);
+            var document = new Document(lcuSchemaRaw);
+
+            return cached.Save(document, TimeSpan.FromMinutes(60));
         }
 
         public async Task<Document> GetLolClientDocumentAsync()
         {
-            await _taskCompletionSource.Task;
-            return _lolClientDocument ?? throw new InvalidOperationException();
-        }
+            if (Cached<Document>.TryGet(nameof(GetLolClientDocumentAsync), out var cached))
+            {
+                return cached;
+            }
 
-        public async Task InitializeAsync()
-        {
-            try
-            {
-                var reader = new OpenApiStreamReader();
-                var lcuSchemaStream = await _httpClient.GetStreamAsync("https://raw.githubusercontent.com/dysolix/hasagi-types/main/swagger.json");
-                var lcuSchemaRaw = reader.Read(lcuSchemaStream, out var _);
-                _lcuSchemaDocument = new Document(lcuSchemaRaw);
+            var lolClientStream = await _githubUserContentClient.Request("/AlsoSylv/Irelia/refs/heads/master/schemas/game_schema.json")
+                .GetStreamAsync();
+            var lolClientRaw = _reader.Read(lolClientStream, out var _);
+            var document = new Document(lolClientRaw);
 
-                var lolClientStream = await _httpClient.GetStreamAsync("https://raw.githubusercontent.com/AlsoSylv/Irelia/refs/heads/master/schemas/game_schema.json");
-                var lolClientRaw = reader.Read(lolClientStream, out var _);
-                _lolClientDocument = new Document(lolClientRaw);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to initialize DataSource");
-            }
-            finally
-            {
-                _taskCompletionSource.SetResult(true);
-            }
+            return cached.Save(document, TimeSpan.FromMinutes(60));
         }
     }
 }

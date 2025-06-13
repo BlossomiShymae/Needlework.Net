@@ -1,10 +1,10 @@
 ﻿using BlossomiShymae.Briar.WebSocket.Events;
-using CommunityToolkit.Mvvm.ComponentModel;
+using ReactiveUI;
 using System;
 
-namespace Needlework.Net.ViewModels.Pages.Websocket;
+namespace Needlework.Net.ViewModels.Pages.WebSocket;
 
-public class EventViewModel : ObservableObject
+public class EventViewModel : ReactiveObject
 {
     public string Time { get; }
     public string Type { get; }

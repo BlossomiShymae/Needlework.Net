@@ -1,15 +1,17 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Threading.Tasks;
+﻿using ReactiveUI;
 
 namespace Needlework.Net.ViewModels.Pages;
 
 
-public abstract partial class PageBase(string displayName, string icon, int index = 0) : ObservableValidator
+public abstract partial class PageBase(string displayName, string icon, int index = 0) : ReactiveObject, IRoutableViewModel
 {
-    [ObservableProperty] private string _displayName = displayName;
-    [ObservableProperty] private string _icon = icon;
-    [ObservableProperty] private int _index = index;
-    [ObservableProperty] private bool _isInitialized;
+    public string DisplayName { get; } = displayName;
 
-    public abstract Task InitializeAsync();
+    public string Icon { get; } = icon;
+
+    public int Index { get; } = index;
+
+    public abstract string? UrlPathSegment { get; }
+
+    public abstract IScreen HostScreen { get; }
 }

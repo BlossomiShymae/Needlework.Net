@@ -1,0 +1,30 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:Needlework.Net.ViewModels.Pages.Endpoints"
+		xmlns:views="using:Needlework.Net.Views.Pages.Endpoints"
+		xmlns:controls="using:Needlework.Net.Controls"
+		xmlns:reactiveUi="http://reactiveui.net"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+		Name="EndpointsControl"
+        x:Class="Needlework.Net.Views.Pages.Endpoints.EndpointTabListView"
+		x:DataType="vm:EndpointTabListViewModel">
+	<Grid RowDefinitions="auto,auto,*" ColumnDefinitions="*">
+		<TextBox Name="SearchTextBox" 
+				 Watermark="Search" 
+				 Margin="0 4" 
+				 Grid.Row="1" 
+				 Grid.Column="0"/>
+		<ScrollViewer Grid.Row="2" Grid.Column="0">
+			<ItemsControl Name="EndpointSearchDetailItemsControl"
+						  ItemsSource="{Binding Plugins}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate x:DataType="vm:EndpointSearchDetailsViewModel">
+						<reactiveUi:ViewModelViewHost ViewModel="{Binding}"/>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</ScrollViewer>
+	</Grid>
+</UserControl>

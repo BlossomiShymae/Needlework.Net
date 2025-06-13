@@ -1,0 +1,37 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 xmlns:vm="using:Needlework.Net.ViewModels.Pages.Endpoints"
+			 xmlns:ui="using:FluentAvalonia.UI.Controls"             
+			 xmlns:controls="using:Needlework.Net.Controls"
+             x:Class="Needlework.Net.Views.Pages.Endpoints.PathOperationView"
+			 x:DataType="vm:PathOperationViewModel">
+	<Grid RowDefinitions="*"
+		  ColumnDefinitions="auto,*">
+		<Grid.ContextFlyout>
+			<MenuFlyout>
+				<MenuItem Header="Copy Swagger URL" Command="{Binding CopyUrlCommand}"/>
+				<MenuItem Header="Copy Markdown" Command="{Binding CopyMarkdownCommand}"/>
+			</MenuFlyout>
+		</Grid.ContextFlyout>
+		<TextBlock
+			VerticalAlignment="Center"
+			TextAlignment="Center"
+			Margin="0 0 8 0"
+			Text="{Binding Request.Value.Method}"
+			Background="{Binding Request.Value.Color}"
+			FontSize="8"
+			Width="50"
+			Padding="10 2 10 2"
+			Grid.Row="0"
+			Grid.Column="0"/>
+		<TextBlock
+			VerticalAlignment="Center"
+			Text="{Binding Path}"
+			FontSize="11"
+			Grid.Row="0"
+			Grid.Column="1"/>
+	</Grid>
+</UserControl>

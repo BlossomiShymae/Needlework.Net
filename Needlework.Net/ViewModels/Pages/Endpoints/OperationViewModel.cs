@@ -1,7 +1,6 @@
-﻿using Avalonia.Collections;
-using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 using Needlework.Net.Models;
+using ReactiveUI;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -9,19 +8,8 @@ using System.Text.Json;
 
 namespace Needlework.Net.ViewModels.Pages.Endpoints;
 
-public partial class OperationViewModel : ObservableObject
+public partial class OperationViewModel : ReactiveObject
 {
-    public string Summary { get; }
-    public string Description { get; }
-    public string ReturnType { get; }
-    public bool IsRequestBody { get; }
-    public string? RequestBodyType { get; }
-    public IAvaloniaReadOnlyList<PropertyClassViewModel> RequestClasses { get; }
-    public IAvaloniaReadOnlyList<PropertyClassViewModel> ResponseClasses { get; }
-    public IAvaloniaReadOnlyList<ParameterViewModel> PathParameters { get; }
-    public IAvaloniaReadOnlyList<ParameterViewModel> QueryParameters { get; }
-    public string? RequestTemplate { get; }
-
     public OperationViewModel(OpenApiOperation operation, Models.Document document)
     {
         Summary = operation.Summary ?? string.Empty;
@@ -35,6 +23,26 @@ public partial class OperationViewModel : ObservableObject
         RequestBodyType = GetRequestBodyType(operation.RequestBody);
         RequestTemplate = GetRequestTemplate(operation.RequestBody, document);
     }
+
+    public List<PropertyClassViewModel> RequestClasses { get; }
+
+    public List<PropertyClassViewModel> ResponseClasses { get; }
+
+    public List<ParameterViewModel> PathParameters { get; }
+
+    public List<ParameterViewModel> QueryParameters { get; }
+
+    public string? RequestTemplate { get; }
+
+    public string Summary { get; }
+
+    public string Description { get; }
+
+    public string ReturnType { get; }
+
+    public bool IsRequestBody { get; }
+
+    public string? RequestBodyType { get; }
 
     private string? GetRequestTemplate(OpenApiRequestBody? requestBody, Document document)
     {
@@ -50,7 +58,7 @@ public partial class OperationViewModel : ObservableObject
         return JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(string.Join(string.Empty, template)), App.JsonSerializerOptions);
     }
 
-    private List<string> CreateTemplate(AvaloniaList<PropertyClassViewModel> requestClasses)
+    private List<string> CreateTemplate(List<PropertyClassViewModel> requestClasses)
     {
         if (requestClasses.Count == 0) return [];
         List<string> template = [];
@@ -83,7 +91,7 @@ public partial class OperationViewModel : ObservableObject
                 }
                 else
                 {
-                    AvaloniaList<PropertyClassViewModel> classes = [.. requestClasses];
+                    List<PropertyClassViewModel> classes = [.. requestClasses];
                     classes.Remove(rootClass);
                     template[i] = string.Join(string.Empty, CreateTemplate(classes));
                 }
@@ -121,9 +129,9 @@ public partial class OperationViewModel : ObservableObject
         return null;
     }
 
-    private AvaloniaList<ParameterViewModel> GetParameters(IList<OpenApiParameter> parameters, ParameterLocation location)
+    private List<ParameterViewModel> GetParameters(IList<OpenApiParameter> parameters, ParameterLocation location)
     {
-        var pathParameters = new AvaloniaList<ParameterViewModel>();
+        var pathParameters = new List<ParameterViewModel>();
         foreach (var parameter in parameters)
         {
             if (parameter.In != location) continue;
@@ -151,7 +159,7 @@ public partial class OperationViewModel : ObservableObject
 
     }
 
-    private AvaloniaList<PropertyClassViewModel> GetResponseClasses(OpenApiResponses responses, Document document)
+    private List<PropertyClassViewModel> GetResponseClasses(OpenApiResponses responses, Document document)
     {
         if (!TryGetResponse(responses, out var response))
             return [];
@@ -162,7 +170,7 @@ public partial class OperationViewModel : ObservableObject
             var schema = media.Schema;
             if (schema == null) return [];
 
-            AvaloniaList<PropertyClassViewModel> propertyClasses = [];
+            List<PropertyClassViewModel> propertyClasses = [];
             WalkSchema(schema, propertyClasses, rawDocument);
             return propertyClasses;
         }
@@ -170,7 +178,7 @@ public partial class OperationViewModel : ObservableObject
         return [];
     }
 
-    private void WalkSchema(OpenApiSchema schema, AvaloniaList<PropertyClassViewModel> propertyClasses, OpenApiDocument document)
+    private void WalkSchema(OpenApiSchema schema, List<PropertyClassViewModel> propertyClasses, OpenApiDocument document)
     {
         var type = GetSchemaType(schema);
         if (IsComponent(type))
@@ -209,7 +217,7 @@ public partial class OperationViewModel : ObservableObject
                             || type.Contains("number"));
     }
 
-    private AvaloniaList<PropertyClassViewModel> GetRequestClasses(OpenApiRequestBody? requestBody, Document document)
+    private List<PropertyClassViewModel> GetRequestClasses(OpenApiRequestBody? requestBody, Document document)
     {
         if (requestBody == null) return [];
         if (requestBody.Content.TryGetValue("application/json", out var media))
@@ -223,7 +231,7 @@ public partial class OperationViewModel : ObservableObject
             {
                 var componentId = GetComponentId(schema);
                 var componentSchema = rawDocument.Components.Schemas[componentId];
-                AvaloniaList<PropertyClassViewModel> propertyClasses = [];
+                List<PropertyClassViewModel> propertyClasses = [];
                 WalkSchema(componentSchema, propertyClasses, rawDocument);
                 return propertyClasses;
             }

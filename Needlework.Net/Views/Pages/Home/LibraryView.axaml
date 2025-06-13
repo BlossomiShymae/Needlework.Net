@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:reactiveUi="http://reactiveui.net"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Needlework.Net.Views.Pages.Home.LibraryView">
+	<StackPanel>
+		<TextBlock>
+			<Run Name="LanguageRun" 
+				 FontWeight="Bold"/>
+			<Bold> - </Bold>
+			<Run Name="RepoRun"
+				 FontWeight="Bold"/>
+		</TextBlock>
+		<TextBlock Name="DescriptionTextBlock" 
+				   TextAlignment="Left"
+				   TextWrapping="WrapWithOverflow"
+				   Width="350"/>
+		<Button Name="OpenUrlButton" 
+				Margin="0 4 0 0">
+			<TextBlock Name="OpenUrlTextBlock" />
+		</Button>
+	</StackPanel>
+</UserControl>

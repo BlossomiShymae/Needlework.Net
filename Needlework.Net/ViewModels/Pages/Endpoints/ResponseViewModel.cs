@@ -1,17 +1,11 @@
 ﻿using BlossomiShymae.Briar.Utils;
-using CommunityToolkit.Mvvm.ComponentModel;
+using ReactiveUI;
+using ReactiveUI.SourceGenerators;
 
 namespace Needlework.Net.ViewModels.Pages.Endpoints;
 
-public partial class ResponseViewModel : ObservableObject
+public partial class ResponseViewModel : ReactiveObject
 {
-    [ObservableProperty] private string? _path;
-    [ObservableProperty] private string? _status;
-    [ObservableProperty] private string? _authentication;
-    [ObservableProperty] private string? _username;
-    [ObservableProperty] private string? _password;
-    [ObservableProperty] private string? _authorization;
-
     public ResponseViewModel(string path)
     {
         Path = path;
@@ -25,6 +19,24 @@ public partial class ResponseViewModel : ObservableObject
             Authorization = $"Basic {riotAuthentication.RawValue}";
         }
     }
+
+    [Reactive]
+    private string? _path;
+
+    [Reactive]
+    private string? _status;
+
+    [Reactive]
+    private string? _authentication;
+
+    [Reactive]
+    private string? _username;
+
+    [Reactive]
+    private string? _password;
+
+    [Reactive]
+    private string? _authorization;
 
     private static ProcessInfo? GetProcessInfo()
     {

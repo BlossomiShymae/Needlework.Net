@@ -7,6 +7,6 @@ namespace Needlework.Net.Models
         [JsonPropertyName("tag_name")]
         public string TagName { get; set; } = string.Empty;
 
-        public bool IsLatest(int version) => int.Parse(TagName.Replace(".", "")) > version;
+        public bool IsLatest(string assemblyVersion) => int.Parse(TagName.Replace(".", string.Empty)) > int.Parse(assemblyVersion.Replace(".", string.Empty));
     }
 }

@@ -1,30 +1,20 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.Logging;
-using Needlework.Net.Models;
+﻿using Needlework.Net.Models;
 using Needlework.Net.ViewModels.Shared;
+using ReactiveUI;
+using ReactiveUI.SourceGenerators;
 using System;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Needlework.Net.ViewModels.Pages.Endpoints;
 
-public partial class PathOperationViewModel : ObservableObject
+public partial class PathOperationViewModel : ReactiveObject
 {
-    public string Path { get; }
-    public OperationViewModel Operation { get; }
-
-    public string Url { get; }
-    public string Markdown { get; }
-
-    [ObservableProperty] private bool _isBusy;
-    [ObservableProperty] private Lazy<RequestViewModel> _request;
-
-    public PathOperationViewModel(PathOperation pathOperation, ILogger<RequestViewModel> requestViewModelLogger, Document document, Tab tab)
+    public PathOperationViewModel(PathOperation pathOperation, Document document, Tab tab)
     {
         Path = pathOperation.Path;
         Operation = new OperationViewModel(pathOperation.Operation, document);
-        Request = new(() => new RequestViewModel(requestViewModelLogger, tab)
+        Request = new(() => new RequestViewModel(tab)
         {
             Method = pathOperation.Method.ToUpper()
         });
@@ -32,7 +22,21 @@ public partial class PathOperationViewModel : ObservableObject
         Markdown = $"[{pathOperation.Method.ToUpper()} {Path}]({Url})";
     }
 
-    [RelayCommand]
+    public string Path { get; }
+
+    public OperationViewModel Operation { get; }
+
+    public string Url { get; }
+
+    public string Markdown { get; }
+
+    [Reactive]
+    private bool _isBusy;
+
+    [Reactive]
+    private Lazy<RequestViewModel> _request;
+
+    [ReactiveCommand]
     private async Task SendRequest()
     {
         var sb = new StringBuilder(Path);
@@ -56,13 +60,13 @@ public partial class PathOperationViewModel : ObservableObject
         await Request.Value.ExecuteAsync();
     }
 
-    [RelayCommand]
+    [ReactiveCommand]
     private void CopyUrl()
     {
         App.MainWindow?.Clipboard?.SetTextAsync(Url);
     }
 
-    [RelayCommand]
+    [ReactiveCommand]
     private void CopyMarkdown()
     {
         App.MainWindow?.Clipboard?.SetTextAsync(Markdown);

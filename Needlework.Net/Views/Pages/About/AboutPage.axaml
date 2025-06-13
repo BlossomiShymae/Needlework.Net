@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:Needlework.Net.ViewModels.Pages.About"
+			 xmlns:controls="using:Needlework.Net.Controls"
+			 xmlns:reactiveUi="http://reactiveui.net"
+			 xmlns:i="https://github.com/projektanker/icons.avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Needlework.Net.Views.Pages.About.AboutPage"
+			 x:DataType="vm:AboutViewModel">
+	<ScrollViewer Margin="8">
+		<WrapPanel HorizontalAlignment="Center">
+			<WrapPanel.Styles>
+				<Style Selector="controls|UserCard">
+					<Setter Property="Width" Value="272"/>
+					<Setter Property="MaxHeight" Value="378"/>
+					<Setter Property="Margin" Value="0 16 32 16"/>
+				</Style>
+			</WrapPanel.Styles>
+			<controls:UserCard UserImage="/Assets/Users/blossomishymae.png"
+							   UserName="estrogen elf"
+							   UserGithub="BlossomiShymae">
+				Needlework.Net is the .NET rewrite of Needlework. This tool was made to help others with LCU and Game Client development. Feel free to ask any questions
+				or help contribute to the project! Made with love. 💜
+			</controls:UserCard>
+			<controls:UserCard UserImage="/Assets/Users/dysolix.png"
+							   UserName="dysolix"
+							   UserGithub="dysolix">
+				For providing LCU Schema, the auto-generated OpenAPI document for the LCU.
+			</controls:UserCard>
+			<controls:UserCard UserImage="/Assets/Users/sylv.jpg"
+							   UserName="Sylv"
+							   UserGithub="AlsoSylv">
+				For providing a fixed up-to-date Game Client schema.
+			</controls:UserCard>
+			<controls:UserCard UserImage="/Assets/Users/ray.png"
+							   UserName="Ray"
+							   UserGithub="Hi-Ray">
+				For guidance, advice, and providing help via HextechDocs.
+			</controls:UserCard>
+			<controls:UserCard UserImage="/Assets/Users/dubble.png"
+							   UserName="dubble"
+							   UserGithub="cuppachino">
+				For encouraging me to publish Needlework.Net and other ideas.
+			</controls:UserCard>
+			<controls:UserCard UserImage="/Assets/Users/aoshiw.png"
+							   UserName="AoshiW"
+							   UserGithub="AoshiW">
+				For PR.
+			</controls:UserCard>
+		</WrapPanel>
+	</ScrollViewer>
+</UserControl>

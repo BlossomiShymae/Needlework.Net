@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:reactiveUi="http://reactiveui.net"
+			 xmlns:ui="using:FluentAvalonia.UI.Controls"
+			 xmlns:uip="using:FluentAvalonia.UI.Controls.Primitives"
+			 xmlns:vm="using:Needlework.Net.ViewModels.Pages.WebSocket"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Needlework.Net.Views.Pages.WebSocket.EventView"
+			 x:DataType="vm:EventViewModel">
+	<Grid ColumnDefinitions="auto,auto,*">
+		<TextBlock Name="TimeTextBlock"
+				   Margin="0 0 4 0"
+				   Grid.Column="0"
+				   Foreground="#8be9fd"/>
+		<TextBlock Name="TypeTextBlock"
+				   Grid.Column="1"
+				   Margin="0 0 4 0"
+				   Foreground="#ffb86c"/>
+		<TextBlock Name="UriTextBlock"
+				   Grid.Column="2"
+				   Foreground="#f8f8f2"/>
+	</Grid>
+</UserControl>
