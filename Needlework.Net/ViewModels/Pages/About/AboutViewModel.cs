@@ -6,7 +6,7 @@ namespace Needlework.Net.ViewModels.Pages.About;
 
 public partial class AboutViewModel : PageBase
 {
-    public AboutViewModel() : base("About", "info-circle")
+    public AboutViewModel() : base("About", "fa-solid fa-circle-info")
     {
     }
 

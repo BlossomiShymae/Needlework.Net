@@ -1,4 +1,6 @@
-﻿using BlossomiShymae.Briar;
+﻿using Avalonia;
+using Avalonia.Media;
+using BlossomiShymae.Briar;
 using BlossomiShymae.Briar.Utils;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -123,7 +125,19 @@ public partial class MainWindowViewModel
     {
         Content = page.DisplayName,
         Tag = page,
-        IconSource = new BitmapIconSource() { UriSource = new Uri($"avares://NeedleworkDotNet/Assets/Icons/{page.Icon}.png") }
+        IconSource = new ImageIconSource
+        {
+            Source = new Projektanker.Icons.Avalonia.IconImage()
+            {
+                Value = page.Icon,
+                Brush = new SolidColorBrush(Application.Current!.ActualThemeVariant.Key switch
+                {
+                    "Light" => Colors.Black,
+                    "Dark" => Colors.White,
+                    _ => Colors.Gray
+                })
+            }
+        }
     };
 
     partial void OnSelectedNavigationViewItemChanged(NavigationViewItem value)

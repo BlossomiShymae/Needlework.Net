@@ -12,7 +12,7 @@ namespace Needlework.Net.ViewModels.Pages.Home;
 
 public partial class HomeViewModel : PageBase
 {
-    public HomeViewModel() : base("Home", "home", int.MinValue) { }
+    public HomeViewModel() : base("Home", "fa-solid fa-house", int.MinValue) { }
 
     public List<LibraryViewModel> Libraries { get; } = JsonSerializer.Deserialize<List<Library>>(AssetLoader.Open(new Uri($"avares://NeedleworkDotNet/Assets/libraries.json")))
         !.Where(library => library.Tags.Contains("lcu") || library.Tags.Contains("ingame"))
