@@ -9,7 +9,7 @@
         x:Class="Needlework.Net.Views.Pages.Endpoints.EndpointListView"
 		x:DataType="vm:EndpointListViewModel">
 	<Grid RowDefinitions="auto,auto,*" ColumnDefinitions="*">
-		<TextBox Watermark="Search" Margin="0 4" Text="{Binding Search}" Grid.Row="1" Grid.Column="0"/>
+		<TextBox Watermark="Search" Margin="0 0 0 4" Text="{Binding Search}" Grid.Row="1" Grid.Column="0"/>
 		<ScrollViewer Grid.Row="2" Grid.Column="0">
 			<ItemsControl ItemsSource="{Binding EndpointSearchDetails}">
 				<ItemsControl.ItemTemplate>
