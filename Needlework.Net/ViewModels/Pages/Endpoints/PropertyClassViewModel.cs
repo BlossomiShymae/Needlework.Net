@@ -1,5 +1,4 @@
-﻿using Avalonia.Collections;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
@@ -9,14 +8,10 @@ namespace Needlework.Net.ViewModels.Pages.Endpoints;
 
 public class PropertyClassViewModel : ObservableObject
 {
-    public string Id { get; }
-    public IAvaloniaReadOnlyList<PropertyFieldViewModel> PropertyFields { get; } = new AvaloniaList<PropertyFieldViewModel>();
-    public IAvaloniaReadOnlyList<PropertyEnumViewModel> PropertyEnums { get; } = new AvaloniaList<PropertyEnumViewModel>();
-
     public PropertyClassViewModel(string id, IDictionary<string, OpenApiSchema> properties, IList<IOpenApiAny> enumValue)
     {
-        AvaloniaList<PropertyFieldViewModel> propertyFields = [];
-        AvaloniaList<PropertyEnumViewModel> propertyEnums = [];
+        List<PropertyFieldViewModel> propertyFields = [];
+        List<PropertyEnumViewModel> propertyEnums = [];
         foreach ((var propertyName, var propertySchema) in properties)
         {
             var type = OperationViewModel.GetSchemaType(propertySchema);
@@ -32,4 +27,10 @@ public class PropertyClassViewModel : ObservableObject
         PropertyEnums = propertyEnums;
         Id = id;
     }
+
+    public string Id { get; }
+
+    public List<PropertyFieldViewModel> PropertyFields { get; } = [];
+
+    public List<PropertyEnumViewModel> PropertyEnums { get; } = [];
 }

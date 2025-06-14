@@ -1,11 +1,12 @@
 ﻿using Avalonia.Media;
+using AvaloniaEdit.Document;
 using BlossomiShymae.Briar;
 using BlossomiShymae.Briar.Utils;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Extensions.Logging;
+using Needlework.Net.Extensions;
 using Needlework.Net.Messages;
-using Needlework.Net.ViewModels.MainWindow;
+using Needlework.Net.Services;
 using Needlework.Net.ViewModels.Pages.Endpoints;
 using System;
 using System.Net.Http;
@@ -14,34 +15,53 @@ using System.Threading.Tasks;
 
 namespace Needlework.Net.ViewModels.Shared;
 
-public partial class RequestViewModel : ObservableObject
+public partial class RequestViewModel : ObservableObject, IEnableLogger
 {
-    [ObservableProperty] private string? _method = "GET";
-    [ObservableProperty] private SolidColorBrush _color = new(GetColor("GET"));
+    private readonly NotificationService _notificationService;
 
-    [ObservableProperty] private bool _isRequestBusy = false;
-    [ObservableProperty] private string? _requestPath = null;
-    [ObservableProperty] private string? _requestBody = null;
-
-    [ObservableProperty] private string? _responsePath = null;
-    [ObservableProperty] private string? _responseStatus = null;
-    [ObservableProperty] private string? _responseAuthentication = null;
-    [ObservableProperty] private string? _responseUsername = null;
-    [ObservableProperty] private string? _responsePassword = null;
-    [ObservableProperty] private string? _responseAuthorization = null;
-    [ObservableProperty] private string? _responseBody = null;
-
-    public event EventHandler<RequestViewModel>? RequestText;
-    public event EventHandler<string>? UpdateText;
-
-    private readonly ILogger<RequestViewModel> _logger;
     private readonly Tab _tab;
 
-    public RequestViewModel(ILogger<RequestViewModel> logger, Pages.Endpoints.Tab tab)
+    public RequestViewModel(NotificationService notificationService, Tab tab)
     {
-        _logger = logger;
         _tab = tab;
+        _notificationService = notificationService;
     }
+
+    [ObservableProperty]
+    private string? _method = "GET";
+
+    [ObservableProperty]
+    private SolidColorBrush _color = new(GetColor("GET"));
+
+    [ObservableProperty]
+    private bool _isRequestBusy;
+
+    [ObservableProperty]
+    private string? _requestPath;
+
+    [ObservableProperty]
+    private TextDocument _requestDocument = new();
+
+    [ObservableProperty]
+    private TextDocument _responseDocument = new();
+
+    [ObservableProperty]
+    private string? _responsePath;
+
+    [ObservableProperty]
+    private string? _responseStatus;
+
+    [ObservableProperty]
+    private string? _responseAuthentication;
+
+    [ObservableProperty]
+    private string? _responseUsername;
+
+    [ObservableProperty]
+    private string? _responsePassword;
+
+    [ObservableProperty]
+    private string? _responseAuthorization;
 
     partial void OnMethodChanged(string? oldValue, string? newValue)
     {
@@ -74,9 +94,10 @@ public partial class RequestViewModel : ObservableObject
                 throw new Exception("Path is empty.");
             var method = GetMethod();
 
-            _logger.LogDebug("Sending request: {Tuple}", (Method, RequestPath));
-            RequestText?.Invoke(this, this);
-            var content = new StringContent(RequestBody ?? string.Empty, new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
+            this.Log()
+                .Debug("Sending request: {Tuple}", (Method, RequestPath));
+            var requestBody = RequestDocument.Text;
+            var content = new StringContent(requestBody, new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
             var client = Connector.GetGameHttpClientInstance();
             var response = await client.SendAsync(new HttpRequestMessage(method, RequestPath) { Content = content });
             var responseBody = await response.Content.ReadAsByteArrayAsync();
@@ -85,12 +106,11 @@ public partial class RequestViewModel : ObservableObject
             if (body.Length > App.MaxCharacters)
             {
                 WeakReferenceMessenger.Default.Send(new OopsiesDialogRequestedMessage(body));
-                UpdateText?.Invoke(this, string.Empty);
+                ResponseDocument = new();
             }
             else
             {
-                ResponseBody = body;
-                UpdateText?.Invoke(this, body);
+                ResponseDocument = new(body);
             }
 
             ResponseStatus = $"{(int)response.StatusCode} {response.StatusCode.ToString()}";
@@ -99,9 +119,9 @@ public partial class RequestViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Request failed: {Tuple}", (Method, RequestPath));
-            WeakReferenceMessenger.Default.Send(new InfoBarUpdateMessage(new InfoBarViewModel("Request Failed", true, ex.Message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error, TimeSpan.FromSeconds(5))));
-            UpdateText?.Invoke(this, string.Empty);
+            this.Log()
+                .Error(ex, "Request failed: {Tuple}", (Method, RequestPath));
+            _notificationService.Notify("Request failed", ex.Message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error);
 
             ResponseStatus = null;
             ResponsePath = null;
@@ -109,7 +129,7 @@ public partial class RequestViewModel : ObservableObject
             ResponseAuthorization = null;
             ResponseUsername = null;
             ResponsePassword = null;
-            ResponseBody = null;
+            ResponseDocument = new();
         }
         finally
         {
@@ -126,11 +146,12 @@ public partial class RequestViewModel : ObservableObject
                 throw new Exception("Path is empty.");
             var method = GetMethod();
 
-            _logger.LogDebug("Sending request: {Tuple}", (Method, RequestPath));
+            this.Log()
+                .Debug("Sending request: {Tuple}", (Method, RequestPath));
 
             var processInfo = ProcessFinder.GetProcessInfo();
-            RequestText?.Invoke(this, this);
-            var content = new StringContent(RequestBody ?? string.Empty, new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
+            var requestBody = RequestDocument.Text;
+            var content = new StringContent(requestBody, new System.Net.Http.Headers.MediaTypeHeaderValue("application/json"));
             var client = Connector.GetLcuHttpClientInstance();
             var response = await client.SendAsync(new(method, RequestPath) { Content = content });
             var riotAuthentication = new RiotAuthentication(processInfo.RemotingAuthToken);
@@ -140,12 +161,11 @@ public partial class RequestViewModel : ObservableObject
             if (body.Length >= App.MaxCharacters)
             {
                 WeakReferenceMessenger.Default.Send(new OopsiesDialogRequestedMessage(body));
-                UpdateText?.Invoke(this, string.Empty);
+                ResponseDocument = new();
             }
             else
             {
-                ResponseBody = body;
-                UpdateText?.Invoke(this, body);
+                ResponseDocument = new(body);
             }
 
             ResponseStatus = $"{(int)response.StatusCode} {response.StatusCode.ToString()}";
@@ -157,9 +177,9 @@ public partial class RequestViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Request failed: {Tuple}", (Method, RequestPath));
-            WeakReferenceMessenger.Default.Send(new InfoBarUpdateMessage(new InfoBarViewModel("Request Failed", true, ex.Message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error, TimeSpan.FromSeconds(5))));
-            UpdateText?.Invoke(this, string.Empty);
+            this.Log()
+                .Error(ex, "Request failed: {Tuple}", (Method, RequestPath));
+            _notificationService.Notify("Request failed", ex.Message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error);
 
             ResponseStatus = null;
             ResponsePath = null;
@@ -167,7 +187,7 @@ public partial class RequestViewModel : ObservableObject
             ResponseAuthorization = null;
             ResponseUsername = null;
             ResponsePassword = null;
-            ResponseBody = null;
+            ResponseDocument = new();
         }
         finally
         {

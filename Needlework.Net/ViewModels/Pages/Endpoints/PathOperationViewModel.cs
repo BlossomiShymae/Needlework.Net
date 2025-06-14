@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.Logging;
 using Needlework.Net.Models;
 using Needlework.Net.ViewModels.Shared;
 using System;
@@ -11,26 +10,30 @@ namespace Needlework.Net.ViewModels.Pages.Endpoints;
 
 public partial class PathOperationViewModel : ObservableObject
 {
-    public string Path { get; }
-    public OperationViewModel Operation { get; }
-
-    public string Url { get; }
-    public string Markdown { get; }
-
-    [ObservableProperty] private bool _isBusy;
-    [ObservableProperty] private Lazy<RequestViewModel> _request;
-
-    public PathOperationViewModel(PathOperation pathOperation, ILogger<RequestViewModel> requestViewModelLogger, Document document, Tab tab)
+    public PathOperationViewModel(Services.NotificationService notificationService, PathOperation pathOperation, Document document, Tab tab)
     {
         Path = pathOperation.Path;
         Operation = new OperationViewModel(pathOperation.Operation, document);
-        Request = new(() => new RequestViewModel(requestViewModelLogger, tab)
+        Request = new(() => new RequestViewModel(notificationService, tab)
         {
-            Method = pathOperation.Method.ToUpper()
+            Method = pathOperation.Method.ToUpper(),
+            RequestDocument = new(Operation.RequestTemplate ?? string.Empty)
         });
         Url = $"https://swagger.dysolix.dev/lcu/#/{Uri.EscapeDataString(pathOperation.Tag)}/{pathOperation.Operation.OperationId}";
         Markdown = $"[{pathOperation.Method.ToUpper()} {Path}]({Url})";
     }
+
+    public string Path { get; }
+
+    public OperationViewModel Operation { get; }
+
+    public string Url { get; }
+
+    public string Markdown { get; }
+
+    [ObservableProperty] private bool _isBusy;
+
+    [ObservableProperty] private Lazy<RequestViewModel> _request;
 
     [RelayCommand]
     private async Task SendRequest()

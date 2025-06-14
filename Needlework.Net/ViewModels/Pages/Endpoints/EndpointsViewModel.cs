@@ -1,52 +1,78 @@
-﻿using Avalonia.Collections;
+﻿using Avalonia.Threading;
+using AvaloniaEdit.Utils;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.Logging;
 using Needlework.Net.Models;
-using Needlework.Net.ViewModels.Shared;
+using Needlework.Net.Services;
 using System;
-using System.Linq;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace Needlework.Net.ViewModels.Pages.Endpoints;
 
-public partial class EndpointsViewModel : ObservableObject
+public enum Tab
 {
-    public IAvaloniaList<string> Plugins { get; }
-    public IAvaloniaList<string> Query { get; }
+    LCU,
+    GameClient
+}
 
-    [ObservableProperty] private string _search = string.Empty;
-    [ObservableProperty] private string? _selectedQuery = string.Empty;
+public partial class EndpointsViewModel : PageBase
+{
+    private readonly DocumentService _documentService;
 
-    public Action<ObservableObject> OnClicked { get; }
+    private readonly NotificationService _notificationService;
 
-    private readonly ILogger<RequestViewModel> _requestViewModelLogger;
-    private readonly Document _document;
-    private readonly Tab _tab;
-
-    public EndpointsViewModel(IAvaloniaList<string> plugins, Action<ObservableObject> onClicked, ILogger<RequestViewModel> requestViewModelLogger, Models.Document document, Tab tab)
+    public EndpointsViewModel(DocumentService documentService, NotificationService notificationService) : base("Endpoints", "list-alt", -500)
     {
-        Plugins = new AvaloniaList<string>(plugins);
-        Query = new AvaloniaList<string>(plugins);
-        OnClicked = onClicked;
-        _requestViewModelLogger = requestViewModelLogger;
-        _document = document;
-        _tab = tab;
+        _documentService = documentService;
+        _notificationService = notificationService;
     }
 
-    partial void OnSearchChanged(string value)
+    public ObservableCollection<string> Plugins { get; } = [];
+
+    public ObservableCollection<EndpointTabItemViewModel> Endpoints { get; } = [];
+
+    [ObservableProperty] private bool _isBusy = true;
+
+    public override async Task InitializeAsync()
     {
-        Query.Clear();
-        if (!string.IsNullOrEmpty(Search))
-            Query.AddRange(Plugins.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
-        else
-            Query.AddRange(Plugins);
+        await AddEndpoint(Tab.LCU);
+        IsBusy = false;
     }
 
     [RelayCommand]
-    private void OpenEndpoint(string? value)
+    private async Task AddEndpoint(Tab tab)
     {
-        if (string.IsNullOrEmpty(value)) return;
+        Document document = tab switch
+        {
+            Tab.LCU => await _documentService.GetLcuSchemaDocumentAsync(),
+            Tab.GameClient => await _documentService.GetLolClientDocumentAsync(),
+            _ => throw new NotImplementedException(),
+        };
 
-        OnClicked.Invoke(new EndpointViewModel(value, _requestViewModelLogger, _document, _tab));
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            Plugins.Clear();
+            Plugins.AddRange(document.Plugins.Keys);
+            var vm = new EndpointTabItemContentViewModel(_notificationService, Plugins, OnEndpointNavigation, AddEndpointCommand, document, tab);
+            Endpoints.Add(new()
+            {
+                Content = vm,
+                Header = vm.Title,
+                Selected = true
+            });
+        });
+    }
+
+    private void OnEndpointNavigation(string? title, Guid guid)
+    {
+        foreach (var endpoint in Endpoints)
+        {
+            if (endpoint.Content.Guid.Equals(guid))
+            {
+                endpoint.Header = endpoint.Content.Title;
+                break;
+            }
+        }
     }
 }

@@ -6,11 +6,7 @@
 			 xmlns:sty="using:FluentAvalonia.Styling"
 			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
 			 RequestedThemeVariant="Dark">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-	<Application.DataTemplates>
-		<local:ViewLocator/>
-	</Application.DataTemplates>
-	
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->	
 	<Application.Styles>
 		<sty:FluentAvaloniaTheme PreferSystemTheme="False" PreferUserAccentColor="False" />
 		<materialIcons:MaterialIconStyles />
@@ -21,7 +17,7 @@
 	</Application.Styles>
 
 	<Application.Resources>
-		<converters:EnumerableBoolConverter x:Key="EnumerableBoolConverter"/>
-		<converters:NullBoolConverter x:Key="NullBoolConverter"/>
+		<converters:EnumerableToVisibility x:Key="EnumerableToVisibilityConverter"/>
+		<converters:NullableToVisibility x:Key="NullableToVisibilityConverter"/>
 	</Application.Resources>
 </Application>

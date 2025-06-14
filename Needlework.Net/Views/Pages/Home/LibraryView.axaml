@@ -1,0 +1,27 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:Needlework.Net.ViewModels.Pages.Home"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Needlework.Net.Views.Pages.Home.LibraryView"
+			 x:DataType="vm:LibraryViewModel">
+	<StackPanel>
+		<TextBlock>
+			<Run Text="{Binding Library.Language}"
+				 FontWeight="Bold"/>
+			<Bold> - </Bold>
+			<Run Text="{Binding Library.Repo}"
+				 FontWeight="Bold"/>
+		</TextBlock>
+		<TextBlock Text="{Binding Library.Description}"
+				   IsVisible="{Binding Library.Description, Converter={StaticResource NullableToVisibilityConverter}}"
+				   TextAlignment="Left"
+				   TextWrapping="WrapWithOverflow"
+				   Width="350"/>
+		<Button Command="{Binding OpenUrlCommand}"
+				Margin="0 4 0 0">
+			<TextBlock Text="{Binding Library.Link}"/>
+		</Button>
+	</StackPanel>
+</UserControl>

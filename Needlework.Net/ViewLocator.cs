@@ -17,11 +17,11 @@ namespace Needlework.Net
             var name = data?.GetType().Name;
             if (name is null)
             {
-                return new TextBlock { Text = "Data is null or has no name." };
+                throw new Exception("Data type name is null.");
             }
             if (!name.Contains("ViewModel"))
             {
-                return new TextBlock { Text = "Data name must end with ViewModel." };
+                throw new Exception("Data type name must end with 'ViewModel'.");
             }
 
             name = name.Replace("ViewModel", "View");
@@ -32,9 +32,8 @@ namespace Needlework.Net
 
             if (type is null)
             {
-                return new TextBlock { Text = $"No view for {name}." };
+                throw new Exception("Data type has no view.");
             }
-
             if (!_controlCache.TryGetValue(data!, out var res))
             {
                 res ??= (Control)Activator.CreateInstance(type)!;

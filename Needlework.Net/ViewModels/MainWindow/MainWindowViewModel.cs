@@ -1,11 +1,12 @@
-﻿using Avalonia.Collections;
-using BlossomiShymae.Briar;
+﻿using BlossomiShymae.Briar;
 using BlossomiShymae.Briar.Utils;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
-using Microsoft.Extensions.Logging;
+using Flurl.Http;
+using Flurl.Http.Configuration;
+using Needlework.Net.Extensions;
 using Needlework.Net.Messages;
 using Needlework.Net.Models;
 using Needlework.Net.Services;
@@ -16,203 +17,178 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.Http;
 using System.Net.Http.Json;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Timers;
 
 namespace Needlework.Net.ViewModels.MainWindow;
 
 public partial class MainWindowViewModel
-    : ObservableObject, IRecipient<InfoBarUpdateMessage>, IRecipient<OopsiesDialogRequestedMessage>
+    : ObservableObject, IRecipient<OopsiesDialogRequestedMessage>, IEnableLogger
 {
-    public IAvaloniaReadOnlyList<NavigationViewItem> MenuItems { get; }
-    [ObservableProperty] private NavigationViewItem _selectedMenuItem;
-    [ObservableProperty] private PageBase _currentPage;
+    private readonly DocumentService _documentService;
 
-    public string Version { get; } = Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "0.0.0.0";
-    [ObservableProperty] private bool _isUpdateShown = false;
+    private readonly IFlurlClient _githubClient;
 
-    [ObservableProperty] private string _schemaVersion = "N/A";
-    [ObservableProperty] private string _schemaVersionLatest = "N/A";
+    private readonly NotificationService _notificationService;
 
-    public HttpClient HttpClient { get; }
-    public DialogService DialogService { get; }
+    private readonly DialogService _dialogService;
 
-    private readonly DataSource _dataSource;
+    private readonly IDisposable _checkForUpdatesDisposable;
 
-    [ObservableProperty] private bool _isBusy = true;
+    private readonly IDisposable _checkForSchemaVersionDisposable;
 
-    [ObservableProperty] private ObservableCollection<InfoBarViewModel> _infoBarItems = [];
-
-    private readonly ILogger<MainWindowViewModel> _logger;
-
-    private readonly System.Timers.Timer _latestUpdateTimer = new()
+    public MainWindowViewModel(IEnumerable<PageBase> pages, DialogService dialogService, DocumentService documentService, NotificationService notificationService, IFlurlClientCache clients)
     {
-        Interval = TimeSpan.FromMinutes(10).TotalMilliseconds,
-        Enabled = true
-    };
+        _dialogService = dialogService;
+        _documentService = documentService;
+        _notificationService = notificationService;
+        _githubClient = clients.Get("GithubClient");
 
-    private readonly System.Timers.Timer _schemaVersionTimer = new()
-    {
-        Interval = TimeSpan.FromSeconds(5).TotalMilliseconds,
-        Enabled = true
-    };
-    private bool _isSchemaVersionChecked = false;
-
-    public MainWindowViewModel(IEnumerable<PageBase> pages, HttpClient httpClient, DialogService dialogService, ILogger<MainWindowViewModel> logger, DataSource dataSource)
-    {
-        _logger = logger;
-        _dataSource = dataSource;
-
-        MenuItems = new AvaloniaList<NavigationViewItem>(pages
+        NavigationViewItems = pages
             .OrderBy(p => p.Index)
             .ThenBy(p => p.DisplayName)
-            .Select(p => new NavigationViewItem()
-            {
-                Content = p.DisplayName,
-                Tag = p,
-                IconSource = new BitmapIconSource() { UriSource = new Uri($"avares://NeedleworkDotNet/Assets/Icons/{p.Icon}.png") }
-            }));
-        SelectedMenuItem = MenuItems[0];
-        CurrentPage = (PageBase)MenuItems[0].Tag!;
+            .Select(ToNavigationViewItem)
+            .ToList();
+        SelectedNavigationViewItem = NavigationViewItems.First();
+        CurrentPage = (PageBase)SelectedNavigationViewItem.Tag!;
 
-        HttpClient = httpClient;
-        DialogService = dialogService;
+        _notificationService.Notifications.Subscribe(async notification =>
+        {
+            var vm = new NotificationViewModel(notification);
+            Notifications.Add(vm);
+            await Task.Delay(notification.Duration ?? TimeSpan.FromSeconds(10));
+            Notifications.Remove(vm);
+        });
+
+        _checkForUpdatesDisposable = Observable.Timer(TimeSpan.Zero, TimeSpan.FromMinutes(10))
+            .Select(time => Unit.Default)
+            .Subscribe(async _ =>
+            {
+                try
+                {
+                    await CheckForUpdatesAsync();
+                }
+                catch (Exception ex)
+                {
+                    var message = "Failed to check for updates. Please check your internet connection or try again later.";
+                    this.Log()
+                        .Error(ex, message);
+                    _notificationService.Notify("Needlework.Net", message, InfoBarSeverity.Error);
+                    _checkForUpdatesDisposable?.Dispose();
+                }
+            });
+
+        _checkForSchemaVersionDisposable = Observable.Timer(TimeSpan.Zero, TimeSpan.FromMinutes(10))
+            .Select(time => Unit.Default)
+            .Subscribe(async _ =>
+            {
+                try
+                {
+                    await CheckForSchemaVersionAsync();
+                }
+                catch (Exception ex)
+                {
+                    var message = "Failed to check for schema version. Please check your internet connection or try again later.";
+                    this.Log()
+                        .Error(ex, message);
+                    _notificationService.Notify("Needlework.Net", message, InfoBarSeverity.Error);
+                    _checkForSchemaVersionDisposable?.Dispose();
+                }
+            });
 
         WeakReferenceMessenger.Default.RegisterAll(this);
-
-        _latestUpdateTimer.Elapsed += OnLatestUpdateTimerElapsed;
-        _schemaVersionTimer.Elapsed += OnSchemaVersionTimerElapsed;
-        _latestUpdateTimer.Start();
-        _schemaVersionTimer.Start();
-        OnLatestUpdateTimerElapsed(null, null);
-        OnSchemaVersionTimerElapsed(null, null);
-
     }
 
-    partial void OnSelectedMenuItemChanged(NavigationViewItem value)
+    [ObservableProperty]
+    private ObservableCollection<NotificationViewModel> _notifications = [];
+
+    [ObservableProperty]
+    private NavigationViewItem _selectedNavigationViewItem;
+
+    [ObservableProperty]
+    private PageBase _currentPage;
+
+    public List<NavigationViewItem> NavigationViewItems { get; private set; } = [];
+
+    public bool IsSchemaVersionChecked { get; private set; }
+
+    public string Version { get; } = Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "0.0.0.0";
+
+    public string Title => $"Needlework.Net {Version}";
+
+    private NavigationViewItem ToNavigationViewItem(PageBase page) => new()
+    {
+        Content = page.DisplayName,
+        Tag = page,
+        IconSource = new BitmapIconSource() { UriSource = new Uri($"avares://NeedleworkDotNet/Assets/Icons/{page.Icon}.png") }
+    };
+
+    partial void OnSelectedNavigationViewItemChanged(NavigationViewItem value)
     {
         if (value.Tag is PageBase page)
         {
             CurrentPage = page;
-            if (!page.IsInitialized)
-            {
-                Task.Run(page.InitializeAsync);
-            }
         }
     }
 
-    private async void OnSchemaVersionTimerElapsed(object? sender, ElapsedEventArgs? e)
+    private async Task CheckForUpdatesAsync()
+    {
+        var release = await _githubClient
+            .Request("/repos/BlossomiShymae/Needlework.Net/releases/latest")
+            .WithHeader("User-Agent", $"Needlework.Net/{Version}")
+            .GetJsonAsync<GithubRelease>();
+
+        if (release.IsLatest(Version))
+        {
+            this.Log()
+                .Information("New version available: {TagName}", release.TagName);
+            _notificationService.Notify("Needlework.Net", $"New version available: {release.TagName}", InfoBarSeverity.Informational, null, "https://github.com/BlossomiShymae/Needlework.Net/releases/latest");
+            _checkForUpdatesDisposable?.Dispose();
+        }
+    }
+
+
+    private async Task CheckForSchemaVersionAsync()
     {
         if (!ProcessFinder.IsPortOpen()) return;
-        var lcuSchemaDocument = await _dataSource.GetLcuSchemaDocumentAsync();
 
-        try
+        var lcuSchemaDocument = await _documentService.GetLcuSchemaDocumentAsync();
+        var client = Connector.GetLcuHttpClientInstance();
+        var currentSemVer = lcuSchemaDocument.Info.Version.Split('.');
+        var systemBuild = await client.GetFromJsonAsync<SystemBuild>("/system/v1/builds") ?? throw new NullReferenceException();
+        var latestSemVer = systemBuild.Version.Split('.');
+
+        if (!IsSchemaVersionChecked)
         {
-            var client = Connector.GetLcuHttpClientInstance();
-
-            var currentSemVer = lcuSchemaDocument.Info.Version.Split('.');
-            var systemBuild = await client.GetFromJsonAsync<SystemBuild>("/system/v1/builds") ?? throw new NullReferenceException();
-            var latestSemVer = systemBuild.Version.Split('.');
-
-            if (!_isSchemaVersionChecked)
-            {
-                _logger.LogInformation("LCU Schema (current): {Version}", lcuSchemaDocument.Info.Version);
-                _logger.LogInformation("LCU Schema (latest): {Version}", systemBuild.Version);
-                _isSchemaVersionChecked = true;
-            }
-
-            bool isVersionMatching = currentSemVer[0] == latestSemVer[0] && currentSemVer[1] == latestSemVer[1]; // Compare major and minor versions
-            if (!isVersionMatching)
-            {
-                Avalonia.Threading.Dispatcher.UIThread.Post(async () =>
-                {
-                    await ShowInfoBarAsync(new("Newer System Build", true, $"LCU Schema is possibly outdated compared to latest system build. Consider submitting a pull request on dysolix/hasagi-types.\nCurrent: {string.Join(".", currentSemVer)}\nLatest: {string.Join(".", latestSemVer)}", InfoBarSeverity.Warning, TimeSpan.FromSeconds(60), new Avalonia.Controls.Button()
-                    {
-                        Command = OpenUrlCommand,
-                        CommandParameter = "https://github.com/dysolix/hasagi-types#updating-the-types",
-                        Content = "Submit PR"
-                    }));
-                });
-
-                _schemaVersionTimer.Elapsed -= OnSchemaVersionTimerElapsed;
-                _schemaVersionTimer.Stop();
-            }
+            this.Log()
+                .Information("LCU Schema (current): {Version}", lcuSchemaDocument.Info.Version);
+            this.Log()
+                .Information("LCU Schema (latest): {Version}", systemBuild.Version);
+            IsSchemaVersionChecked = true;
         }
-        catch (Exception ex)
+
+        bool isVersionMatching = currentSemVer[0] == latestSemVer[0] && currentSemVer[1] == latestSemVer[1]; // Compare major and minor versions
+        if (!isVersionMatching)
         {
-            _logger.LogError(ex, "Schema version check failed");
-        }
-    }
-
-    private async void OnLatestUpdateTimerElapsed(object? sender, ElapsedEventArgs? e)
-    {
-        try
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, "https://api.github.com/repos/BlossomiShymae/Needlework.Net/releases/latest");
-            request.Headers.UserAgent.Add(new System.Net.Http.Headers.ProductInfoHeaderValue("Needlework.Net", Version));
-
-            var response = await HttpClient.SendAsync(request);
-            var release = await response.Content.ReadFromJsonAsync<GithubRelease>();
-            if (release == null)
-            {
-                _logger.LogWarning("Release response is null");
-                return;
-            }
-
-            var currentVersion = int.Parse(Version.Replace(".", ""));
-
-            if (release.IsLatest(currentVersion))
-            {
-                Avalonia.Threading.Dispatcher.UIThread.Post(async () =>
-                {
-                    await ShowInfoBarAsync(new("Needlework.Net Update", true, $"There is a new version available: {release.TagName}.", InfoBarSeverity.Informational, TimeSpan.FromSeconds(30), new Avalonia.Controls.Button()
-                    {
-                        Command = OpenUrlCommand,
-                        CommandParameter = "https://github.com/BlossomiShymae/Needlework.Net/releases",
-                        Content = "Download"
-                    }));
-                });
-
-                _latestUpdateTimer.Elapsed -= OnLatestUpdateTimerElapsed;
-                _latestUpdateTimer.Stop();
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to check for latest version");
+            this.Log()
+                .Warning("LCU Schema version mismatch: Current {CurrentVersion}, Latest {LatestVersion}", lcuSchemaDocument.Info.Version, systemBuild.Version);
+            _notificationService.Notify("Needlework.Net", $"LCU Schema is possibly outdated compared to latest system build. Consider submitting a pull request on dysolix/hasagi-types.\nCurrent: {string.Join(".", currentSemVer)}\nLatest: {string.Join(".", latestSemVer)}", InfoBarSeverity.Warning, null, "https://github.com/dysolix/hasagi-types#updating-the-types");
+            _checkForSchemaVersionDisposable?.Dispose();
         }
     }
 
     [RelayCommand]
     private void OpenUrl(string url)
     {
-        var process = new Process()
-        {
-            StartInfo = new ProcessStartInfo(url)
-            {
-                UseShellExecute = true
-            }
-        };
+        var process = new Process() { StartInfo = new ProcessStartInfo(url) { UseShellExecute = true } };
         process.Start();
-    }
-
-    public void Receive(InfoBarUpdateMessage message)
-    {
-        Avalonia.Threading.Dispatcher.UIThread.Post(async () => await ShowInfoBarAsync(message.Value));
-    }
-
-    private async Task ShowInfoBarAsync(InfoBarViewModel vm)
-    {
-        InfoBarItems.Add(vm);
-        await Task.Delay(vm.Duration);
-        InfoBarItems.Remove(vm);
     }
 
     public void Receive(OopsiesDialogRequestedMessage message)
     {
-        Avalonia.Threading.Dispatcher.UIThread.Invoke(async () => await DialogService.ShowAsync<OopsiesDialog>(message.Value));
+        Avalonia.Threading.Dispatcher.UIThread.Invoke(async () => await _dialogService.ShowAsync<OopsiesDialog>(message.Value));
     }
 }

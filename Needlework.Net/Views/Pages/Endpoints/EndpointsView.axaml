@@ -1,29 +1,58 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:vm="using:Needlework.Net.ViewModels.Pages.Endpoints"
-		xmlns:controls="using:Needlework.Net.Controls"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-		Name="EndpointsControl"
-        x:Class="Needlework.Net.Views.Pages.Endpoints.EndpointsView"
-		x:DataType="vm:EndpointsViewModel">
-	<Grid RowDefinitions="auto,auto,*" ColumnDefinitions="*">
-		<TextBox Watermark="Search" Margin="0 4" Text="{Binding Search}" Grid.Row="1" Grid.Column="0"/>
-		<ScrollViewer Grid.Row="2" Grid.Column="0">
-			<ItemsRepeater ItemsSource="{Binding Query}">
-				<ItemsRepeater.ItemTemplate>
-					<DataTemplate>
-						<Button Command="{Binding #EndpointsControl.((vm:EndpointsViewModel)DataContext).OpenEndpointCommand}"
-								VerticalAlignment="Stretch"
-								HorizontalAlignment="Stretch"
-								HorizontalContentAlignment="Left"
-								CommandParameter="{Binding}"
-								Content="{Binding}"
-								Theme="{StaticResource TransparentButton}"/>
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:i="https://github.com/projektanker/icons.avalonia"
+			 Name="EndpointsTab"
+			 xmlns:vm="using:Needlework.Net.ViewModels.Pages.Endpoints"
+			 xmlns:ui="using:FluentAvalonia.UI.Controls"             
+			 xmlns:controls="using:Needlework.Net.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Needlework.Net.Views.Pages.Endpoints.EndpointsView"
+			 x:DataType="vm:EndpointsViewModel">
+	<controls:BusyArea IsBusy="{Binding IsBusy}"
+						   BusyText="Loading...">
+		<Grid>
+			<ui:TabView TabItems="{Binding Endpoints}"
+						AddTabButtonCommand="{Binding AddEndpointCommand}"
+						AddTabButtonCommandParameter="{x:Static vm:Tab.LCU}"
+						TabCloseRequested="TabView_TabCloseRequested">
+				<!--Need to override Tab header for Mica theme...-->
+				<ui:TabView.Resources>
+					<ResourceDictionary>
+						<SolidColorBrush x:Key="TabViewItemHeaderBackgroundSelected" Color="{DynamicResource ControlFillColorTransparent}"/>
+					</ResourceDictionary>
+				</ui:TabView.Resources>
+				<!--We need to hack this style for Mica theme since there is no way to explicity set style priority in Avalonia...-->
+				<ui:TabView.Styles>
+					<Style Selector="Grid > ContentPresenter#TabContentPresenter">
+						<Style.Animations>
+							<Animation IterationCount="1" Duration="0:0:1" FillMode="Both">
+								<KeyFrame Cue="0%">
+									<Setter Property="Background" Value="{DynamicResource ControlFillColorTransparentBrush}"/>
+								</KeyFrame>
+								<KeyFrame Cue="100%">
+									<Setter Property="Background" Value="{DynamicResource ControlFillColorTransparentBrush}"/>
+								</KeyFrame>
+							</Animation>
+						</Style.Animations>
+					</Style>
+				</ui:TabView.Styles>
+				<ui:TabView.TabItemTemplate>
+					<DataTemplate x:DataType="vm:EndpointTabItemViewModel">
+						<ui:TabViewItem Header="{Binding Header}"
+										IconSource="{Binding IconSource}"
+										IsSelected="{Binding Selected}"
+										Content="{Binding Content}">
+							<ui:TabViewItem.ContentTemplate>
+								<DataTemplate x:DataType="vm:EndpointTabItemContentViewModel">
+									<ContentControl Content="{Binding}"/>
+								</DataTemplate>
+							</ui:TabViewItem.ContentTemplate>
+						</ui:TabViewItem>
 					</DataTemplate>
-				</ItemsRepeater.ItemTemplate>
-			</ItemsRepeater>
-		</ScrollViewer>
-	</Grid>
+				</ui:TabView.TabItemTemplate>
+			</ui:TabView>
+		</Grid>
+	</controls:BusyArea>
 </UserControl>

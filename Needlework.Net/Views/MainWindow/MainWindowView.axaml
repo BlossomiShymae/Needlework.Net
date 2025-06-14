@@ -28,11 +28,10 @@
 				   DockPanel.Dock="Left"
 				   Grid.Column="0"/>
 			<TextBlock FontSize="12"
+					   Text="{Binding Title}"
 					   IsHitTestVisible="False"
 					   VerticalAlignment="Center"
-					   Grid.Column="1">
-				Needlework.Net
-			</TextBlock>
+					   Grid.Column="1"/>
 		</Grid>
 		<ui:NavigationView AlwaysShowHeader="False"
 						   PaneDisplayMode="Left"
@@ -40,8 +39,8 @@
 						   IsPaneOpen="False"
 						   OpenPaneLength="200"
 						   Grid.Row="1"
-						   MenuItemsSource="{Binding MenuItems}"
-						   SelectedItem="{Binding SelectedMenuItem}">
+						   MenuItemsSource="{Binding NavigationViewItems}"
+						   SelectedItem="{Binding SelectedNavigationViewItem}">
 			<ui:NavigationView.PaneFooter>
 				<StackPanel Orientation="Vertical">
 					<StackPanel.Styles>
@@ -75,27 +74,14 @@
 			</ui:NavigationView.PaneFooter>
 			<Grid>
 				<TransitioningContentControl Content="{Binding CurrentPage}"/>
-				<Button Content="{Binding Version}"
-						Background="RoyalBlue"
-						HorizontalAlignment="Right"
-						VerticalAlignment="Bottom"
-						Margin="16"/>
-				<ItemsRepeater ItemsSource="{Binding InfoBarItems}" 
+				<ItemsControl ItemsSource="{Binding Notifications}" 
 							   VerticalAlignment="Bottom">
-					<ItemsRepeater.ItemTemplate>
-						<DataTemplate>
-							<Border Margin="4">
-								<ui:InfoBar
-								Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
-								Title="{Binding Title}"
-								IsOpen="{Binding IsOpen}"
-								Severity="{Binding Severity}"
-								Message="{Binding Message}"
-								ActionButton="{Binding ActionButton}"/>
-							</Border>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate x:DataType="vm:NotificationViewModel">
+							<ContentControl Content="{Binding}"/>
 						</DataTemplate>
-					</ItemsRepeater.ItemTemplate>
-				</ItemsRepeater>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
 			</Grid>
 		</ui:NavigationView>
 	</Grid>

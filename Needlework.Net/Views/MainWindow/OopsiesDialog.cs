@@ -10,8 +10,10 @@ namespace Needlework.Net.Views.MainWindow;
 public class OopsiesDialog : IDialog, IDisposable
 {
     private bool _isDisposing;
+
     private string? _text;
-    private ContentDialog _dialog;
+
+    private readonly ContentDialog _dialog;
 
     public OopsiesDialog()
     {

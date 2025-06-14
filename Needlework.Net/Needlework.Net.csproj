@@ -31,6 +31,8 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="FastCache.Cached" Version="1.8.2" />
     <PackageReference Include="FluentAvaloniaUI" Version="2.3.0" />
+    <PackageReference Include="Flurl" Version="4.0.0" />
+    <PackageReference Include="Flurl.Http" Version="4.0.2" />
     <PackageReference Include="Material.Icons.Avalonia" Version="2.4.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.0" />
@@ -67,11 +69,17 @@
     <Compile Update="Views\MainWindow\MainWindowView.axaml.cs">
       <DependentUpon>MainWindowView.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\Pages\Endpoints\EndpointsNavigationView.axaml.cs">
-      <DependentUpon>EndpointsNavigationView.axaml</DependentUpon>
+    <Compile Update="Views\Pages\Endpoints\EndpointListView.axaml.cs">
+      <DependentUpon>EndpointListView.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\Pages\Endpoints\EndpointView.axaml.cs">
-      <DependentUpon>EndpointView.axaml</DependentUpon>
+    <Compile Update="Views\Pages\Endpoints\EndpointsView.axaml.cs">
+      <DependentUpon>EndpointsView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Pages\Endpoints\PluginView.axaml.cs">
+      <DependentUpon>PluginView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Pages\WebSocket\WebsocketView.axaml.cs">
+      <DependentUpon>WebSocketView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 

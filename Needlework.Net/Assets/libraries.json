@@ -1,1 +1,1796 @@
-[{"Repo":"GrrrLCU","Description":"A simple wrapper for the LCU. Grrr. x3","Language":"C#","Link":"https://github.com/BlossomiShymae/GrrrLCU"},{"Repo":"Kunc.RiotGames","Description":null,"Language":"C#","Link":"https://github.com/AoshiW/Kunc.RiotGames"},{"Repo":"rito","Description":"Rito is a simple, crossplatform (Windows and Linux) C++20 library interfacing with Riot services (i.e. Riot REST API and League of Legends client).","Language":"cpp","Link":"https://github.com/bartekprtc/rito"},{"Repo":"R4J","Description":"A Java library containing the API for every Riot game","Language":"Java","Link":"https://github.com/stelar7/R4J"},{"Repo":"hasagi-core","Description":"LCU library with auto-generated types for request parameters and responses","Language":"JavaScript","Link":"https://github.com/dysolix/hasagi-core"},{"Repo":"lcu-driver","Description":"Python3 helper for the League of Legends LCU API.","Language":"Python","Link":"https://github.com/sousa-andre/lcu-driver"},{"Repo":"willump","Description":"Python3 helper for the League of Legends LCU API.","Language":"Python","Link":"https://github.com/elliejs/Willump"},{"Repo":"Irelia","Description":"LoL LCU Wrapper for Rust, built on top of hyper!","Language":"Rust","Link":"https://github.com/AlsoSylv/Irelia"},{"Repo":"Shaco","Description":"League of Legends LCU wrapper for rust","Language":"Rust","Link":"https://github.com/Leastrio/Shaco"},{"Repo":"hasagi-core","Description":"LCU library with auto-generated types for request parameters and responses","Language":"TypeScript","Link":"https://github.com/dysolix/hasagi-core"},{"Repo":"hexgate","Description":"LCU API wrapper for League of Legends","Language":"TypeScript","Link":"https://github.com/cuppachino/hexgate"}]
+[
+    {
+        "owner": "BlossomiShymae",
+        "repo": "Briar",
+        "language": "C#",
+        "description": "A simple wrapper for the League Client and Game Client APIs.",
+        "links": [
+            {
+                "name": "NuGet",
+                "url": "https://www.nuget.org/packages/BlossomiShymae.Briar/"
+            },
+            {
+                "name": "Documentation",
+                "url": "https://github.com/BlossomiShymae/Briar/blob/main/README.md#Usage"
+            }
+        ],
+        "metadata": {
+            "async": true
+        },
+        "tags": [
+            "lcu",
+            "rest",
+            "websocket",
+            "ws",
+            "ingame"
+        ]
+    },
+    {
+        "owner": "MingweiSamuel",
+        "repo": "Camille",
+        "language": "C#",
+        "description": "Fully rate limited, automatic retrying, thread-safe. Automatic nightly releases.",
+        "links": [
+            {
+                "name": "NuGet",
+                "url": "https://www.nuget.org/packages/Camille.RiotGames/"
+            }
+        ],
+        "metadata": {
+            "v3": true,
+            "v4": true,
+            "async": true,
+            "rate-limiter": {
+                "header-driven": true,
+                "method-rate-limiting": true,
+                "per-region": true,
+                "per-endpoint": true
+            }
+        },
+        "tags": [
+            "v3",
+            "v4",
+            "rate-limiting",
+            "lol",
+            "tft",
+            "lor",
+            "val"
+        ]
+    },
+    {
+        "owner": "ercand",
+        "repo": "CottontailSummoners",
+        "description": "LeagueOfLegends v3 API wrapper. Website in asp.net MVC like www.op.gg",
+        "language": "C#",
+        "links": [
+            {
+                "name": "NuGet",
+                "url": "https://github.com/ercand/CottontailSummoners/"
+            }
+        ],
+        "metadata": {
+            "v3": true,
+            "rate-limiter": {
+                "header-driven": true,
+                "method-rate-limiting": true,
+                "per-region": true,
+                "per-endpoint": true
+            }
+        },
+        "tags": [
+            "v3",
+            "rate-limiter"
+        ]
+    },
+    {
+        "owner": "golf1052",
+        "repo": "CreepScore",
+        "language": "C#",
+        "links": [
+            {
+                "name": "NuGet",
+                "url": "https://www.nuget.org/packages/Creep.Score/"
+            }
+        ],
+        "metadata": {}
+    },
+    {
+        "owner": "AoshiW",
+        "repo": "Kunc.RiotGames",
+        "language": "C#",
+        "links": [
+            {
+                "name": "NuGet",
+                "url": "https://www.nuget.org/packages?q=Kunc.RiotGames."
+            }
+        ],
+        "metadata": {
+            "slow": true,
+            "bugFree": false,
+            "otherVeryUsefulMetadata": null
+        },
+        "tags": [
+            "lol",
+            "lcu",
+            "ingame",
+            "tft",
+            "lor",
+            "rate-limiting",
+            "v4"
+        ]
+    },
+    {
+        "owner": "XeeX",
+        "repo": "LeagueOfLegendsAPI",
+        "language": "C#",
+        "links": [
+            {
+                "name": "NuGet",
+                "url": "https://www.nuget.org/packages/Remake.PortableLeagueAPI/"
+            }
+        ],
+        "metadata": {}
+    },
+    {
+        "owner": "p-ob",
+        "repo": "LolSharp",
+        "language": "C#",
+        "links": [
+            {
+                "name": "NuGet",
+                "url": "https://www.nuget.org/packages/LolSharp/"
+            }
+        ],
+        "metadata": {}
+    },
+    {
+        "owner": "sdesyllas",
+        "repo": "RiotApi.NET",
+        "language": "C#",
+        "links": [
+            {
+                "name": "NuGet",
+                "url": "https://www.nuget.org/packages/RiotApi.NET/"
+            }
+        ],
+        "metadata": {}
+    },
+    {
+        "owner": "Msx752",
+        "repo": "RiotGamesAPI",
+        "description": "Riot Games API Library v3 (all in one)",
+        "language": "C#",
+        "links": [
+            {
+                "name": "AspNetCore",
+                "url": "https://www.nuget.org/packages/RiotGamesAPI/"
+            },
+            {
+                "name": "NetStandard",
+                "url": "https://www.nuget.org/packages/RiotGamesAPI/"
+            },
+            {
+                "name": "AspNet",
+                "url": "https://www.nuget.org/packages/RiotGamesAPI/"
+            },
+            {
+                "name": "Documentation",
+                "url": "https://riotgamesapi.readme.io/docs"
+            }
+        ],
+        "metadata": {
+            "v3": true,
+            "async": true,
+            "caching": {
+                "static-api": true,
+                "non-static-api": true
+            },
+            "rate-limiter": {
+                "header-driven": true,
+                "method-rate-limiting": true,
+                "per-region": true,
+                "per-endpoint": true
+            }
+        },
+        "tags": [
+            "v3",
+            "rate-limiting"
+        ]
+    },
+    {
+        "owner": "aj-r",
+        "repo": "RiotNet",
+        "language": "C#",
+        "links": [
+            {
+                "name": "NuGet",
+                "url": "https://www.nuget.org/packages/RiotNet/"
+            },
+            {
+                "name": "Documentation",
+                "url": "http://aj-r.github.io/RiotNet/docs/interface_riot_net_1_1_i_riot_client.html"
+            }
+        ],
+        "metadata": {
+            "v3": true,
+            "async": true,
+            "caching": {
+                "static-api": false,
+                "non-static-api": false
+            },
+            "rate-limiter": {
+                "header-driven": true,
+                "method-rate-limiting": true,
+                "per-region": true,
+                "per-endpoint": true
+            }
+        },
+        "tags": [
+            "v3",
+            "rate-limiting"
+        ]
+    },
+    {
+        "owner": "BenFradet",
+        "repo": "RiotSharp",
+        "language": "C#",
+        "description": "RiotSharp's ASP.NET Core integration. **NOTE: Library is not actively maintained! You will have to fork the project and add missing enum values, classes and properties.**",
+        "links": [],
+        "metadata": {
+            "v4": true,
+            "async": true,
+            "caching": false,
+            "rate-limiter": {
+                "header-driven": false,
+                "method-rate-limiting": true,
+                "per-region": true,
+                "per-endpoint": true
+            }
+        },
+        "tags": [
+            "v4",
+            "rate-limiting",
+            "asp-net-core"
+        ]
+    },
+    {
+        "owner": "ChristianFreak",
+        "repo": "RiotWrapper.NET",
+        "description": "An asynchronus .NET wrapper for the League of Legends API",
+        "language": "C#",
+        "links": [
+            {
+                "name": "NuGet",
+                "url": "https://www.nuget.org/packages/RiotWrapper.NET/"
+            }
+        ],
+        "metadata": {},
+        "tags": [
+            "v3",
+            "rate-limiting"
+        ]
+    },
+    {
+        "owner": "Dan-Tan",
+        "repo": "riot-cpp",
+        "language": "cpp",
+        "description": "A c++ library implementing allowing basic access to riot's api using libcurl and jsoncpp",
+        "links": [
+            {
+                "name": "Documentation",
+                "url": "https://github.com/Dan-Tan/riot-cpp"
+            }
+        ],
+        "metadata": {},
+        "tags": [
+            "v4",
+            "rate-limiting",
+            "logging"
+        ]
+    },
+    {
+        "owner": "bartekprtc",
+        "repo": "rito",
+        "description": "Rito is a simple, crossplatform (Windows and Linux) C++20 library interfacing with Riot services (i.e. Riot REST API and League of Legends client).",
+        "language": "cpp",
+        "links": [
+            {
+                "name": "Docs",
+                "url": "https://bartekjaszczak.github.io/rito/"
+            }
+        ],
+        "metadata": {
+            "version": "0.1.0"
+        },
+        "tags": [
+            "lol",
+            "lcu",
+            "ingame",
+            "v4"
+        ]
+    },
+    {
+        "owner": "aguxez",
+        "repo": "godfist",
+        "description": "Library for League of Legends API in Elixir.",
+        "language": "Elixir",
+        "links": [
+            {
+                "name": "Documentation",
+                "url": "https://hexdocs.pm/godfist/Godfist.html"
+            }
+        ],
+        "metadata": {
+            "v3-supported": true
+        },
+        "tags": [
+            "v3"
+        ]
+    },
+    {
+        "owner": "trilleplay",
+        "repo": "seraphine",
+        "description": "Seraphine is an API library written in Elixir for the Riot Games API.",
+        "language": "Elixir",
+        "links": [
+            {
+                "name": "Documentation",
+                "url": "https://hexdocs.pm/seraphine/readme.html"
+            }
+        ],
+        "metadata": {
+            "version": "0.1.1"
+        },
+        "tags": [
+            "v4",
+            "rate-limiting"
+        ]
+    },
+    {
+        "owner": "KnutZuidema",
+        "repo": "golio",
+        "language": "Go",
+        "links": [
+            {
+                "name": "src",
+                "url": "https://github.com/KnutZuidema/golio"
+            },
+            {
+                "name": "docs",
+                "url": "https://pkg.go.dev/github.com/KnutZuidema/golio"
+            }
+        ],
+        "metadata": {
+            "version": "1.0.0"
+        },
+        "tags": [
+            "v4",
+            "rate-limiting",
+            "caching",
+            "lol",
+            "lor",
+            "val"
+        ]
+    },
+    {
+        "owner": "bbqtd",
+        "repo": "rg-kit",
+        "description": "A Riot Games developer toolkit",
+        "language": "Go",
+        "links": [
+            {
+                "name": "src",
+                "url": "https://github.com/bbqtd/rg-kit"
+            },
+            {
+                "name": "Documentation",
+                "url": "https://godoc.org/github.com/bbqtd/rg-kit"
+            }
+        ],
+        "metadata": {},
+        "tags": [
+            "v3",
+            "rate-limiting"
+        ]
+    },
+    {
+        "owner": "junioryono",
+        "repo": "Riot-API-Golang",
+        "language": "Go",
+        "links": [
+            {
+                "name": "github",
+                "url": "https://github.com/junioryono/Riot-API-Golang"
+            }
+        ],
+        "metadata": {
+            "version": "0.1"
+        },
+        "tags": [
+            "v4",
+            "v5",
+            "ddragon",
+            "rate-limiting"
+        ]
+    },
+    {
+        "owner": "yuhanfang",
+        "repo": "riot",
+        "description": "Go library for the Riot Games API",
+        "language": "Go",
+        "links": [
+            {
+                "name": "Documentation",
+                "url": "https://github.com/yuhanfang/riot"
+            }
+        ],
+        "metadata": {
+            "version": "1.0"
+        },
+        "tags": [
+            "v3",
+            "rate-limiting"
+        ]
+    },
+    {
+        "owner": "meraki-analytics",
+        "repo": "orianna",
+        "description": "A highly configurable, usability-focused Riot API framework that takes care of all the details for you so you can focus on building your application",
+        "language": "Java",
+        "links": [
+            {
+                "name": "Maven",
+                "url": "https://search.maven.org/search?q=g:com.merakianalytics.orianna"
+            },
+            {
+                "name": "Documentation",
+                "url": "http://orianna.readthedocs.org/en/latest/"
+            },
+            {
+                "name": "JavaDoc",
+                "url": "http://javadoc.io/doc/com.merakianalytics.orianna/orianna"
+            }
+        ],
+        "metadata": {},
+        "tags": [
+            "v4",
+            "rate-limiting",
+            "caching"
+        ]
+    },
+    {
+        "owner": "stelar7",
+        "repo": "R4J",
+        "language": "Java",
+        "description": "A Java library containing the API for every Riot game",
+        "links": [],
+        "metadata": {},
+        "tags": [
+            "v4",
+            "v5",
+            "lcu",
+            "ingame",
+            "lol",
+            "tft",
+            "lor",
+            "val"
+        ]
+    },
+    {
+        "owner": "shyos",
+        "repo": "Shyvana",
+        "language": "Java",
+        "links": [],
+        "metadata": {}
+    },
+    {
+        "owner": "a64adam",
+        "repo": "ulti",
+        "language": "Java",
+        "links": [],
+        "metadata": {}
+    },
+    {
+        "owner": "MingweiSamuel",
+        "repo": "Zyra",
+        "language": "Java",
+        "links": [
+            {
+                "name": "Maven",
+                "url": "https://search.maven.org/search?q=g:com.mingweisamuel.zyra%20AND%20a:zyra"
+            },
+            {
+                "name": "Nightlies",
+                "url": "http://www.mingweisamuel.com/Zyra/"
+            },
+            {
+                "name": "Javadoc",
+                "url": "http://www.mingweisamuel.com/Zyra/apidocs/"
+            }
+        ],
+        "metadata": {
+            "async": true,
+            "rate-limiter": true,
+            "retries": true
+        },
+        "tags": [
+            "v3",
+            "rate-limiting"
+        ]
+    },
+    {
+        "owner": "fightmegg",
+        "repo": "riot-api",
+        "language": "JavaScript",
+        "description": "Fully featured Riot API client",
+        "links": [
+            {
+                "name": "npm",
+                "url": "https://www.npmjs.com/package/@fightmegg/riot-api"
+            }
+        ],
+        "metadata": {
+            "v4": true,
+            "async": true,
+            "rate-limiter": {
+                "header-driven": true,
+                "method-rate-limiting": true,
+                "per-region": true,
+                "per-endpoint": true,
+                "spread": true
+            },
+            "cacher": {
+                "in-memory": true,
+                "redis": true
+            }
+        },
+        "tags": [
+            "v4",
+            "rate-limiting",
+            "caching"
+        ]
+    },
+    {
+        "owner": "bcho04",
+        "repo": "galeforce",
+        "language": "JavaScript",
+        "links": [
+            {
+                "name": "npm",
+                "url": "https://www.npmjs.com/package/galeforce"
+            },
+            {
+                "name": "github",
+                "url": "https://github.com/bcho04/galeforce"
+            },
+            {
+                "name": "docs",
+                "url": "https://bcho04.github.io/galeforce/"
+            }
+        ],
+        "metadata": {
+            "version": "0.5.0"
+        },
+        "tags": [
+            "v4",
+            "v5",
+            "rate-limiting",
+            "lol",
+            "lor",
+            "val",
+            "tft",
+            "cache"
+        ]
+    },
+    {
+        "owner": "dysolix",
+        "repo": "hasagi-core",
+        "description": "LCU library with auto-generated types for request parameters and responses",
+        "language": "JavaScript",
+        "links": [
+            {
+                "name": "GitHub",
+                "url": "https://github.com/dysolix/hasagi-core"
+            },
+            {
+                "name": "Docs",
+                "url": "https://github.com/dysolix/hasagi-core/wiki"
+            },
+            {
+                "name": "Extended Version GitHub",
+                "url": "https://github.com/dysolix/hasagi-extended"
+            }
+        ],
+        "metadata": {},
+        "tags": [
+            "lcu"
+        ]
+    },
+    {
+        "owner": "perezpaya",
+        "repo": "Irelia",
+        "language": "Javascript",
+        "links": [
+            {
+                "name": "npm",
+                "url": "https://www.npmjs.com/package/irelia"
+            }
+        ],
+        "metadata": {}
+    },
+    {
+        "owner": "LionelBergen",
+        "repo": "MundoScript",
+        "language": "JavaScript",
+        "links": [
+            {
+                "name": "npm",
+                "url": "https://www.npmjs.com/package/leagueapiwrapper"
+            },
+            {
+                "name": "Documentation",
+                "url": "https://github.com/LionelBergen/MundoScript"
+            }
+        ],
+        "metadata": {},
+        "tags": [
+            "v4"
+        ]
+    },
+    {
+        "owner": "claudiowilson",
+        "repo": "LeagueJS",
+        "language": "JavaScript",
+        "links": [],
+        "metadata": {}
+    },
+    {
+        "owner": "Colorfulstan",
+        "repo": "LeagueJS",
+        "language": "JavaScript",
+        "links": [
+            {
+                "name": "npm",
+                "url": "https://www.npmjs.com/package/leaguejs"
+            },
+            {
+                "name": "gitter",
+                "url": "https://gitter.im/League-JS/"
+            }
+        ],
+        "metadata": {
+            "version": "2.0.1",
+            "unit-tested": true,
+            "rate-limiter": {
+                "header-driven": true,
+                "method-rate-limiting": true,
+                "per-region": true,
+                "per-endpoint": true,
+                "burst": true,
+                "spread": true
+            },
+            "cacher": {
+                "in-memory": true,
+                "redis": false,
+                "db": false
+            }
+        },
+        "tags": [
+            "v4",
+            "caching",
+            "ddragon",
+            "rate-limiting"
+        ]
+    },
+    {
+        "owner": "danielsogl",
+        "repo": "lol-stats-api",
+        "description": "A ready to use, configurable League of Legends API",
+        "language": "JavaScript",
+        "links": [
+            {
+                "name": "npm",
+                "url": "https://www.npmjs.com/package/lol-stats-api"
+            },
+            {
+                "name": "Documentation",
+                "url": "https://github.com/danielsogl/lol-stats-api"
+            }
+        ],
+        "metadata": {
+            "version": "1.0.0",
+            "rate-limiter": {
+                "per-region": false,
+                "burst": true,
+                "spread": true,
+                "method-rate-limiting": true
+            },
+            "cacher": {
+                "in-memory": true,
+                "redis": true
+            }
+        },
+        "tags": [
+            "v3",
+            "rate-limiting",
+            "caching"
+        ]
+    },
+    {
+        "owner": "emmorts",
+        "repo": "lolapi",
+        "language": "Javascript",
+        "links": [],
+        "metadata": {}
+    },
+    {
+        "owner": "jwalton",
+        "repo": "lol-js",
+        "language": "Javascript",
+        "links": [
+            {
+                "name": "npm",
+                "url": "https://www.npmjs.com/package/lol-js"
+            }
+        ],
+        "metadata": {}
+    },
+    {
+        "owner": "neamar",
+        "repo": "riot-lol-api",
+        "description": "A library tuned to handle with very high volumes of requests to the API (over 1k requests per seconds) over one or many instances",
+        "language": "JavaScript",
+        "links": [
+            {
+                "name": "npm",
+                "url": "https://www.npmjs.com/package/riot-lol-api"
+            }
+        ],
+        "metadata": {
+            "version": "4.2.2",
+            "rate-limiter": {
+                "header-driven": true,
+                "method-rate-limiting": true,
+                "per-region": true,
+                "per-endpoint": true,
+                "burst": true
+            },
+            "cacher": {
+                "customizeable": true
+            }
+        },
+        "tags": [
+            "v3",
+            "rate-limiting",
+            "burst",
+            "high-usage"
+        ]
+    },
+    {
+        "owner": "Colorfulstan",
+        "repo": "RiotRateLimiter-node",
+        "language": "JavaScript",
+        "links": [
+            {
+                "name": "npm",
+                "url": "https://www.npmjs.com/package/riot-ratelimiter"
+            }
+        ],
+        "metadata": {
+            "version": "0.0.7",
+            "unit-tested": true
+        },
+        "tags": [
+            "v3",
+            "rate-limiting",
+            "header-driven",
+            "burst",
+            "spread",
+            "per-region"
+        ]
+    },
+    {
+        "owner": "pinddfull",
+        "repo": "RiotAPI.grab",
+        "language": "TypeScript",
+        "links": [
+            {
+                "name": "npm",
+                "url": "https://www.npmjs.com/package/riotapi-grab"
+            },
+            {
+                "name": "github",
+                "url": "https://github.com/pinddFull/RiotAPI.grab"
+            }
+        ],
+        "metadata": {
+            "version": "0.0.3"
+        },
+        "tags": [
+            "v3",
+            "rate-limiter"
+        ]
+    },
+    {
+        "owner": "brucewsinc",
+        "repo": "rito-pls",
+        "language": "Javascript",
+        "links": [
+            {
+                "name": "npm",
+                "url": "https://www.npmjs.com/package/rito-pls"
+            }
+        ],
+        "metadata": {}
+    },
+    {
+        "owner": "TheDrone7",
+        "repo": "shieldbow",
+        "description": "A super easy-to-use RIOT API Wrapper with full type support.",
+        "language": "JavaScript",
+        "links": [
+            {
+                "name": "npm",
+                "url": "https://www.npmjs.com/package/shieldbow"
+            },
+            {
+                "name": "Documentation",
+                "url": "https://thedrone7.github.io/shieldbow/"
+            }
+        ],
+        "metadata": {
+            "version": "1.2.0"
+        },
+        "tags": [
+            "v4",
+            "v5",
+            "rate-limiting",
+            "caching",
+            "lol",
+            "ts"
+        ]
+    },
+    {
+        "owner": "MingweiSamuel",
+        "repo": "TeemoJS",
+        "language": "JavaScript",
+        "description": "Fast & tiny, automatic retries & smart rate limiting, V4 & champion.gg support, all in 300 lines.",
+        "links": [
+            {
+                "name": "npm",
+                "url": "https://www.npmjs.com/package/teemojs"
+            }
+        ],
+        "metadata": {
+            "v3": true,
+            "v4": true,
+            "async": true,
+            "rate-limiter": {
+                "header-driven": true,
+                "method-rate-limiting": true,
+                "per-region": true,
+                "per-endpoint": true
+            }
+        },
+        "tags": [
+            "v3",
+            "v4",
+            "rate-limiting"
+        ]
+    },
+    {
+        "owner": "Sansossio",
+        "repo": "twisted",
+        "language": "JavaScript",
+        "links": [
+            {
+                "name": "npm",
+                "url": "https://www.npmjs.com/package/twisted"
+            },
+            {
+                "name": "github",
+                "url": "https://github.com/Sansossio/twisted"
+            },
+            {
+                "name": "examples",
+                "url": "https://github.com/Sansossio/twisted/tree/master/example"
+            }
+        ],
+        "metadata": {
+            "version": "2.0.0"
+        },
+        "tags": [
+            "rate-limiting",
+            "v4",
+            "lol",
+            "tft",
+            "caching"
+        ]
+    },
+    {
+        "owner": "wookay",
+        "repo": "LOLTools.jl",
+        "language": "Julia",
+        "description": "Julia package to the Riot Games API for League of Legends.",
+        "links": [],
+        "metadata": {
+            "v3": false,
+            "v4": true,
+            "tft": false
+        },
+        "tags": [
+            "v4"
+        ]
+    },
+    {
+        "owner": "stelar7",
+        "repo": "kotmaw",
+        "language": "Kotlin",
+        "description": "API Wrapper for kotlin",
+        "links": [],
+        "metadata": {},
+        "tags": [
+            "v3",
+            "rate-limiting",
+            "async",
+            "android"
+        ]
+    },
+    {
+        "owner": "nspu",
+        "repo": "riot-api-android",
+        "description": "A library to use riot api and datadragon with android. It uses Retrofit and Picasso.",
+        "language": "Kotlin",
+        "links": [
+            {
+                "name": "Github",
+                "url": "https://github.com/nspu/riot-api-android"
+            },
+            {
+                "name": "Documentation",
+                "url": "https://nspu.github.io/riot-api-android/docs/index.html"
+            },
+            {
+                "name": "Library (.aar)",
+                "url": "https://github.com/nspu/riot-api-android/releases"
+            }
+        ],
+        "metadata": {
+            "version": "0.0.1"
+        },
+        "tags": [
+            "v3",
+            "datadragon",
+            "android",
+            "caching"
+        ]
+    },
+    {
+        "owner": "victhebeast",
+        "repo": "iOS-LoL-API",
+        "language": "Objective-C",
+        "links": [],
+        "metadata": {}
+    },
+    {
+        "owner": "troystump",
+        "repo": "LoLAPI",
+        "language": "Objective-C",
+        "links": [],
+        "metadata": {}
+    },
+    {
+        "owner": "arcanez",
+        "repo": "www-riotgames-leagueoflegends",
+        "description": "Perl wrapper around the Riot Games League of Legends API",
+        "language": "Perl",
+        "links": [
+            {
+                "name": "github",
+                "url": "https://github.com/arcanez/www-riotgames-leagueoflegends"
+            },
+            {
+                "name": "CPAN",
+                "url": "https://metacpan.org/pod/WWW::RiotGames::LeagueOfLegends"
+            }
+        ],
+        "metadata": {
+            "v3-supported": true,
+            "author": {
+                "name": "Justin Hunter",
+                "website": "http://warpedreality.org",
+                "twitter": "justindhunter",
+                "gitHub": "arcanez"
+            },
+            "version": "0.0001"
+        }
+    },
+    {
+        "owner": "rennokki",
+        "repo": "league-api",
+        "description": "League API is a PHP wrapper of RIOT Games' League of Legends API. This wrapper gives you access to both REST API and Data Dragon in an eloquent way that you'll love!",
+        "language": "PHP",
+        "links": [],
+        "metadata": {
+            "version": "1.0.3"
+        },
+        "tags": [
+            "v3"
+        ]
+    },
+    {
+        "owner": "haringsrob",
+        "repo": "League-of-legends-php-class",
+        "language": "PHP",
+        "links": [],
+        "metadata": {}
+    },
+    {
+        "owner": "m1so",
+        "repo": "LeagueWrap",
+        "description": "League of Legend API wrapper for PHP 5.6 and 7+. Supports PSR-6 compatible caching backends and rate-limiting, as well as batch requests.",
+        "language": "PHP",
+        "links": [
+            {
+                "name": "Github",
+                "url": "https://github.com/m1so/LeagueWrap"
+            },
+            {
+                "name": "Packagist",
+                "url": "https://packagist.org/packages/m1so/leaguewrap"
+            }
+        ],
+        "metadata": {
+            "version": "1.0"
+        },
+        "tags": [
+            "v3",
+            "rate-limiting"
+        ]
+    },
+    {
+        "owner": "Babacooll",
+        "repo": "lol-api",
+        "language": "PHP",
+        "links": [],
+        "metadata": {}
+    },
+    {
+        "owner": "optii",
+        "repo": "LolApiBundle",
+        "language": "PHP",
+        "links": [],
+        "metadata": {}
+    },
+    {
+        "owner": "DarkIntaqt",
+        "repo": "malPHPhite",
+        "description": "MalPHPhite is a beginner-friendly PHP Wrapper for the League of Legends API. Just include a single file and you are ready to go!",
+        "language": "PHP",
+        "links": [
+            {
+                "name": "Tutorial",
+                "url": "https://darkintaqt.com/blog/malphphite"
+            }
+        ],
+        "tags": [
+            "v4",
+            "v5",
+            "caching",
+            "lol"
+        ]
+    },
+    {
+        "owner": "andi2garcia",
+        "repo": "OnLoL-Riot-API",
+        "language": "PHP",
+        "links": [],
+        "metadata": {}
+    },
+    {
+        "owner": "carlos170586",
+        "repo": "php-lol-api",
+        "language": "PHP",
+        "links": [],
+        "metadata": {}
+    },
+    {
+        "owner": "kevinohashi",
+        "repo": "php-riot-api",
+        "language": "PHP",
+        "links": [],
+        "metadata": {},
+        "tags": [
+            "v3",
+            "rate-limiting"
+        ]
+    },
+    {
+        "owner": "fcarrascosa",
+        "repo": "phpRiotApi",
+        "language": "PHP",
+        "links": [
+            {
+                "name": "The project on gitHub",
+                "url": "https://github.com/fcarrascosa/phpRiotApi"
+            },
+            {
+                "name": "The project on packagist",
+                "url": "https://packagist.org/packages/fcarrascosa/riot-api-client"
+            }
+        ],
+        "metadata": {
+            "v3-supported": true,
+            "author": {
+                "name": "Fernando Carrascosa",
+                "website": "https://fcarrascosa.es",
+                "location": "Madrid/Spain",
+                "twitter": "jarredethe",
+                "gitHub": "fcarrascosa"
+            },
+            "version": "1.0.0"
+        }
+    },
+    {
+        "owner": "dolejska-daniel",
+        "repo": "riot-api",
+        "description": "Riot League of Legends & DataDragon API wrappers for PHP7",
+        "language": "PHP",
+        "links": [
+            {
+                "name": "GitHub Wiki",
+                "url": "https://github.com/dolejska-daniel/riot-api/wiki"
+            },
+            {
+                "name": "Packagist",
+                "url": "https://packagist.org/packages/dolejska-daniel/riot-api"
+            }
+        ],
+        "metadata": {
+            "version": "v3.1.0"
+        },
+        "tags": [
+            "v3",
+            "v4",
+            "rate-limiting",
+            "cli"
+        ]
+    },
+    {
+        "owner": "simivar",
+        "repo": "riot-php",
+        "description": "PSR-17, PSR-18 and Dependency-Injection based PHP wrapper around Riot API",
+        "language": "PHP",
+        "links": [
+            {
+                "name": "Packagist",
+                "url": "https://packagist.org/packages/simivar/riot-php"
+            },
+            {
+                "name": "Github",
+                "url": "https://github.com/simivar/riot-php"
+            }
+        ],
+        "metadata": {
+            "v3": true,
+            "v4": true
+        },
+        "tags": [
+            "v3",
+            "v4",
+            "psr-17",
+            "psr-18"
+        ]
+    },
+    {
+        "owner": "opgginc",
+        "repo": "php-riotapi-request",
+        "description": "RiotQuest, PHP RiotAPI client library that focused on multi request from OP.GG",
+        "language": "PHP",
+        "metadata": {
+            "version": "0.5"
+        },
+        "tags": [
+            "v3"
+        ]
+    },
+    {
+        "owner": "kdefives",
+        "repo": "oauth2-riot",
+        "description": "Riot (RSO) OAuth 2.0 support for the PHP League's OAuth 2.0 Client",
+        "language": "PHP",
+        "links": [
+            {
+                "name": "Packagist",
+                "url": "https://packagist.org/packages/kdefives/oauth2-riot"
+            },
+            {
+                "name": "Github",
+                "url": "https://github.com/kdefives/oauth2-riot"
+            }
+        ],
+        "metadata": {
+            "version": "1.0.0"
+        },
+        "tags": [
+            "v4",
+            "rso",
+            "oauth 2.0"
+        ]
+    },
+    {
+        "owner": "meraki-analytics",
+        "repo": "cassiopeia",
+        "description": "Cassiopeia takes care of all the details for you so you can focus on building your application",
+        "language": "Python",
+        "links": [
+            {
+                "name": "PyPi",
+                "url": "https://pypi.org/project/cassiopeia/"
+            },
+            {
+                "name": "Documentation",
+                "url": "http://cassiopeia.readthedocs.org/en/latest/"
+            }
+        ],
+        "metadata": {},
+        "tags": [
+            "v4",
+            "rate-limiting",
+            "caching"
+        ]
+    },
+    {
+        "owner": "sousa-andre",
+        "repo": "lcu-driver",
+        "description": "Python3 helper for the League of Legends LCU API.",
+        "language": "Python",
+        "links": [
+            {
+                "name": "PyPI",
+                "url": "https://pypi.org/project/lcu-driver/"
+            },
+            {
+                "name": "github",
+                "url": "https://github.com/sousa-andre/lcu-driver"
+            },
+            {
+                "name": "Documentation",
+                "url": "https://lcu-driver.readthedocs.io/en/latest/"
+            }
+        ],
+        "metadata": {},
+        "tags": [
+            "lcu",
+            "lol",
+            "asyncio"
+        ]
+    },
+    {
+        "owner": "Kruptein",
+        "repo": "lolapi",
+        "language": "Python",
+        "links": [],
+        "metadata": {}
+    },
+    {
+        "owner": "p-ob",
+        "repo": "lolPy",
+        "language": "Python",
+        "links": [],
+        "metadata": {}
+    },
+    {
+        "owner": "iann838",
+        "repo": "pulsefire",
+        "description": "A modern and flexible Riot Games Python SDK.",
+        "language": "Python",
+        "links": [
+            {
+                "name": "Documentation",
+                "url": "https://pulsefire.iann838.com/"
+            },
+            {
+                "name": "GitHub",
+                "url": "https://github.com/iann838/pulsefire"
+            },
+            {
+                "name": "PyPi",
+                "url": "https://pypi.org/project/pulsefire/"
+            }
+        ],
+        "metadata": {},
+        "tags": [
+            "v4",
+            "rate-limiting",
+            "asyncio",
+            "lol",
+            "lor",
+            "tft",
+            "val"
+        ]
+    },
+    {
+        "owner": "iann838",
+        "repo": "Pyot",
+        "description": "AsyncIO-based high-level Python framework for the Riot Games API. (Deprecated, please use pulsefire instead)",
+        "language": "Python",
+        "links": [
+            {
+                "name": "Documentation",
+                "url": "https://pyot.iann838.com/"
+            },
+            {
+                "name": "PyPi",
+                "url": "https://pypi.org/project/pyot/"
+            }
+        ],
+        "metadata": {},
+        "tags": [
+            "v4",
+            "rate-limiting",
+            "asyncio",
+            "lol",
+            "lor",
+            "tft",
+            "val"
+        ]
+    },
+    {
+        "owner": "HeshamAmer",
+        "repo": "Riot-API-datasource",
+        "language": "Python",
+        "links": [],
+        "metadata": {}
+    },
+    {
+        "owner": "pseudonym117",
+        "repo": "Riot-Watcher",
+        "description": "A thin Riot API wrapper focused on simplicity and ease of use",
+        "language": "Python",
+        "links": [
+            {
+                "name": "Documentation",
+                "url": "http://riot-watcher.readthedocs.io/en/latest/"
+            },
+            {
+                "name": "PyPi",
+                "url": "https://pypi.python.org/pypi/riotwatcher"
+            }
+        ],
+        "metadata": {},
+        "tags": [
+            "v4",
+            "rate-limiting",
+            "tft",
+            "lor",
+            "val"
+        ]
+    },
+    {
+        "owner": "jellies",
+        "repo": "willump",
+        "description": "Python3 helper for the League of Legends LCU API.",
+        "language": "Python",
+        "links": [
+            {
+                "name": "PyPi",
+                "url": "https://pypi.org/project/willump/"
+            },
+            {
+                "name": "github",
+                "url": "https://github.com/elliejs/Willump"
+            },
+            {
+                "name": "Tutorial",
+                "url": "https://github.com/elliejs/Willump/tree/main/tutorial"
+            }
+        ],
+        "metadata": {},
+        "tags": [
+            "lcu",
+            "lol",
+            "asyncio",
+            "wss",
+            "https",
+            "cors",
+            "live-events"
+        ]
+    },
+    {
+        "owner": "shishi",
+        "repo": "riot_games_api",
+        "language": "Ruby",
+        "links": [],
+        "metadata": {}
+    },
+    {
+        "owner": "francois-blanchard",
+        "repo": "riot_lol_api",
+        "language": "Ruby",
+        "links": [],
+        "metadata": {}
+    },
+    {
+        "owner": "mikamai",
+        "repo": "ruby-lol",
+        "language": "Ruby",
+        "links": [],
+        "metadata": {}
+    },
+    {
+        "owner": "josephyi",
+        "repo": "taric",
+        "language": "Ruby",
+        "links": [],
+        "metadata": {}
+    },
+    {
+        "owner": "AlsoSylv",
+        "repo": "Irelia",
+        "language": "Rust",
+        "description": "LoL LCU Wrapper for Rust, built on top of hyper!",
+        "links": [
+            {
+                "name": "docs.rs",
+                "url": "https://docs.rs/crate/irelia/latest"
+            },
+            {
+                "name": "crates.io",
+                "url": "https://crates.io/crates/irelia"
+            },
+            {
+                "name": "github",
+                "url": "https://github.com/AlsoSylv/Irelia/tree/master"
+            }
+        ],
+        "metadata": {
+            "async": true
+        },
+        "tags": [
+            "lcu",
+            "rest",
+            "websocket",
+            "ws",
+            "ingame",
+            "tokio",
+            "hyper"
+        ]
+    },
+    {
+        "owner": "MingweiSamuel",
+        "repo": "Riven",
+        "language": "Rust",
+        "description": "Tried and tested Riot API design, in Rust",
+        "links": [
+            {
+                "name": "Docs.rs",
+                "url": "https://docs.rs/riven/"
+            },
+            {
+                "name": "Crates.io",
+                "url": "https://crates.io/crates/riven"
+            }
+        ],
+        "metadata": {
+            "v3": true,
+            "v4": true,
+            "async": true,
+            "rate-limiter": {
+                "header-driven": true,
+                "method-rate-limiting": true,
+                "per-region": true,
+                "per-endpoint": true
+            },
+            "tft": true
+        },
+        "tags": [
+            "v3",
+            "v4",
+            "rate-limiting",
+            "lol",
+            "tft",
+            "lor",
+            "val"
+        ]
+    },
+    {
+        "owner": "Leastrio",
+        "repo": "Shaco",
+        "language": "Rust",
+        "description": "League of Legends LCU wrapper for rust",
+        "links": [
+            {
+                "name": "docs.rs",
+                "url": "https://docs.rs/shaco/latest/shaco/"
+            },
+            {
+                "name": "crates.io",
+                "url": "https://crates.io/crates/shaco"
+            }
+        ],
+        "metadata": {
+            "async": true
+        },
+        "tags": [
+            "lcu",
+            "rest",
+            "websocket",
+            "ws",
+            "ingame",
+            "tokio"
+        ]
+    },
+    {
+        "owner": "LionelBergen",
+        "repo": "ZedScript",
+        "language": "Rust",
+        "description": "Easy to use, simple, basic, tested Riot API wrapper written in Rust",
+        "links": [
+            {
+                "name": "Crates.io",
+                "url": "https://crates.io/crates/zed_script"
+            }
+        ],
+        "metadata": {
+            "v4": true,
+            "async": true,
+            "tft": true
+        },
+        "tags": [
+            "v4",
+            "tft"
+        ]
+    },
+    {
+        "owner": "WxWatch",
+        "repo": "DragonService",
+        "language": "Swift",
+        "links": [],
+        "metadata": {},
+        "tags": [
+            "v4"
+        ]
+    },
+    {
+        "owner": "Kelmatou",
+        "repo": "LeagueAPI",
+        "description": "Framework providing all League of Legends data, with cache, rate-limit handling with auto retry system. Compatible with Carthage and Cocoapod.",
+        "language": "Swift",
+        "links": [
+            {
+                "name": "Github",
+                "url": "https://github.com/Kelmatou/LeagueAPI"
+            },
+            {
+                "name": "Documentation",
+                "url": "https://github.com/Kelmatou/LeagueAPI/wiki"
+            }
+        ],
+        "metadata": {},
+        "tags": [
+            "v4",
+            "rate-limiting"
+        ]
+    },
+    {
+        "owner": "bcho04",
+        "repo": "galeforce",
+        "language": "TypeScript",
+        "links": [
+            {
+                "name": "npm",
+                "url": "https://www.npmjs.com/package/galeforce"
+            },
+            {
+                "name": "github",
+                "url": "https://github.com/bcho04/galeforce"
+            },
+            {
+                "name": "docs",
+                "url": "https://bcho04.github.io/galeforce/"
+            }
+        ],
+        "metadata": {
+            "version": "0.5.0"
+        },
+        "tags": [
+            "v4",
+            "v5",
+            "rate-limiting",
+            "lol",
+            "lor",
+            "val",
+            "tft",
+            "cache"
+        ]
+    },
+    {
+        "owner": "dysolix",
+        "repo": "hasagi-core",
+        "description": "LCU library with auto-generated types for request parameters and responses",
+        "language": "TypeScript",
+        "links": [
+            {
+                "name": "GitHub",
+                "url": "https://github.com/dysolix/hasagi-core"
+            },
+            {
+                "name": "Docs",
+                "url": "https://github.com/dysolix/hasagi-core/wiki"
+            },
+            {
+                "name": "Extended Version GitHub",
+                "url": "https://github.com/dysolix/hasagi-extended"
+            }
+        ],
+        "metadata": {},
+        "tags": [
+            "lcu"
+        ]
+    },
+    {
+        "owner": "cuppachino",
+        "repo": "hexgate",
+        "description": "LCU API wrapper for League of Legends",
+        "language": "TypeScript",
+        "links": [
+            {
+                "name": "GitHub",
+                "url": "https://github.com/cuppachino/hexgate"
+            },
+            {
+                "name": "NPM",
+                "url": "https://www.npmjs.com/package/hexgate"
+            }
+        ],
+        "metadata": {
+            "version": "0.7.7"
+        },
+        "tags": [
+            "lol",
+            "lcu",
+            "websocket",
+            "auth",
+            "authentication",
+            "ts"
+        ]
+    },
+    {
+        "owner": "SKarajic",
+        "repo": "JarvanScript",
+        "description": "A TypeScript Riot API wrapper",
+        "language": "TypeScript",
+        "links": [
+            {
+                "name": "GitHub",
+                "url": "https://github.com/SKarajic/JarvanScript"
+            },
+            {
+                "name": "NPM",
+                "url": "https://www.npmjs.com/package/jarvanscript"
+            }
+        ],
+        "metadata": {
+            "version": "0.4.2-alpha"
+        },
+        "tags": [
+            "v3",
+            "rate-limiting"
+        ]
+    },
+    {
+        "owner": "protectator",
+        "repo": "league-typedef",
+        "description": "Typescript type definitions for the League of Legends API.",
+        "language": "TypeScript",
+        "links": [
+            {
+                "name": "GitHub",
+                "url": "https://github.com/Protectator/league-typedef"
+            },
+            {
+                "name": "npm",
+                "url": "https://www.npmjs.com/package/league-typedef"
+            }
+        ],
+        "metadata": {}
+    },
+    {
+        "owner": "danielsogl",
+        "repo": "lol-api-wrapper",
+        "description": "A ready to run LoL API wrapper powered by Express.js and TypeScript",
+        "language": "TypeScript",
+        "links": [
+            {
+                "name": "GitHub",
+                "url": "https://github.com/danielsogl/lol-api-wrapper"
+            }
+        ],
+        "tags": [
+            "v3",
+            "caching",
+            "ratelimit",
+            "heroku",
+            "express",
+            "typescript",
+            "redis"
+        ]
+    },
+    {
+        "owner": "TheDrone7",
+        "repo": "shieldbow",
+        "description": "A super easy-to-use RIOT API Wrapper with full type support.",
+        "language": "TypeScript",
+        "links": [
+            {
+                "name": "npm",
+                "url": "https://www.npmjs.com/package/shieldbow"
+            },
+            {
+                "name": "Documentation",
+                "url": "https://thedrone7.github.io/shieldbow/"
+            }
+        ],
+        "metadata": {
+            "version": "1.2.0"
+        },
+        "tags": [
+            "v4",
+            "v5",
+            "rate-limiting",
+            "caching",
+            "lol",
+            "ts"
+        ]
+    },
+    {
+        "owner": "Sansossio",
+        "repo": "twisted",
+        "language": "TypeScript",
+        "links": [
+            {
+                "name": "npm",
+                "url": "https://www.npmjs.com/package/twisted"
+            },
+            {
+                "name": "github",
+                "url": "https://github.com/Sansossio/twisted"
+            },
+            {
+                "name": "examples",
+                "url": "https://github.com/Sansossio/twisted/tree/master/example"
+            }
+        ],
+        "metadata": {
+            "version": "2.0.0"
+        },
+        "tags": [
+            "rate-limiting",
+            "v4",
+            "lol",
+            "tft",
+            "caching"
+        ]
+    },
+    {
+        "owner": "NitashEU",
+        "repo": "zed.gg",
+        "language": "TypeScript",
+        "links": [
+            {
+                "name": "npm",
+                "url": "https://www.npmjs.com/package/zed.gg"
+            }
+        ],
+        "metadata": {
+            "v3": "true",
+            "rate-limiter": {
+                "per-region": true,
+                "burst": false,
+                "spread": true,
+                "header-validation": true
+            }
+        }
+    }
+]
