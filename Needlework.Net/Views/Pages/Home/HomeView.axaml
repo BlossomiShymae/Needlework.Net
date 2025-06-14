@@ -48,15 +48,15 @@
 				<StackPanel>
 					<controls:Card Margin="12" Width="300">
 						<StackPanel>
+							<StackPanel.Styles>
+								<Style Selector="Button">
+									<Setter Property="Command" Value="{Binding OpenUrlCommand}"/>
+								</Style>
+							</StackPanel.Styles>
 							<TextBlock
 									   Theme="{StaticResource SubtitleTextBlockStyle}"
 									   Margin="0 0 0 8">Resources</TextBlock>
 							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-								<StackPanel.Styles>
-									<Style Selector="Button">
-										<Setter Property="Command" Value="{Binding OpenUrlCommand}"/>
-									</Style>
-								</StackPanel.Styles>
 								<Button CommandParameter="https://hextechdocs.dev/tag/lcu/" Margin="4">
 									Hextech Docs
 								</Button>
