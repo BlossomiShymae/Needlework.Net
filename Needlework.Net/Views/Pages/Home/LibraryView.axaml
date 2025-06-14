@@ -7,7 +7,7 @@
              x:Class="Needlework.Net.Views.Pages.Home.LibraryView"
 			 x:DataType="vm:LibraryViewModel">
 	<Border Background="{DynamicResource ControlFillColorDefaultBrush}"
-			Padding="8"
+			Padding="12"
 			CornerRadius="4">
 		<StackPanel>
 			<TextBlock>

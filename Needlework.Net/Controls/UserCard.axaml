@@ -21,7 +21,7 @@
 		<Setter Property="Template">
 			<ControlTemplate>
 				<Grid>
-					<Border CornerRadius="16,16,16,16"
+					<Border CornerRadius="4"
 							Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
 							Margin="0 50 0 0"
 							Padding="16 66 16 16">

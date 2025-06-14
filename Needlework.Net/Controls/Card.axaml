@@ -9,8 +9,8 @@
 		<!-- Set Defaults -->
 		<Setter Property="Template">
 			<ControlTemplate>
-				<Border Padding="16" 
-						CornerRadius="16,16,16,16"
+				<Border Padding="12" 
+						CornerRadius="4"
 						Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
 					<ContentPresenter Content="{TemplateBinding Content}"/>
 				</Border>
