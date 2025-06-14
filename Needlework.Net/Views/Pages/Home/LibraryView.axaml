@@ -6,20 +6,24 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Needlework.Net.Views.Pages.Home.LibraryView"
 			 x:DataType="vm:LibraryViewModel">
-	<StackPanel>
-		<TextBlock>
-			<Run Text="{Binding Library.Language}"
-				 FontWeight="Bold"/>
-			<Bold> - </Bold>
-			<Run Text="{Binding Library.Repo}"
-				 FontWeight="Bold"/>
-		</TextBlock>
-		<TextBlock Text="{Binding Library.Description}"
-				   IsVisible="{Binding Library.Description, Converter={StaticResource NullableToVisibilityConverter}}"
-				   TextAlignment="Left"
-				   TextWrapping="WrapWithOverflow"
-				   Width="350"/>
-		<HyperlinkButton Content="{Binding Library.Link}" NavigateUri="{Binding Library.Link}"
-				Margin="0 4 0 0"/>
-	</StackPanel>
+	<Border Background="{DynamicResource ControlFillColorDefaultBrush}"
+			Padding="8"
+			CornerRadius="4">
+		<StackPanel>
+			<TextBlock>
+				<Run Text="{Binding Library.Language}"
+					 FontWeight="Bold"/>
+				<Bold> - </Bold>
+				<Run Text="{Binding Library.Repo}"
+					 FontWeight="Bold"/>
+			</TextBlock>
+			<TextBlock Text="{Binding Library.Description}"
+					   IsVisible="{Binding Library.Description, Converter={StaticResource NullableToVisibilityConverter}}"
+					   TextAlignment="Left"
+					   TextWrapping="WrapWithOverflow"
+					   Width="300"/>
+			<HyperlinkButton Content="{Binding Library.Link}" NavigateUri="{Binding Library.Link}"
+					Margin="0 4 0 0"/>
+		</StackPanel>
+	</Border>
 </UserControl>
