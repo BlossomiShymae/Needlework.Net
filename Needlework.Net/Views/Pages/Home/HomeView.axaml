@@ -48,29 +48,24 @@
 				<StackPanel>
 					<controls:Card Margin="12" Width="300">
 						<StackPanel>
-							<StackPanel.Styles>
-								<Style Selector="Button">
-									<Setter Property="Command" Value="{Binding OpenUrlCommand}"/>
-								</Style>
-							</StackPanel.Styles>
 							<TextBlock
 									   Theme="{StaticResource SubtitleTextBlockStyle}"
 									   Margin="0 0 0 8">Resources</TextBlock>
 							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-								<Button CommandParameter="https://hextechdocs.dev/tag/lcu/" Margin="4">
+								<HyperlinkButton NavigateUri="https://hextechdocs.dev/tag/lcu/" Margin="4">
 									Hextech Docs
-								</Button>
-								<Button CommandParameter="https://hextechdocs.dev/getting-started-with-the-lcu-api/" Margin="4">
+								</HyperlinkButton>
+								<HyperlinkButton NavigateUri="https://hextechdocs.dev/getting-started-with-the-lcu-api/" Margin="4">
 									Getting Started
-								</Button>
+								</HyperlinkButton>
 							</StackPanel>
 							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-								<Button CommandParameter="https://discord.com/channels/187652476080488449/516802588805431296" Margin="4">
+								<HyperlinkButton NavigateUri="https://discord.com/channels/187652476080488449/516802588805431296" Margin="4">
 									#lcu-api
-								</Button>
-								<Button CommandParameter="https://discord.com/channels/187652476080488449/543112946402721832" Margin="4">
+								</HyperlinkButton>
+								<HyperlinkButton NavigateUri="https://discord.com/channels/187652476080488449/543112946402721832" Margin="4">
 									#ingame-api
-								</Button>
+								</HyperlinkButton>
 							</StackPanel>
 						</StackPanel>
 					</controls:Card>

@@ -19,9 +19,7 @@
 				   TextAlignment="Left"
 				   TextWrapping="WrapWithOverflow"
 				   Width="350"/>
-		<Button Command="{Binding OpenUrlCommand}"
-				Margin="0 4 0 0">
-			<TextBlock Text="{Binding Library.Link}"/>
-		</Button>
+		<HyperlinkButton Content="{Binding Library.Link}" NavigateUri="{Binding Library.Link}"
+				Margin="0 4 0 0"/>
 	</StackPanel>
 </UserControl>

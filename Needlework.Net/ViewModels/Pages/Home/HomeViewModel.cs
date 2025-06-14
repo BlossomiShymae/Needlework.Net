@@ -1,9 +1,7 @@
 ﻿using Avalonia.Platform;
-using CommunityToolkit.Mvvm.Input;
 using Needlework.Net.Models;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -23,13 +21,4 @@ public partial class HomeViewModel : PageBase
     {
         return Task.CompletedTask;
     }
-
-    [RelayCommand]
-    private void OpenUrl(string? value)
-    {
-        if (value == null) return;
-        var process = new Process() { StartInfo = new ProcessStartInfo(value) { UseShellExecute = true } };
-        process.Start();
-    }
-
 }
