@@ -253,8 +253,9 @@ public partial class OperationViewModel : ObservableObject
         return "none";
     }
 
-    public static string GetSchemaType(OpenApiSchema schema)
+    public static string GetSchemaType(OpenApiSchema? schema)
     {
+        if (schema == null) return "object"; // Because GetLolVanguardV1Notification exists where it has a required parameter without a type...
         if (schema.Reference != null) return schema.Reference.Id;
         if (schema.Type == "object" && schema.AdditionalProperties?.Reference != null) return schema.AdditionalProperties.Reference.Id;
         if (schema.Type == "integer" || schema.Type == "number") return $"{schema.Type}:{schema.Format}";
