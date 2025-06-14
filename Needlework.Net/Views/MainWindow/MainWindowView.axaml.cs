@@ -1,5 +1,3 @@
-using System;
-using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using FluentAvalonia.UI.Windowing;
 
@@ -13,18 +11,6 @@ public partial class MainWindowView : AppWindow
 
         TitleBar.ExtendsContentIntoTitleBar = true;
         TransparencyLevelHint = [WindowTransparencyLevel.Mica, WindowTransparencyLevel.None];
-        
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            if (IsWindows11OrNewer())
-            {
-                Background = null;
-            }
-        }
-    }
-
-    private static bool IsWindows11OrNewer()
-    {
-        return Environment.OSVersion.Version.Major >= 10 && Environment.OSVersion.Version.Build >= 22000;
+        Background = IsWindows11 ? null : Background;
     }
 }
