@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Media;
+using Avalonia.Threading;
 using BlossomiShymae.Briar;
 using BlossomiShymae.Briar.Utils;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -9,6 +10,7 @@ using FluentAvalonia.UI.Controls;
 using Flurl.Http;
 using Flurl.Http.Configuration;
 using Needlework.Net.Extensions;
+using Needlework.Net.Helpers;
 using Needlework.Net.Messages;
 using Needlework.Net.Models;
 using Needlework.Net.Services;
@@ -23,6 +25,7 @@ using System.Net.Http.Json;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Needlework.Net.ViewModels.MainWindow;
@@ -105,6 +108,15 @@ public partial class MainWindowViewModel
     }
 
     [ObservableProperty]
+    private bool _isPaneOpen;
+
+    [ObservableProperty]
+    private ObservableCollection<SchemaViewModel> _schemas = [];
+
+    [ObservableProperty]
+    private SchemaViewModel? _selectedSchema;
+
+    [ObservableProperty]
     private ObservableCollection<NotificationViewModel> _notifications = [];
 
     [ObservableProperty]
@@ -113,6 +125,9 @@ public partial class MainWindowViewModel
     [ObservableProperty]
     private PageBase _currentPage;
 
+    [ObservableProperty]
+    private SchemaSearchDetailsViewModel? _selectedSchemaSearchDetails;
+
     public List<NavigationViewItem> NavigationViewItems { get; private set; } = [];
 
     public bool IsSchemaVersionChecked { get; private set; }
@@ -120,6 +135,54 @@ public partial class MainWindowViewModel
     public string Version { get; } = Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "0.0.0.0";
 
     public string Title => $"Needlework.Net {Version}";
+
+    partial void OnSelectedNavigationViewItemChanged(NavigationViewItem value)
+    {
+        if (value.Tag is PageBase page)
+        {
+            CurrentPage = page;
+        }
+    }
+
+    partial void OnSelectedSchemaSearchDetailsChanged(SchemaSearchDetailsViewModel? value)
+    {
+        if (value == null) return;
+        Task.Run(async () =>
+        {
+            var document = value.Tab switch
+            {
+                Pages.Endpoints.Tab.LCU => await _documentService.GetLcuSchemaDocumentAsync(),
+                Pages.Endpoints.Tab.GameClient => await _documentService.GetLolClientDocumentAsync(),
+                _ => throw new NotImplementedException()
+            };
+            var propertyClassViewModel = OpenApiHelpers.WalkSchema(document.OpenApiDocument.Components.Schemas[value.Key], document.OpenApiDocument);
+            var schemaViewModel = new SchemaViewModel(propertyClassViewModel);
+            Dispatcher.UIThread.Post(() =>
+            {
+                if (Schemas.ToList().Find(schema => schema.Id == schemaViewModel.Id) == null)
+                {
+                    Schemas.Add(schemaViewModel);
+                    IsPaneOpen = true;
+
+                    OpenSchemaPaneCommand.NotifyCanExecuteChanged();
+                    CloseSchemaAllCommand.NotifyCanExecuteChanged();
+                }
+            });
+        });
+    }
+
+    partial void OnSelectedSchemaChanged(SchemaViewModel? value)
+    {
+        CloseSchemaCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnSchemasChanged(ObservableCollection<SchemaViewModel> value)
+    {
+        if (!value.Any())
+        {
+            IsPaneOpen = false;
+        }
+    }
 
     private NavigationViewItem ToNavigationViewItem(PageBase page) => new()
     {
@@ -139,14 +202,6 @@ public partial class MainWindowViewModel
             }
         }
     };
-
-    partial void OnSelectedNavigationViewItemChanged(NavigationViewItem value)
-    {
-        if (value.Tag is PageBase page)
-        {
-            CurrentPage = page;
-        }
-    }
 
     private async Task CheckForUpdatesAsync()
     {
@@ -192,6 +247,66 @@ public partial class MainWindowViewModel
             _notificationService.Notify("Needlework.Net", $"LCU Schema is possibly outdated compared to latest system build. Consider submitting a pull request on dysolix/hasagi-types.\nCurrent: {string.Join(".", currentSemVer)}\nLatest: {string.Join(".", latestSemVer)}", InfoBarSeverity.Warning, null, "https://github.com/dysolix/hasagi-types#updating-the-types");
             _checkForSchemaVersionDisposable?.Dispose();
         }
+    }
+
+    public async Task<IEnumerable<object>> PopulateAsync(string? searchText, CancellationToken cancellationToken)
+    {
+        if (searchText == null) return [];
+
+        var lcuSchemaDocument = await _documentService.GetLcuSchemaDocumentAsync(cancellationToken);
+        var gameClientDocument = await _documentService.GetLolClientDocumentAsync(cancellationToken);
+        var lcuResults = lcuSchemaDocument.OpenApiDocument.Components.Schemas.Keys.Where(key => key.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                .Select(key => new SchemaSearchDetailsViewModel(key, Pages.Endpoints.Tab.LCU));
+        var gameClientResults = gameClientDocument.OpenApiDocument.Components.Schemas.Keys.Where(key => key.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                .Select(key => new SchemaSearchDetailsViewModel(key, Pages.Endpoints.Tab.GameClient));
+
+        return Enumerable.Concat(lcuResults, gameClientResults);
+    }
+
+    [RelayCommand(CanExecute = nameof(CanOpenSchemaPane))]
+    private void OpenSchemaPane()
+    {
+        IsPaneOpen = !IsPaneOpen;
+    }
+
+    private bool CanOpenSchemaPane()
+    {
+        return Schemas.Any();
+    }
+
+    [RelayCommand(CanExecute = nameof(CanCloseSchema))]
+    private void CloseSchema()
+    {
+        if (SelectedSchema is SchemaViewModel selection)
+        {
+            SelectedSchema = null;
+            Schemas = new ObservableCollection<SchemaViewModel>(Schemas.Where(schema => schema != selection));
+
+            OpenSchemaPaneCommand.NotifyCanExecuteChanged();
+            CloseSchemaCommand.NotifyCanExecuteChanged();
+            CloseSchemaAllCommand.NotifyCanExecuteChanged();
+        }
+    }
+
+    private bool CanCloseSchema()
+    {
+        return SelectedSchema != null;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanCloseSchemaAll))]
+    private void CloseSchemaAll()
+    {
+        SelectedSchema = null;
+        Schemas = [];
+
+        OpenSchemaPaneCommand.NotifyCanExecuteChanged();
+        CloseSchemaCommand.NotifyCanExecuteChanged();
+        CloseSchemaAllCommand.NotifyCanExecuteChanged();
+    }
+
+    private bool CanCloseSchemaAll()
+    {
+        return Schemas.Any();
     }
 
     [RelayCommand]

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
+using Needlework.Net.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,7 +15,7 @@ public class PropertyClassViewModel : ObservableObject
         List<PropertyEnumViewModel> propertyEnums = [];
         foreach ((var propertyName, var propertySchema) in properties)
         {
-            var type = OperationViewModel.GetSchemaType(propertySchema);
+            var type = OpenApiHelpers.GetSchemaType(propertySchema);
             var field = new PropertyFieldViewModel(propertyName, type);
             propertyFields.Add(field);
         }

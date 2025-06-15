@@ -16,7 +16,8 @@
         Width="1280"
         Height="720">	
 	<Grid RowDefinitions="auto,*">
-		<Grid ColumnDefinitions="auto,auto,*,auto"
+		<Grid Name="TitleBarHost"
+			  ColumnDefinitions="auto,auto,*,auto"
 			  Background="Transparent"
 			  Height="40"
 			  Grid.Row="0">
@@ -32,8 +33,38 @@
 					   IsHitTestVisible="False"
 					   VerticalAlignment="Center"
 					   Grid.Column="1"/>
+			<Border Grid.Column="2" Padding="4" IsHitTestVisible="True">
+				<StackPanel	HorizontalAlignment="Center"
+							Orientation="Horizontal">
+					<AutoCompleteBox Name="SchemaAutoCompleteBox"
+									 Margin="0 0 8 0"
+									 MinWidth="200"
+									 MaxWidth="500"
+									 MaxDropDownHeight="400"
+									 Watermark="Search schemas"
+									 FilterMode="None"
+									 ValueMemberBinding="{Binding Key, DataType=vm:SchemaSearchDetailsViewModel}"
+									 AsyncPopulator="{Binding PopulateAsync}"
+									 SelectedItem="{Binding SelectedSchemaSearchDetails}">
+						<AutoCompleteBox.ItemTemplate>
+							<DataTemplate x:DataType="vm:SchemaSearchDetailsViewModel">
+								<ContentControl Content="{Binding}"/>
+							</DataTemplate>
+						</AutoCompleteBox.ItemTemplate>
+					</AutoCompleteBox>
+					<Button i:Attached.Icon="fa-solid fa-file-lines" 
+							FontSize="20"
+							Command="{Binding OpenSchemaPaneCommand}"/>
+				</StackPanel>
+			</Border>
 		</Grid>
-		<ui:NavigationView AlwaysShowHeader="False"
+		<SplitView Grid.Row="1"
+				   PaneBackground="Transparent"
+				   IsPaneOpen="{Binding IsPaneOpen}"
+				   DisplayMode="Inline"
+				   OpenPaneLength="350"
+				   PanePlacement="Right">
+			<ui:NavigationView AlwaysShowHeader="False"
 						   PaneDisplayMode="Left"
 						   IsSettingsVisible="False"
 						   IsPaneOpen="False"
@@ -41,48 +72,76 @@
 						   Grid.Row="1"
 						   MenuItemsSource="{Binding NavigationViewItems}"
 						   SelectedItem="{Binding SelectedNavigationViewItem}">
-			<ui:NavigationView.PaneFooter>
-				<StackPanel Orientation="Vertical">
-					<StackPanel.Styles>
-						<Style Selector="materialIcons|MaterialIcon">
-							<Setter Property="Width" Value="20" />
-							<Setter Property="Height" Value="20" />
-						</Style>
-						<Style Selector="i|Icon">
-							<Setter Property="FontSize" Value="20" />
-						</Style>
-					</StackPanel.Styles>
-					<Button 
-							Theme="{StaticResource TransparentButton}"
-							VerticalAlignment="Center"
-							Command="{Binding OpenUrlCommand}"
-							CommandParameter="https://github.com/BlossomiShymae/Needlework.Net"
-							ToolTip.Tip="Open on GitHub."
-							Margin="4">
-						<materialIcons:MaterialIcon Kind="Github" />
-					</Button>
-					<Button 
-							Theme="{StaticResource TransparentButton}"
-							VerticalAlignment="Center"
-							Command="{Binding OpenUrlCommand}"
-							CommandParameter="https://discord.gg/chEvEX5J4E"
-							ToolTip.Tip="Open Discord server."
-							Margin="4">
-						<i:Icon Value="fa-brand fa-discord" />
-					</Button>
+				<ui:NavigationView.PaneFooter>
+					<StackPanel Orientation="Vertical">
+						<StackPanel.Styles>
+							<Style Selector="materialIcons|MaterialIcon">
+								<Setter Property="Width" Value="20" />
+								<Setter Property="Height" Value="20" />
+							</Style>
+							<Style Selector="i|Icon">
+								<Setter Property="FontSize" Value="20" />
+							</Style>
+						</StackPanel.Styles>
+						<Button
+								Theme="{StaticResource TransparentButton}"
+								VerticalAlignment="Center"
+								Command="{Binding OpenUrlCommand}"
+								CommandParameter="https://github.com/BlossomiShymae/Needlework.Net"
+								ToolTip.Tip="Open on GitHub."
+								Margin="4">
+							<materialIcons:MaterialIcon Kind="Github" />
+						</Button>
+						<Button
+								Theme="{StaticResource TransparentButton}"
+								VerticalAlignment="Center"
+								Command="{Binding OpenUrlCommand}"
+								CommandParameter="https://discord.gg/chEvEX5J4E"
+								ToolTip.Tip="Open Discord server."
+								Margin="4">
+							<i:Icon Value="fa-brand fa-discord" />
+						</Button>
+					</StackPanel>
+				</ui:NavigationView.PaneFooter>
+				<Grid>
+					<TransitioningContentControl Content="{Binding CurrentPage}"/>
+					<ItemsControl ItemsSource="{Binding Notifications}"
+								   VerticalAlignment="Bottom">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate x:DataType="vm:NotificationViewModel">
+								<ContentControl Content="{Binding}"/>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</Grid>
+			</ui:NavigationView>
+			<SplitView.Pane>
+				<StackPanel>
+					<ui:CommandBar DefaultLabelPosition="Right">
+						<ui:CommandBar.PrimaryCommands>
+							<ui:CommandBarButton Name="CloseCommandBarButton" Label="Close" Command="{Binding CloseSchemaCommand}"/>
+							<ui:CommandBarButton Name="CloseAllCommandBarButton" Label="Close all" Command="{Binding CloseSchemaAllCommand}"/>
+						</ui:CommandBar.PrimaryCommands>
+					</ui:CommandBar>
+					<ScrollViewer HorizontalScrollBarVisibility="Disabled"
+							  Margin="8 0 8 0">
+						<ListBox ItemsSource="{Binding Schemas}" SelectedItem="{Binding SelectedSchema}">
+							<ListBox.Styles>
+								<Style Selector="ListBoxItem">
+									<Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+									<Setter Property="Padding" Value="0"></Setter>
+									<Setter Property="Margin" Value="0 0 0 8"></Setter>
+								</Style>
+							</ListBox.Styles>
+							<ListBox.ItemTemplate>
+								<DataTemplate>
+									<ContentControl Content="{Binding}"/>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
+					</ScrollViewer>
 				</StackPanel>
-			</ui:NavigationView.PaneFooter>
-			<Grid>
-				<TransitioningContentControl Content="{Binding CurrentPage}"/>
-				<ItemsControl ItemsSource="{Binding Notifications}" 
-							   VerticalAlignment="Bottom">
-					<ItemsControl.ItemTemplate>
-						<DataTemplate x:DataType="vm:NotificationViewModel">
-							<ContentControl Content="{Binding}"/>
-						</DataTemplate>
-					</ItemsControl.ItemTemplate>
-				</ItemsControl>
-			</Grid>
-		</ui:NavigationView>
+			</SplitView.Pane>
+		</SplitView>
 	</Grid>
 </Window>
