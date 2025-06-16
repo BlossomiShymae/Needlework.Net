@@ -30,7 +30,8 @@ namespace Needlework.Net.Helpers
             if (schema.Reference != null) return schema.Reference.Id;
             if (schema.Type == "object" && schema.AdditionalProperties?.Reference != null) return schema.AdditionalProperties.Reference.Id;
             if (schema.Type == "integer" || schema.Type == "number") return $"{schema.Type}:{schema.Format}";
-            if (schema.Type == "array" && schema.AdditionalProperties?.Reference != null) return schema.AdditionalProperties.Reference.Id;
+            if (schema.Type == "array" && schema.AdditionalProperties?.Reference != null) return $"{schema.AdditionalProperties.Reference.Id}[]";
+            if (schema.Type == "array" && schema.AdditionalProperties?.Type != null) return $"{schema.AdditionalProperties.Type}[]";
             if (schema.Type == "array" && schema.Items.Reference != null) return $"{schema.Items.Reference.Id}[]";
             if (schema.Type == "array" && (schema.Items.Type == "integer" || schema.Items.Type == "number")) return $"{schema.Items.Type}:{schema.Items.Format}[]";
             if (schema.Type == "array") return $"{schema.Items.Type}[]";

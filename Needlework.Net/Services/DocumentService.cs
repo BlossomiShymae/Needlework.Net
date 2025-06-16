@@ -30,7 +30,12 @@ namespace Needlework.Net
 
             var lcuSchemaStream = await _githubUserContentClient.Request("/dysolix/hasagi-types/main/swagger.json")
                 .GetStreamAsync(cancellationToken: cancellationToken);
-            var lcuSchemaRaw = _reader.Read(lcuSchemaStream, out var _);
+            var lcuSchemaRaw = _reader.Read(lcuSchemaStream, out var diagnostic);
+            foreach (var error in diagnostic.Errors)
+            {
+                this.Log()
+                    .Warning("Diagnostic error: {Message}", error);
+            }
             var document = new Document(lcuSchemaRaw);
 
             return cached.Save(document, TimeSpan.FromMinutes(60));
@@ -45,7 +50,12 @@ namespace Needlework.Net
 
             var lolClientStream = await _githubUserContentClient.Request("/AlsoSylv/Irelia/refs/heads/master/schemas/game_schema.json")
                 .GetStreamAsync(cancellationToken: cancellationToken);
-            var lolClientRaw = _reader.Read(lolClientStream, out var _);
+            var lolClientRaw = _reader.Read(lolClientStream, out var diagnostic);
+            foreach (var error in diagnostic.Errors)
+            {
+                this.Log()
+                    .Warning("Diagnostic error: {Message}", error);
+            }
             var document = new Document(lolClientRaw);
 
             return cached.Save(document, TimeSpan.FromMinutes(60));
