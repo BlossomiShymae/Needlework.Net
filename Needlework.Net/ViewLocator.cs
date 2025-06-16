@@ -7,8 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Reflection;
 
 namespace Needlework.Net
 {
@@ -40,6 +38,8 @@ namespace Needlework.Net
             .WithMetrics()
             .Build();
 
+        private readonly Dictionary<Type, Func<Control>> _viewRegister = [];
+
         public ViewLocator()
         {
             _controlCache.Events.Value!.ItemRemoved += (source, args) =>
@@ -55,32 +55,23 @@ namespace Needlework.Net
             };
         }
 
+        public void Register<T>(Func<Control> viewActivator)
+            where T : INotifyPropertyChanged
+        {
+            _viewRegister[typeof(T)] = viewActivator;
+        }
+
         public Control Build(object? data)
         {
-            var name = data?.GetType().Name;
-            if (name is null)
+            if (!_viewRegister.TryGetValue(data!.GetType(), out var activator))
             {
-                throw new Exception("Data type name is null.");
-            }
-            if (!name.Contains("ViewModel"))
-            {
-                throw new Exception("Data type name must end with 'ViewModel'.");
+                throw new Exception("Data type has no registered view activator.");
             }
 
-            name = name.Replace("ViewModel", "View");
-            var type = Assembly.GetExecutingAssembly()
-                .GetTypes()
-                .Where(t => t.Name == name)
-                .FirstOrDefault();
-
-            if (type is null)
-            {
-                throw new Exception("Data type has no view.");
-            }
             bool isCold = !_controlCache.TryGet(data!, out var res);
             if (isCold)
             {
-                res ??= (Control)Activator.CreateInstance(type)!;
+                res ??= activator();
                 _controlCache.AddOrUpdate(data!, res);
             }
 

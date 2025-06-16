@@ -12,6 +12,13 @@ using Needlework.Net.ViewModels.Pages.Endpoints;
 using Needlework.Net.ViewModels.Pages.Home;
 using Needlework.Net.ViewModels.Pages.Schemas;
 using Needlework.Net.ViewModels.Pages.WebSocket;
+using Needlework.Net.Views.MainWindow;
+using Needlework.Net.Views.Pages.About;
+using Needlework.Net.Views.Pages.Console;
+using Needlework.Net.Views.Pages.Endpoints;
+using Needlework.Net.Views.Pages.Home;
+using Needlework.Net.Views.Pages.Schemas;
+using Needlework.Net.Views.Pages.WebSocket;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
 using Serilog;
@@ -50,10 +57,44 @@ class Program
     private static IServiceProvider BuildServices()
     {
         var builder = new ServiceCollection();
+
+        AddViews(builder);
         AddViewModels(builder);
         AddServices(builder);
 
         return builder.BuildServiceProvider();
+    }
+
+    private static void AddViews(ServiceCollection builder)
+    {
+        var locator = new ViewLocator();
+        // MAIN WINDOW
+        locator.Register<NotificationViewModel>(() => new NotificationView());
+        locator.Register<SchemaSearchDetailsViewModel>(() => new SchemaSearchDetailsView());
+        locator.Register<SchemaViewModel>(() => new SchemaView());
+        // ABOUT
+        locator.Register<AboutViewModel>(() => new AboutView());
+        // CONSOLE
+        locator.Register<ConsoleViewModel>(() => new ConsoleView());
+        // ENDPOINTS
+        locator.Register<EndpointListViewModel>(() => new EndpointListView());
+        locator.Register<EndpointSearchDetailsViewModel>(() => new EndpointSearchDetailsView());
+        locator.Register<EndpointsViewModel>(() => new EndpointsView());
+        locator.Register<EndpointTabItemContentViewModel>(() => new EndpointTabItemContentView());
+        locator.Register<PathOperationViewModel>(() => new PathOperationView());
+        locator.Register<PluginViewModel>(() => new PluginView());
+        locator.Register<PropertyClassViewModel>(() => new PropertyClassView());
+        // HOME
+        locator.Register<HomeViewModel>(() => new HomeView());
+        locator.Register<LibraryViewModel>(() => new LibraryView());
+        // SCHEMAS
+        locator.Register<SchemasViewModel>(() => new SchemasView());
+        locator.Register<SchemaItemViewModel>(() => new SchemaItemView());
+        // WEBSOCKET
+        locator.Register<WebSocketViewModel>(() => new WebSocketView());
+        locator.Register<EventViewModel>(() => new EventView());
+
+        builder.AddSingleton<IDataTemplate>(locator);
     }
 
     private static void AddServices(ServiceCollection builder)
@@ -67,7 +108,6 @@ class Program
             .Add("Client"));
 
         builder.AddLogging((builder) => builder.AddSerilog(EnableLoggerExtensions.Log(null)));
-        builder.AddSingleton<IDataTemplate>(new ViewLocator());
     }
 
     private static void AddViewModels(ServiceCollection builder)
