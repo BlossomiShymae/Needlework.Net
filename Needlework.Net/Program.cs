@@ -10,6 +10,7 @@ using Needlework.Net.ViewModels.Pages.About;
 using Needlework.Net.ViewModels.Pages.Console;
 using Needlework.Net.ViewModels.Pages.Endpoints;
 using Needlework.Net.ViewModels.Pages.Home;
+using Needlework.Net.ViewModels.Pages.Schemas;
 using Needlework.Net.ViewModels.Pages.WebSocket;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
@@ -77,6 +78,7 @@ class Program
         builder.AddSingleton<PageBase, ConsoleViewModel>();
         builder.AddSingleton<PageBase, EndpointsViewModel>();
         builder.AddSingleton<PageBase, WebSocketViewModel>();
+        builder.AddSingleton<PageBase, SchemasViewModel>();
         builder.AddSingleton<PageBase, AboutViewModel>();
     }
 

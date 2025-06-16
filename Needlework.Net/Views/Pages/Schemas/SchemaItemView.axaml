@@ -1,0 +1,46 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:Needlework.Net.ViewModels.Pages.Schemas"
+			 xmlns:controls="using:Needlework.Net.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Needlework.Net.Views.Pages.Schemas.SchemaItemView"
+			 x:DataType="vm:SchemaItemViewModel">
+	<UserControl.Styles>
+		<Style Selector="DataGrid">
+			<Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource ControlElevationBorderBrush}"/>
+		</Style>
+		<Style Selector="DataGridColumnHeader TextBlock">
+			<Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+		</Style>
+		<Style Selector="DataGridRow DataGridCell">
+			<Setter Property="FontSize" Value="12"></Setter>
+		</Style>
+		<Style Selector="DataGridRow">
+			<Setter Property="Margin" Value="0 0 0 4"></Setter>
+		</Style>
+	</UserControl.Styles>
+	<Expander>
+		<Expander.Header>
+			<TextBlock FontSize="12"
+					   FontWeight="DemiBold"
+					   Text="{Binding Id}"/>
+		</Expander.Header>
+		<StackPanel>
+			<DataGrid IsVisible="{Binding PropertyFields, Converter={StaticResource EnumerableToVisibilityConverter}}"
+								ItemsSource="{Binding PropertyFields}"
+								AutoGenerateColumns="True"
+								IsReadOnly="True"
+								GridLinesVisibility="Horizontal">
+			</DataGrid>
+			<DataGrid IsVisible="{Binding PropertyEnums, Converter={StaticResource EnumerableToVisibilityConverter}}"
+					   Margin="0 0 0 8"
+				ItemsSource="{Binding PropertyEnums}"
+				AutoGenerateColumns="True"
+				IsReadOnly="True"
+				GridLinesVisibility="Horizontal">
+			</DataGrid>
+		</StackPanel>
+	</Expander>
+</UserControl>
