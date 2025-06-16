@@ -21,7 +21,7 @@ namespace Needlework.Net.ViewModels.Pages.Schemas
 
         private List<SchemaTab> _schemas = [];
 
-        public SchemasViewModel(DocumentService documentService) : base("Schemas", "fa-solid fa-file-lines")
+        public SchemasViewModel(DocumentService documentService) : base("Schemas", "fa-solid fa-file-lines", -100)
         {
             _documentService = documentService;
         }
