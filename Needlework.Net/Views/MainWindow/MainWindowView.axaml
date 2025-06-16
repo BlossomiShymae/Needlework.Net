@@ -116,31 +116,29 @@
 				</Grid>
 			</ui:NavigationView>
 			<SplitView.Pane>
-				<StackPanel>
-					<ui:CommandBar DefaultLabelPosition="Right">
+				<Grid RowDefinitions="auto,*">
+					<ui:CommandBar DefaultLabelPosition="Right"
+								   Grid.Row="0">
 						<ui:CommandBar.PrimaryCommands>
 							<ui:CommandBarButton Name="CloseCommandBarButton" Label="Close" Command="{Binding CloseSchemaCommand}"/>
 							<ui:CommandBarButton Name="CloseAllCommandBarButton" Label="Close all" Command="{Binding CloseSchemaAllCommand}"/>
 						</ui:CommandBar.PrimaryCommands>
 					</ui:CommandBar>
-					<ScrollViewer HorizontalScrollBarVisibility="Disabled"
-							  Margin="8 0 8 0">
-						<ListBox ItemsSource="{Binding Schemas}" SelectedItem="{Binding SelectedSchema}">
-							<ListBox.Styles>
-								<Style Selector="ListBoxItem">
-									<Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
-									<Setter Property="Padding" Value="0"></Setter>
-									<Setter Property="Margin" Value="0 0 0 8"></Setter>
-								</Style>
-							</ListBox.Styles>
-							<ListBox.ItemTemplate>
-								<DataTemplate>
-									<ContentControl Content="{Binding}"/>
-								</DataTemplate>
-							</ListBox.ItemTemplate>
-						</ListBox>
-					</ScrollViewer>
-				</StackPanel>
+					<ListBox ItemsSource="{Binding Schemas}" SelectedItem="{Binding SelectedSchema}" Margin="8 0 8 0" Grid.Row="1">
+						<ListBox.Styles>
+							<Style Selector="ListBoxItem">
+								<Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+								<Setter Property="Padding" Value="0"></Setter>
+								<Setter Property="Margin" Value="0 0 0 8"></Setter>
+							</Style>
+						</ListBox.Styles>
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<ContentControl Content="{Binding}"/>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+				</Grid>
 			</SplitView.Pane>
 		</SplitView>
 	</Grid>
