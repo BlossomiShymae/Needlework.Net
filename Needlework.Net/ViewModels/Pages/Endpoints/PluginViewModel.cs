@@ -1,4 +1,5 @@
-﻿using AvaloniaEdit.Utils;
+﻿using Avalonia;
+using AvaloniaEdit.Utils;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,15 @@ public partial class PluginViewModel : ObservableObject
 
     [ObservableProperty]
     private string? _search;
+
+    [ObservableProperty]
+    private Vector _offset = new();
+
+    [ObservableProperty]
+    private Vector _paramsOffset = new();
+
+    [ObservableProperty]
+    private Vector _schemasOffset = new();
 
     partial void OnSearchChanged(string? value)
     {

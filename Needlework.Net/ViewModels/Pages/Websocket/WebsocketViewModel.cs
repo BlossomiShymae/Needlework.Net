@@ -1,4 +1,5 @@
-﻿using Avalonia.Collections;
+﻿using Avalonia;
+using Avalonia.Collections;
 using AvaloniaEdit.Document;
 using BlossomiShymae.Briar;
 using BlossomiShymae.Briar.WebSocket.Events;
@@ -53,6 +54,9 @@ public partial class WebSocketViewModel : PageBase, IEnableLogger
 
     public IReadOnlyList<EventViewModel> FilteredEventLog => string.IsNullOrWhiteSpace(Search) ? EventLog : [.. EventLog.Where(x => x.Key.Contains(Search, StringComparison.InvariantCultureIgnoreCase))];
 
+    [ObservableProperty]
+    private Vector _eventLogOffset = new();
+
     [NotifyPropertyChangedFor(nameof(FilteredEventLog))]
     [ObservableProperty]
     private string _search = string.Empty;
@@ -74,6 +78,9 @@ public partial class WebSocketViewModel : PageBase, IEnableLogger
 
     [ObservableProperty]
     private TextDocument _document = new();
+
+    [ObservableProperty]
+    private Vector _documentOffset = new();
 
     public override async Task InitializeAsync()
     {

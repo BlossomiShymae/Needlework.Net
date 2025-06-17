@@ -54,6 +54,11 @@
 						 ItemsSource="{Binding FilteredEventLog}"
 						 SelectedItem="{Binding SelectedEventLog}"
 						 ScrollViewer.HorizontalScrollBarVisibility="Auto">
+					<ListBox.Styles>
+						<Style Selector="ScrollViewer#PART_ScrollViewer">
+							<Setter Property="Offset" Value="{Binding EventLogOffset, Mode=TwoWay}"/>
+						</Style>
+					</ListBox.Styles>
 					<ListBox.ItemTemplate>
 						<DataTemplate x:DataType="vm:EventViewModel">
 							<ContentControl Content="{Binding}"/>
@@ -72,7 +77,13 @@
 				HorizontalScrollBarVisibility="Auto"
 				VerticalScrollBarVisibility="Visible"
 				Text=""
-				FontSize="12"/>
+				FontSize="12">
+				<avaloniaEdit:TextEditor.Styles>
+					<Style Selector="ScrollViewer#PART_ScrollViewer">
+						<Setter Property="Offset" Value="{Binding DocumentOffset, Mode=TwoWay}"/>
+					</Style>
+				</avaloniaEdit:TextEditor.Styles>
+			</avaloniaEdit:TextEditor>
 		</Border>
 	</Grid>
 </UserControl>

@@ -19,7 +19,8 @@
 					 Grid.Row="0"
 					 Grid.Column="0"/>
 			<ScrollViewer Grid.Row="1"
-						  Grid.Column="0">
+						  Grid.Column="0"
+						  Offset="{Binding Offset, Mode=TwoWay}">
 				<ItemsControl ItemsSource="{Binding SchemaItems}">
 					<ItemsControl.Styles>
 						<Style Selector="views|SchemaItemView">

@@ -1,4 +1,6 @@
-﻿using Avalonia.Platform;
+﻿using Avalonia;
+using Avalonia.Platform;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Needlework.Net.Models;
 using System;
 using System.Collections.Generic;
@@ -16,6 +18,9 @@ public partial class HomeViewModel : PageBase
         !.Where(library => library.Tags.Contains("lcu") || library.Tags.Contains("ingame"))
         .Select(library => new LibraryViewModel(library))
         .ToList();
+
+    [ObservableProperty]
+    private Vector _librariesOffset = new();
 
     public override Task InitializeAsync()
     {

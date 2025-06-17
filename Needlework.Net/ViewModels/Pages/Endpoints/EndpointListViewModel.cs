@@ -1,4 +1,5 @@
-﻿using AvaloniaEdit.Utils;
+﻿using Avalonia;
+using AvaloniaEdit.Utils;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Needlework.Net.Models;
@@ -39,6 +40,9 @@ public partial class EndpointListViewModel : ObservableObject
 
     [ObservableProperty]
     private string _search = string.Empty;
+
+    [ObservableProperty]
+    private Vector _offset = new();
 
     partial void OnSearchChanged(string value)
     {

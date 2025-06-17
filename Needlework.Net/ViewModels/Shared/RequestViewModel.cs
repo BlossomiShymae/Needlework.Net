@@ -1,4 +1,5 @@
-﻿using Avalonia.Media;
+﻿using Avalonia;
+using Avalonia.Media;
 using AvaloniaEdit.Document;
 using BlossomiShymae.Briar;
 using BlossomiShymae.Briar.Utils;
@@ -43,7 +44,19 @@ public partial class RequestViewModel : ObservableObject, IEnableLogger
     private TextDocument _requestDocument = new();
 
     [ObservableProperty]
+    private Vector _requestDocumentOffset = new();
+
+    [ObservableProperty]
     private TextDocument _responseDocument = new();
+
+    [ObservableProperty]
+    private Vector _responseDocumentOffset = new();
+
+    [ObservableProperty]
+    private double _responseDocumentHorizontalScrollBar;
+
+    [ObservableProperty]
+    private double _responseDocumentVerticalScrollBar;
 
     [ObservableProperty]
     private string? _responsePath;

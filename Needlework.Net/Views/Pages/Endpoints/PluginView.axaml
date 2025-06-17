@@ -50,6 +50,11 @@
 					 Margin="0 0 0 0"
 					 Grid.Row="1"
 					 Grid.Column="0">
+				<ListBox.Styles>
+					<Style Selector="ScrollViewer#PART_ScrollViewer">
+						<Setter Property="Offset" Value="{Binding Offset, Mode=TwoWay}"/>
+					</Style>
+				</ListBox.Styles>
 				<ListBox.ItemTemplate>
 					<DataTemplate x:DataType="vm:PathOperationViewModel">
 						<ContentControl Content="{Binding}"/>
@@ -92,7 +97,7 @@
 		<Grid Grid.Row="1" Grid.Column="2">
 			<TabControl>
 				<TabItem Header="Params">
-					<ScrollViewer>
+					<ScrollViewer Offset="{Binding ParamsOffset, Mode=TwoWay}">
 						<StackPanel IsVisible="{Binding SelectedPathOperation, Converter={StaticResource NullableToVisibilityConverter}}">
 							<controls:Card
 										   Margin="0 4"
@@ -155,7 +160,13 @@
 						VerticalScrollBarVisibility="Visible"
 						Text=""
 						ShowLineNumbers="True"
-						FontSize="12"/>
+						FontSize="12">
+						<avalonEdit:TextEditor.Styles>
+							<Style Selector="ScrollViewer#PART_ScrollViewer">
+								<Setter Property="Offset" Value="{Binding SelectedPathOperation.Request.Value.RequestDocumentOffset, Mode=TwoWay}"/>
+							</Style>
+						</avalonEdit:TextEditor.Styles>
+					</avalonEdit:TextEditor>
 				</TabItem>
 				<TabItem Header="Auth">
 					<Grid RowDefinitions="auto,auto,auto,*" ColumnDefinitions="*,4*">
@@ -197,7 +208,7 @@
 					</Grid>
 				</TabItem>
 				<TabItem Header="Schemas">
-					<ScrollViewer>
+					<ScrollViewer Offset="{Binding SchemasOffset, Mode=TwoWay}">
 						<StackPanel>
 							<controls:Card Margin="0 4" IsVisible="{Binding SelectedPathOperation.Operation.RequestBodyType, Converter={StaticResource NullableToVisibilityConverter}}">
 								<TextBlock>
@@ -266,7 +277,13 @@
 							ShowLineNumbers="True"
 							IsReadOnly="True"
 							Text=""
-							FontSize="12"/>
+							FontSize="12">
+							<avalonEdit:TextEditor.Styles>
+								<Style Selector="ScrollViewer#PART_ScrollViewer">
+									<Setter Property="Offset" Value="{Binding SelectedPathOperation.Request.Value.ResponseDocumentOffset, Mode=TwoWay}"/>
+								</Style>
+							</avalonEdit:TextEditor.Styles>
+						</avalonEdit:TextEditor>
 					</TabItem>
 				</TabControl>
 			</controls:BusyArea>

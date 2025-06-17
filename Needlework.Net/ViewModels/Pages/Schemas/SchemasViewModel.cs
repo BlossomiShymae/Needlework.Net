@@ -1,4 +1,5 @@
-﻿using Avalonia.Threading;
+﻿using Avalonia;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DebounceThrottle;
 using Needlework.Net.Helpers;
@@ -34,6 +35,9 @@ namespace Needlework.Net.ViewModels.Pages.Schemas
 
         [ObservableProperty]
         private List<SchemaItemViewModel> _schemaItems = [];
+
+        [ObservableProperty]
+        private Vector _offset = new();
 
         partial void OnSearchChanged(string? value)
         {

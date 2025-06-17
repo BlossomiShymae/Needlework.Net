@@ -59,7 +59,13 @@
 								 Margin="0 8 0 0"
 								 FontSize="12"
 								 Grid.Row="1"
-								 Grid.Column="0"/>
+								 Grid.Column="0">
+					<avaloniaEdit:TextEditor.Styles>
+						<Style Selector="ScrollViewer#PART_ScrollViewer">
+							<Setter Property="Offset" Value="{Binding Request.RequestDocumentOffset, Mode=TwoWay}"/>
+						</Style>
+					</avaloniaEdit:TextEditor.Styles>
+				</avaloniaEdit:TextEditor>
 			</Grid>
 			<Grid	RowDefinitions="35,*"
 					ColumnDefinitions="*"
@@ -83,7 +89,13 @@
 									   ShowLineNumbers="True"
 									   IsReadOnly="True"
 									   Text=""
-									   FontSize="12"/>
+									   FontSize="12">
+					<avaloniaEdit:TextEditor.Styles>
+						<Style Selector="ScrollViewer#PART_ScrollViewer">
+							<Setter Property="Offset" Value="{Binding Request.ResponseDocumentOffset, Mode=TwoWay}"/>
+						</Style>
+					</avaloniaEdit:TextEditor.Styles>
+				</avaloniaEdit:TextEditor>
 			</Grid>
 		</Grid>
 	</controls:BusyArea>

@@ -93,7 +93,8 @@
 					   Grid.Row="0">Libraries</TextBlock>
 			<ScrollViewer Grid.Column="0"
 						  Grid.Row="1"
-						  HorizontalScrollBarVisibility="Disabled">
+						  HorizontalScrollBarVisibility="Disabled"
+						  Offset="{Binding LibrariesOffset, Mode=TwoWay}">
 				<ItemsRepeater ItemsSource="{Binding Libraries}">
 					<ItemsRepeater.ItemTemplate>
 						<DataTemplate x:DataType="vm:LibraryViewModel">
