@@ -21,26 +21,39 @@
 			<Setter Property="Margin" Value="0 0 0 4"></Setter>
 		</Style>
 	</UserControl.Styles>
-	<Expander>
-		<Expander.Header>
-			<TextBlock FontSize="12"
+	<Border CornerRadius="4"
+			ClipToBounds="True"
+			BorderBrush="{DynamicResource ControlStrokeColorOnAccentTertiaryBrush}"
+			BorderThickness="1">
+		<StackPanel>
+			<Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+					BorderThickness="0 0 0 1"
+					BorderBrush="{DynamicResource ControlStrokeColorOnAccentTertiaryBrush}"
+					Padding="12">
+				<TextBlock FontSize="12"
 					   FontWeight="DemiBold"
 					   Text="{Binding Id}"/>
-		</Expander.Header>
-		<StackPanel>
-			<DataGrid IsVisible="{Binding PropertyFields, Converter={StaticResource EnumerableToVisibilityConverter}}"
+			</Border>
+			<Border Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
+					Padding="12"
+					IsVisible="{Binding PropertyFields, Converter={StaticResource EnumerableToVisibilityConverter}}">
+				<DataGrid 
 								ItemsSource="{Binding PropertyFields}"
 								AutoGenerateColumns="True"
 								IsReadOnly="True"
 								GridLinesVisibility="Horizontal">
-			</DataGrid>
-			<DataGrid IsVisible="{Binding PropertyEnums, Converter={StaticResource EnumerableToVisibilityConverter}}"
-					   Margin="0 0 0 8"
-				ItemsSource="{Binding PropertyEnums}"
-				AutoGenerateColumns="True"
-				IsReadOnly="True"
-				GridLinesVisibility="Horizontal">
-			</DataGrid>
+				</DataGrid>
+			</Border>
+			<Border Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
+					Padding="12"
+					IsVisible="{Binding PropertyEnums, Converter={StaticResource EnumerableToVisibilityConverter}}">
+				<DataGrid
+								ItemsSource="{Binding PropertyEnums}"
+								AutoGenerateColumns="True"
+								IsReadOnly="True"
+								GridLinesVisibility="Horizontal">
+				</DataGrid>
+			</Border>
 		</StackPanel>
-	</Expander>
+	</Border>
 </UserControl>
