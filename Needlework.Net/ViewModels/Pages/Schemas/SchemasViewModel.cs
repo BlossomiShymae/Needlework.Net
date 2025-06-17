@@ -39,16 +39,19 @@ namespace Needlework.Net.ViewModels.Pages.Schemas
         {
             _debounceDispatcher.Debounce(() =>
             {
-                if (string.IsNullOrEmpty(value))
-                {
-                    SchemaItems = [];
-                    return;
-                }
-
                 Task.Run(async () =>
                 {
                     var lcuSchemaDocument = await _documentService.GetLcuSchemaDocumentAsync();
                     var lolClientDocument = await _documentService.GetLolClientDocumentAsync();
+                    if (string.IsNullOrEmpty(value))
+                    {
+                        Dispatcher.UIThread.Invoke(() =>
+                        {
+                            SchemaItems = _schemas.Select((schema) => ToSchemaItemViewModel(schema, lcuSchemaDocument, lolClientDocument))
+                            .ToList();
+                        });
+                        return;
+                    }
                     var items = _schemas.Where(schema => schema.Key.Contains(value, StringComparison.OrdinalIgnoreCase))
                         .Select((schema) => ToSchemaItemViewModel(schema, lcuSchemaDocument, lolClientDocument))
                         .ToList();
@@ -76,10 +79,14 @@ namespace Needlework.Net.ViewModels.Pages.Schemas
             var lolClientDocument = await _documentService.GetLolClientDocumentAsync();
             Dispatcher.UIThread.Invoke(() =>
             {
-                _schemas = Enumerable.Concat(
+                var schemas = Enumerable.Concat(
                     lcuSchemaDocument.OpenApiDocument.Components.Schemas.Keys.Select(key => new SchemaTab(key, Tab.LCU)),
                     lolClientDocument.OpenApiDocument.Components.Schemas.Keys.Select(key => new SchemaTab(key, Tab.GameClient))
                     ).ToList();
+                _schemas = schemas;
+                SchemaItems = schemas
+                    .Select((schema) => ToSchemaItemViewModel(schema, lcuSchemaDocument, lolClientDocument))
+                    .ToList();
                 IsBusy = false;
             });
         }
