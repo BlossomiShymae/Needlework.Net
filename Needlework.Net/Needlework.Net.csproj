@@ -27,7 +27,6 @@
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.2.8" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.8" />
     <PackageReference Include="AvaloniaEdit.TextMate" Version="11.3.0" />
-    <PackageReference Include="BitFaster.Caching" Version="2.5.3" />
     <PackageReference Include="BlossomiShymae.Briar" Version="0.2.0" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="DebounceThrottle" Version="3.0.1" />
