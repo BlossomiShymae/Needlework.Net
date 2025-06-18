@@ -12,6 +12,11 @@
 		<TextBox Watermark="Search" Margin="0 0 0 4" Text="{Binding Search}" Grid.Row="1" Grid.Column="0"/>
 		<ScrollViewer Grid.Row="2" Grid.Column="0" Offset="{Binding Offset, Mode=TwoWay}">
 			<ItemsControl ItemsSource="{Binding EndpointSearchDetails}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<VirtualizingStackPanel/>
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
 						<ContentControl Content="{Binding}"/>
