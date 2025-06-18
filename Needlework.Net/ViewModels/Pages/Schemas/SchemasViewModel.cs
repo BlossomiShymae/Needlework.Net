@@ -3,6 +3,7 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DebounceThrottle;
 using Needlework.Net.Helpers;
+using Needlework.Net.Services;
 using Needlework.Net.ViewModels.Pages.Endpoints;
 using System;
 using System.Collections.Generic;
@@ -17,11 +18,14 @@ namespace Needlework.Net.ViewModels.Pages.Schemas
 
         private readonly DocumentService _documentService;
 
+        private readonly SchemaPaneService _schemaPaneService;
+
         private List<SchemaSearchDetailsViewModel> _schemas = [];
 
-        public SchemasViewModel(DocumentService documentService) : base("Schemas", "fa-solid fa-file-lines", -100)
+        public SchemasViewModel(DocumentService documentService, SchemaPaneService schemaPaneService) : base("Schemas", "fa-solid fa-file-lines", -100)
         {
             _documentService = documentService;
+            _schemaPaneService = schemaPaneService;
         }
 
         [ObservableProperty]
@@ -61,8 +65,8 @@ namespace Needlework.Net.ViewModels.Pages.Schemas
             Dispatcher.UIThread.Invoke(() =>
             {
                 var schemas = Enumerable.Concat(
-                    lcuSchemaDocument.OpenApiDocument.Components.Schemas.Values.Select(schema => new SchemaSearchDetailsViewModel(Tab.LCU, OpenApiHelpers.WalkSchema(schema, lcuSchemaDocument.OpenApiDocument))),
-                    lolClientDocument.OpenApiDocument.Components.Schemas.Values.Select(schema => new SchemaSearchDetailsViewModel(Tab.GameClient, OpenApiHelpers.WalkSchema(schema, lolClientDocument.OpenApiDocument)))
+                    lcuSchemaDocument.OpenApiDocument.Components.Schemas.Values.Select(schema => new SchemaSearchDetailsViewModel(Tab.LCU, OpenApiHelpers.WalkSchema(schema, lcuSchemaDocument.OpenApiDocument), _schemaPaneService)),
+                    lolClientDocument.OpenApiDocument.Components.Schemas.Values.Select(schema => new SchemaSearchDetailsViewModel(Tab.GameClient, OpenApiHelpers.WalkSchema(schema, lolClientDocument.OpenApiDocument), _schemaPaneService))
                     ).ToList();
                 _schemas = schemas;
                 SchemaItems = schemas.ToList();

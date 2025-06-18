@@ -41,15 +41,18 @@ public partial class MainWindowViewModel
 
     private readonly DialogService _dialogService;
 
+    private readonly SchemaPaneService _schemaPaneService;
+
     private readonly IDisposable _checkForUpdatesDisposable;
 
     private readonly IDisposable _checkForSchemaVersionDisposable;
 
-    public MainWindowViewModel(IEnumerable<PageBase> pages, DialogService dialogService, DocumentService documentService, NotificationService notificationService, IFlurlClientCache clients)
+    public MainWindowViewModel(IEnumerable<PageBase> pages, DialogService dialogService, DocumentService documentService, NotificationService notificationService, IFlurlClientCache clients, SchemaPaneService schemaPaneService)
     {
         _dialogService = dialogService;
         _documentService = documentService;
         _notificationService = notificationService;
+        _schemaPaneService = schemaPaneService;
         _githubClient = clients.Get("GithubClient");
 
         NavigationViewItems = pages
@@ -66,6 +69,26 @@ public partial class MainWindowViewModel
             Notifications.Add(vm);
             await Task.Delay(notification.Duration ?? TimeSpan.FromSeconds(10));
             Notifications.Remove(vm);
+        });
+
+        _schemaPaneService.SchemaPaneItems.Subscribe(async item =>
+        {
+            var document = item.Tab switch
+            {
+                Pages.Endpoints.Tab.LCU => await documentService.GetLcuSchemaDocumentAsync(),
+                Pages.Endpoints.Tab.GameClient => await documentService.GetLolClientDocumentAsync(),
+                _ => throw new NotImplementedException()
+            };
+            var propertyClassViewModel = OpenApiHelpers.WalkSchema(document.OpenApiDocument.Components.Schemas[item.Key], document.OpenApiDocument);
+            var schemaViewModel = new SchemaViewModel(propertyClassViewModel);
+            if (Schemas.ToList().Find(schema => schema.Id == schemaViewModel.Id) == null)
+            {
+                Schemas.Add(schemaViewModel);
+                IsPaneOpen = true;
+
+                OpenSchemaPaneCommand.NotifyCanExecuteChanged();
+                CloseSchemaAllCommand.NotifyCanExecuteChanged();
+            }
         });
 
         _checkForUpdatesDisposable = Observable.Timer(TimeSpan.Zero, TimeSpan.FromMinutes(10))

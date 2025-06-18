@@ -8,6 +8,7 @@
 		xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
 		xmlns:i="https://github.com/projektanker/icons.avalonia"
 		xmlns:vm="using:Needlework.Net.ViewModels.MainWindow"
+		xmlns:views="using:Needlework.Net.Views.MainWindow"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Needlework.Net.Views.MainWindow.MainWindowView"
 		x:DataType="vm:MainWindowViewModel"
@@ -132,6 +133,11 @@
 								<Setter Property="Margin" Value="0 0 0 8"></Setter>
 							</Style>
 						</ListBox.Styles>
+						<ListBox.ItemsPanel>
+							<ItemsPanelTemplate>
+								<StackPanel/>
+							</ItemsPanelTemplate>
+						</ListBox.ItemsPanel>
 						<ListBox.ItemTemplate>
 							<DataTemplate>
 								<ContentControl Content="{Binding}"/>

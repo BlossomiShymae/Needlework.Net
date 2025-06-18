@@ -28,7 +28,8 @@
 			Padding="0"
 			BorderThickness="1"
 			HorizontalAlignment="Stretch"
-			HorizontalContentAlignment="Stretch">
+			HorizontalContentAlignment="Stretch"
+			Command="{Binding DisplayCommand}">
 		<Border Grid.Column="0"
 				Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
 				Padding="12">

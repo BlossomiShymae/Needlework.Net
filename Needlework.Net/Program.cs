@@ -102,6 +102,7 @@ class Program
         builder.AddSingleton<DialogService>();
         builder.AddSingleton<DocumentService>();
         builder.AddSingleton<NotificationService>();
+        builder.AddSingleton<SchemaPaneService>();
         builder.AddSingleton<IFlurlClientCache>(new FlurlClientCache()
             .Add("GithubClient", "https://api.github.com")
             .Add("GithubUserContentClient", "https://raw.githubusercontent.com")
