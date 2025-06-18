@@ -70,7 +70,7 @@ class Program
         var locator = new ViewLocator();
         // MAIN WINDOW
         locator.Register<NotificationViewModel>(() => new NotificationView());
-        locator.Register<SchemaSearchDetailsViewModel>(() => new SchemaSearchDetailsView());
+        locator.Register<ViewModels.MainWindow.SchemaSearchDetailsViewModel>(() => new Views.MainWindow.SchemaSearchDetailsView());
         locator.Register<SchemaViewModel>(() => new SchemaView());
         // ABOUT
         locator.Register<AboutViewModel>(() => new AboutView());
@@ -89,7 +89,7 @@ class Program
         locator.Register<LibraryViewModel>(() => new LibraryView());
         // SCHEMAS
         locator.Register<SchemasViewModel>(() => new SchemasView());
-        locator.Register<SchemaItemViewModel>(() => new SchemaItemView());
+        locator.Register<ViewModels.Pages.Schemas.SchemaSearchDetailsViewModel>(() => new Views.Pages.Schemas.SchemaSearchDetailsView());
         // WEBSOCKET
         locator.Register<WebSocketViewModel>(() => new WebSocketView());
         locator.Register<EventViewModel>(() => new EventView());

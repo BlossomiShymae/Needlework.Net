@@ -79,6 +79,9 @@
     <Compile Update="Views\Pages\Endpoints\PluginView.axaml.cs">
       <DependentUpon>PluginView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Pages\Schemas\SchemaSearchDetailsView.axaml.cs">
+      <DependentUpon>SchemaSearchDetailsView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Pages\WebSocket\WebsocketView.axaml.cs">
       <DependentUpon>WebSocketView.axaml</DependentUpon>
     </Compile>
@@ -86,5 +89,9 @@
 
   <ItemGroup>
     <Folder Include="Assets\Users\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="ViewModels\Pages\Schemas\SchemaSearchDetailsViewModel.cs" />
   </ItemGroup>
 </Project>

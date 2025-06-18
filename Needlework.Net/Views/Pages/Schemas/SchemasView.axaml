@@ -23,13 +23,13 @@
 						  Offset="{Binding Offset, Mode=TwoWay}">
 				<ItemsControl ItemsSource="{Binding SchemaItems}">
 					<ItemsControl.Styles>
-						<Style Selector="views|SchemaItemView">
-							<Setter Property="Margin" Value="0 0 0 8"/>
+						<Style Selector="views|SchemaSearchDetailsView">
+							<Setter Property="Margin" Value="0 0 0 8" />
 						</Style>
 					</ItemsControl.Styles>
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>
-							<VirtualizingStackPanel/>
+							<VirtualizingStackPanel />
 						</ItemsPanelTemplate>
 					</ItemsControl.ItemsPanel>
 					<ItemsControl.ItemTemplate>

@@ -1,0 +1,46 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:Needlework.Net.ViewModels.Pages.Schemas"
+			 xmlns:controls="using:Needlework.Net.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Needlework.Net.Views.Pages.Schemas.SchemaSearchDetailsView"
+			 x:DataType="vm:SchemaSearchDetailsViewModel">
+	<UserControl.Styles>
+		<Style Selector="DataGrid">
+			<Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource ControlElevationBorderBrush}"/>
+		</Style>
+		<Style Selector="DataGridColumnHeader TextBlock">
+			<Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+		</Style>
+		<Style Selector="DataGridRow DataGridCell">
+			<Setter Property="FontSize" Value="12"></Setter>
+		</Style>
+		<Style Selector="DataGridRow">
+			<Setter Property="Margin" Value="0 0 0 4"></Setter>
+		</Style>
+	</UserControl.Styles>
+	<Button CornerRadius="4"
+			ClipToBounds="True"
+			BorderBrush="{DynamicResource ControlStrokeColorOnAccentTertiaryBrush}"
+			Background="Transparent"
+			Padding="0"
+			BorderThickness="1"
+			HorizontalAlignment="Stretch"
+			HorizontalContentAlignment="Stretch">
+		<Border Grid.Column="0"
+				Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+				Padding="12">
+			<StackPanel>
+				<TextBlock FontSize="12"
+				   FontWeight="DemiBold"
+				   Text="{Binding Id}"/>
+				<TextBlock FontSize="12"
+						   Text="{Binding Document}"
+						   Theme="{StaticResource CaptionTextBlockStyle}"
+						   Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"/>
+			</StackPanel>
+		</Border>
+	</Button>
+</UserControl>

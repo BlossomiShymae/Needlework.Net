@@ -3,7 +3,6 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DebounceThrottle;
 using Needlework.Net.Helpers;
-using Needlework.Net.Models;
 using Needlework.Net.ViewModels.Pages.Endpoints;
 using System;
 using System.Collections.Generic;
@@ -18,9 +17,7 @@ namespace Needlework.Net.ViewModels.Pages.Schemas
 
         private readonly DocumentService _documentService;
 
-        public record SchemaTab(string Key, Tab Tab);
-
-        private List<SchemaTab> _schemas = [];
+        private List<SchemaSearchDetailsViewModel> _schemas = [];
 
         public SchemasViewModel(DocumentService documentService) : base("Schemas", "fa-solid fa-file-lines", -100)
         {
@@ -34,7 +31,7 @@ namespace Needlework.Net.ViewModels.Pages.Schemas
         private string? _search;
 
         [ObservableProperty]
-        private List<SchemaItemViewModel> _schemaItems = [];
+        private List<SchemaSearchDetailsViewModel> _schemaItems = [];
 
         [ObservableProperty]
         private Vector _offset = new();
@@ -43,38 +40,18 @@ namespace Needlework.Net.ViewModels.Pages.Schemas
         {
             _debounceDispatcher.Debounce(() =>
             {
-                Task.Run(async () =>
+                if (string.IsNullOrEmpty(value))
                 {
-                    var lcuSchemaDocument = await _documentService.GetLcuSchemaDocumentAsync();
-                    var lolClientDocument = await _documentService.GetLolClientDocumentAsync();
-                    if (string.IsNullOrEmpty(value))
+                    Dispatcher.UIThread.Invoke(() =>
                     {
-                        Dispatcher.UIThread.Invoke(() =>
-                        {
-                            SchemaItems = _schemas.Select((schema) => ToSchemaItemViewModel(schema, lcuSchemaDocument, lolClientDocument))
-                            .ToList();
-                        });
-                        return;
-                    }
-                    var items = _schemas.Where(schema => schema.Key.Contains(value, StringComparison.OrdinalIgnoreCase))
-                        .Select((schema) => ToSchemaItemViewModel(schema, lcuSchemaDocument, lolClientDocument))
-                        .ToList();
-                    Dispatcher.UIThread.Invoke(() => { SchemaItems = items; });
-                });
+                        SchemaItems = _schemas.ToList();
+                    });
+                    return;
+                }
+                var items = _schemas.Where(schema => schema.Id.Contains(value, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+                Dispatcher.UIThread.Invoke(() => { SchemaItems = items; });
             });
-        }
-
-        private SchemaItemViewModel ToSchemaItemViewModel(SchemaTab schema, Document lcuSchemaDocument, Document lolClientDocument)
-        {
-            var document = schema.Tab switch
-            {
-                Tab.LCU => lcuSchemaDocument.OpenApiDocument,
-                Tab.GameClient => lolClientDocument.OpenApiDocument,
-                _ => throw new NotImplementedException()
-            };
-            var vm = OpenApiHelpers.WalkSchema(document.Components.Schemas[schema.Key], document);
-            return new SchemaItemViewModel(vm);
-
         }
 
         public override async Task InitializeAsync()
@@ -84,13 +61,11 @@ namespace Needlework.Net.ViewModels.Pages.Schemas
             Dispatcher.UIThread.Invoke(() =>
             {
                 var schemas = Enumerable.Concat(
-                    lcuSchemaDocument.OpenApiDocument.Components.Schemas.Keys.Select(key => new SchemaTab(key, Tab.LCU)),
-                    lolClientDocument.OpenApiDocument.Components.Schemas.Keys.Select(key => new SchemaTab(key, Tab.GameClient))
+                    lcuSchemaDocument.OpenApiDocument.Components.Schemas.Values.Select(schema => new SchemaSearchDetailsViewModel(Tab.LCU, OpenApiHelpers.WalkSchema(schema, lcuSchemaDocument.OpenApiDocument))),
+                    lolClientDocument.OpenApiDocument.Components.Schemas.Values.Select(schema => new SchemaSearchDetailsViewModel(Tab.GameClient, OpenApiHelpers.WalkSchema(schema, lolClientDocument.OpenApiDocument)))
                     ).ToList();
                 _schemas = schemas;
-                SchemaItems = schemas
-                    .Select((schema) => ToSchemaItemViewModel(schema, lcuSchemaDocument, lolClientDocument))
-                    .ToList();
+                SchemaItems = schemas.ToList();
                 IsBusy = false;
             });
         }
