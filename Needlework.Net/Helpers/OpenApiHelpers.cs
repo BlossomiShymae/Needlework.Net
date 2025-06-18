@@ -15,13 +15,57 @@ namespace Needlework.Net.Helpers
             if (!TryGetResponse(responses, out var response))
                 return "none";
 
-            if (response.Content.TryGetValue("application/json", out var media))
+            if (TryGetApplicationJsonMedia(response, out var media))
             {
                 var schema = media.Schema;
                 return GetSchemaType(schema);
             }
 
             return "none";
+        }
+
+        public static bool TryGetApplicationJsonMedia(OpenApiResponse response, [NotNullWhen(true)] out OpenApiMediaType? media) // Because GetLolGameflowV1SpectateDelayedLaunch has an empty schema with no type...
+        {
+            var flag = false;
+            if (response.Content.TryGetValue("application/json", out var _media))
+            {
+                if (_media?.Schema?.Type != null)
+                {
+                    media = _media;
+                    flag = true;
+                }
+                else
+                {
+                    media = null;
+                }
+            }
+            else
+            {
+                media = null;
+            }
+            return flag;
+        }
+
+        public static bool TryGetApplicationJsonMedia(OpenApiRequestBody requestBody, [NotNullWhen(true)] out OpenApiMediaType? media)
+        {
+            var flag = false;
+            if (requestBody.Content.TryGetValue("application/json", out var _media))
+            {
+                if (_media?.Schema?.Type != null)
+                {
+                    media = _media;
+                    flag = true;
+                }
+                else
+                {
+                    media = null;
+                }
+            }
+            else
+            {
+                media = null;
+            }
+            return flag;
         }
 
         public static string GetSchemaType(OpenApiSchema? schema)
@@ -121,7 +165,7 @@ namespace Needlework.Net.Helpers
         public static List<PropertyClassViewModel> GetRequestClasses(OpenApiRequestBody? requestBody, Document document)
         {
             if (requestBody == null) return [];
-            if (requestBody.Content.TryGetValue("application/json", out var media))
+            if (TryGetApplicationJsonMedia(requestBody, out var media))
             {
                 var rawDocument = document.OpenApiDocument;
                 var schema = media.Schema;
@@ -171,7 +215,7 @@ namespace Needlework.Net.Helpers
             if (!TryGetResponse(responses, out var response))
                 return [];
 
-            if (response.Content.TryGetValue("application/json", out var media))
+            if (TryGetApplicationJsonMedia(response, out var media))
             {
                 var rawDocument = document.OpenApiDocument;
                 var schema = media.Schema;
