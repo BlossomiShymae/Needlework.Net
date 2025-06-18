@@ -1,3 +1,4 @@
+using Akavache;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -9,6 +10,7 @@ using Needlework.Net.ViewModels.MainWindow;
 using Needlework.Net.ViewModels.Pages;
 using Needlework.Net.Views.MainWindow;
 using System;
+using System.Reactive.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -59,6 +61,13 @@ public partial class App : Application, IEnableLogger
                 DataContext = _serviceProvider.GetRequiredService<MainWindowViewModel>()
             };
             MainWindow = desktop.MainWindow;
+
+            desktop.ShutdownRequested += (_, _) =>
+            {
+                var blobCache = _serviceProvider.GetRequiredService<IBlobCache>();
+                blobCache.Flush().Wait();
+                blobCache.Dispose();
+            };
         }
 
         base.OnFrameworkInitializationCompleted();

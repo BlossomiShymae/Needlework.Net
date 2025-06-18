@@ -1,4 +1,6 @@
-﻿using Avalonia;
+﻿using Akavache;
+using Akavache.Sqlite3;
+using Avalonia;
 using Avalonia.Controls.Templates;
 using Flurl.Http.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -105,6 +107,11 @@ class Program
         builder.AddSingleton<NotificationService>();
         builder.AddSingleton<SchemaPaneService>();
         builder.AddSingleton<HextechDocsPostService>();
+        builder.AddSingleton<IBlobCache>((_) =>
+        {
+            Directory.CreateDirectory("Data");
+            return new SqlRawPersistentBlobCache("Data/data.sqlite");
+        });
         builder.AddSingleton<IFlurlClientCache>(new FlurlClientCache()
             .Add("GithubClient", "https://api.github.com")
             .Add("GithubUserContentClient", "https://raw.githubusercontent.com")

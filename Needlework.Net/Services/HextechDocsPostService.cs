@@ -1,41 +1,49 @@
-﻿using AngleSharp;
-using FastCache;
+﻿using Akavache;
+using AngleSharp;
+using Needlework.Net.Extensions;
 using Needlework.Net.Models;
 using System;
 using System.Collections.Generic;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 namespace Needlework.Net.Services
 {
-    public class HextechDocsPostService
+    public class HextechDocsPostService : IEnableLogger
     {
         private readonly IBrowsingContext _context = BrowsingContext.New(Configuration.Default.WithDefaultLoader());
 
+        private readonly IBlobCache _blobCache;
+
+        public HextechDocsPostService(IBlobCache blobCache)
+        {
+            _blobCache = blobCache;
+        }
+
         public async Task<List<HextechDocsPost>> GetPostsAsync()
         {
-            if (Cached<List<HextechDocsPost>>.TryGet(nameof(GetPostsAsync), out var cached))
+            return await _blobCache.GetOrFetchObject("HextechDocsPosts", async () =>
             {
-                return cached;
-            }
-
-            var document = await _context.OpenAsync("https://hextechdocs.dev/tag/lcu/");
-            var elements = document.QuerySelectorAll("article.post-card");
-            var posts = new List<HextechDocsPost>();
-            foreach (var element in elements)
-            {
-                var path = element.QuerySelector("a.post-card-content-link")!.GetAttribute("href")!;
-                var title = element.QuerySelector(".post-card-title")!.TextContent;
-                var excerpt = element.QuerySelector(".post-card-excerpt > p")!.TextContent;
-                var post = new HextechDocsPost()
+                this.Log()
+                    .Debug("Downloading HextechDocs posts...");
+                var document = await _context.OpenAsync("https://hextechdocs.dev/tag/lcu/");
+                var elements = document.QuerySelectorAll("article.post-card");
+                var posts = new List<HextechDocsPost>();
+                foreach (var element in elements)
                 {
-                    Path = path,
-                    Title = title,
-                    Excerpt = excerpt,
-                };
-                posts.Add(post);
-            }
-
-            return cached.Save(posts, TimeSpan.FromMinutes(60));
+                    var path = element.QuerySelector("a.post-card-content-link")!.GetAttribute("href")!;
+                    var title = element.QuerySelector(".post-card-title")!.TextContent;
+                    var excerpt = element.QuerySelector(".post-card-excerpt > p")!.TextContent;
+                    var post = new HextechDocsPost()
+                    {
+                        Path = path,
+                        Title = title,
+                        Excerpt = excerpt,
+                    };
+                    posts.Add(post);
+                }
+                return posts;
+            }, DateTimeOffset.Now + TimeSpan.FromHours(12));
         }
     }
 }
