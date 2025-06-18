@@ -29,13 +29,18 @@ public partial class HomeViewModel : PageBase, IEnableLogger
             .Select(time => Unit.Default)
             .Subscribe(_ =>
             {
-                if (SelectedHextechDocsPostsIndex == HextechDocsPosts.Count - 1)
+                if (SelectedHextechDocsPost is HextechDocsPostViewModel vm)
                 {
-                    SelectedHextechDocsPostsIndex = 0;
-                }
-                else
-                {
-                    SelectedHextechDocsPostsIndex += 1;
+                    var index = HextechDocsPosts.IndexOf(vm);
+                    if (index == HextechDocsPosts.Count - 1)
+                    {
+                        index = 0;
+                    }
+                    else
+                    {
+                        index += 1;
+                    }
+                    SelectedHextechDocsPost = HextechDocsPosts.ElementAt(index);
                 }
             });
     }
@@ -52,7 +57,7 @@ public partial class HomeViewModel : PageBase, IEnableLogger
     private List<HextechDocsPostViewModel> _hextechDocsPosts = [];
 
     [ObservableProperty]
-    private int _selectedHextechDocsPostsIndex;
+    private HextechDocsPostViewModel? _selectedHextechDocsPost;
 
     public override async Task InitializeAsync()
     {
@@ -63,6 +68,7 @@ public partial class HomeViewModel : PageBase, IEnableLogger
             Dispatcher.UIThread.Invoke(() =>
             {
                 HextechDocsPosts = hextechDocsPosts;
+                SelectedHextechDocsPost = HextechDocsPosts.First();
             });
         }
         catch (Exception ex)
