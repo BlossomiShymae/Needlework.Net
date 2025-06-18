@@ -44,7 +44,7 @@
 					<Carousel ItemsSource="{Binding HextechDocsPosts}"
 							  SelectedIndex="{Binding SelectedHextechDocsPostsIndex}"
 							  Margin="12"
-							  IsVisible="{Binding SelectedHextechDocsPostsIndex, Converter={StaticResource EnumerableToVisibilityConverter}}">
+							  IsVisible="{Binding HextechDocsPosts, Converter={StaticResource EnumerableToVisibilityConverter}}">
 						<Carousel.PageTransition>
 							<PageSlide Orientation="Horizontal" Duration="0.25"/>
 						</Carousel.PageTransition>
