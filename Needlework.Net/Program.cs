@@ -87,6 +87,7 @@ class Program
         // HOME
         locator.Register<HomeViewModel>(() => new HomeView());
         locator.Register<LibraryViewModel>(() => new LibraryView());
+        locator.Register<HextechDocsPostViewModel>(() => new HextechDocsPostView());
         // SCHEMAS
         locator.Register<SchemasViewModel>(() => new SchemasView());
         locator.Register<ViewModels.Pages.Schemas.SchemaSearchDetailsViewModel>(() => new Views.Pages.Schemas.SchemaSearchDetailsView());
@@ -103,6 +104,7 @@ class Program
         builder.AddSingleton<DocumentService>();
         builder.AddSingleton<NotificationService>();
         builder.AddSingleton<SchemaPaneService>();
+        builder.AddSingleton<HextechDocsPostService>();
         builder.AddSingleton<IFlurlClientCache>(new FlurlClientCache()
             .Add("GithubClient", "https://api.github.com")
             .Add("GithubUserContentClient", "https://raw.githubusercontent.com")
