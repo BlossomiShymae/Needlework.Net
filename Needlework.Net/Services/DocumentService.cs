@@ -2,6 +2,7 @@
 using Flurl.Http;
 using Flurl.Http.Configuration;
 using Microsoft.OpenApi.Readers;
+using Needlework.Net.Constants;
 using Needlework.Net.Extensions;
 using Needlework.Net.Models;
 using System;
@@ -18,7 +19,7 @@ namespace Needlework.Net
 
         public DocumentService(IFlurlClientCache clients)
         {
-            _githubUserContentClient = clients.Get("GithubUserContentClient");
+            _githubUserContentClient = clients.Get(FlurlClientKeys.GithubUserContentClient);
         }
 
         public async Task<Document> GetLcuSchemaDocumentAsync(CancellationToken cancellationToken = default)

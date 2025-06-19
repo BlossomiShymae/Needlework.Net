@@ -20,8 +20,8 @@ namespace Needlework.Net.Services
 
         public GithubService(IBlobCache blobCache, IFlurlClientCache clients)
         {
-            _githubClient = clients.Get("GithubClient");
-            _githubUserContentClient = clients.Get("GithubUserContentClient");
+            _githubClient = clients.Get(FlurlClientKeys.GithubClient);
+            _githubUserContentClient = clients.Get(FlurlClientKeys.GithubUserContentClient);
             _blobCache = blobCache;
         }
 
@@ -33,7 +33,7 @@ namespace Needlework.Net.Services
                     .Debug("Downloading latest release info from GitHub...");
                 var release = await _githubClient
                     .Request("/repos/BlossomiShymae/Needlework.Net/releases/latest")
-                    .WithHeader("User-Agent", $"Needlework.Net/{AppInfo.Version}")
+                    .WithHeader("User-Agent", $"{AppInfo.Name}/{AppInfo.Version}")
                     .GetJsonAsync<GithubRelease>();
                 return release;
             }, DateTimeOffset.Now + Intervals.CheckForUpdates);

@@ -4,6 +4,7 @@ using Avalonia;
 using Avalonia.Controls.Templates;
 using Flurl.Http.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Needlework.Net.Constants;
 using Needlework.Net.Extensions;
 using Needlework.Net.Services;
 using Needlework.Net.ViewModels.MainWindow;
@@ -114,9 +115,9 @@ class Program
             return new SqlRawPersistentBlobCache("Data/data.sqlite");
         });
         builder.AddSingleton<IFlurlClientCache>(new FlurlClientCache()
-            .Add("GithubClient", "https://api.github.com")
-            .Add("GithubUserContentClient", "https://raw.githubusercontent.com")
-            .Add("Client"));
+            .Add(FlurlClientKeys.GithubClient, "https://api.github.com")
+            .Add(FlurlClientKeys.GithubUserContentClient, "https://raw.githubusercontent.com")
+            .Add(FlurlClientKeys.Client));
 
         builder.AddLogging((builder) => builder.AddSerilog(EnableLoggerExtensions.Log(null)));
     }

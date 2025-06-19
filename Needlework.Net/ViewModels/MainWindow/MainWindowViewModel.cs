@@ -23,7 +23,6 @@ using System.Linq;
 using System.Net.Http.Json;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -103,7 +102,7 @@ public partial class MainWindowViewModel
                     var message = "Failed to check for updates. Please check your internet connection or try again later.";
                     this.Log()
                         .Error(ex, message);
-                    _notificationService.Notify("Needlework.Net", message, InfoBarSeverity.Error);
+                    _notificationService.Notify(AppInfo.Name, message, InfoBarSeverity.Error);
                     _checkForUpdatesDisposable?.Dispose();
                 }
             });
@@ -121,7 +120,7 @@ public partial class MainWindowViewModel
                     var message = "Failed to check for schema version. Please check your internet connection or try again later.";
                     this.Log()
                         .Error(ex, message);
-                    _notificationService.Notify("Needlework.Net", message, InfoBarSeverity.Error);
+                    _notificationService.Notify(AppInfo.Name, message, InfoBarSeverity.Error);
                     _checkForSchemaVersionDisposable?.Dispose();
                 }
             });
@@ -154,9 +153,9 @@ public partial class MainWindowViewModel
 
     public bool IsSchemaVersionChecked { get; private set; }
 
-    public string Version { get; } = Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "0.0.0.0";
+    public string AppName => AppInfo.Name;
 
-    public string Title => $"Needlework.Net {Version}";
+    public string Title => $"{AppInfo.Name} {AppInfo.Version}";
 
     partial void OnSelectedNavigationViewItemChanged(NavigationViewItem value)
     {
@@ -228,11 +227,11 @@ public partial class MainWindowViewModel
     private async Task CheckForUpdatesAsync()
     {
         var release = await _githubService.GetLatestReleaseAsync();
-        if (release.IsLatest(Version))
+        if (release.IsLatest(AppInfo.Version))
         {
             this.Log()
                 .Information("New version available: {TagName}", release.TagName);
-            _notificationService.Notify("Needlework.Net", $"New version available: {release.TagName}", InfoBarSeverity.Informational, null, "https://github.com/BlossomiShymae/Needlework.Net/releases/latest");
+            _notificationService.Notify(AppInfo.Name, $"New version available: {release.TagName}", InfoBarSeverity.Informational, null, "https://github.com/BlossomiShymae/Needlework.Net/releases/latest");
             _checkForUpdatesDisposable?.Dispose();
         }
     }
@@ -262,7 +261,7 @@ public partial class MainWindowViewModel
         {
             this.Log()
                 .Warning("LCU Schema version mismatch: Current {CurrentVersion}, Latest {LatestVersion}", lcuSchemaDocument.Info.Version, systemBuild.Version);
-            _notificationService.Notify("Needlework.Net", $"LCU Schema is possibly outdated compared to latest system build. Consider submitting a pull request on dysolix/hasagi-types.\nCurrent: {string.Join(".", currentSemVer)}\nLatest: {string.Join(".", latestSemVer)}", InfoBarSeverity.Warning, null, "https://github.com/dysolix/hasagi-types#updating-the-types");
+            _notificationService.Notify(AppInfo.Name, $"LCU Schema is possibly outdated compared to latest system build. Consider submitting a pull request on dysolix/hasagi-types.\nCurrent: {string.Join(".", currentSemVer)}\nLatest: {string.Join(".", latestSemVer)}", InfoBarSeverity.Warning, null, "https://github.com/dysolix/hasagi-types#updating-the-types");
             _checkForSchemaVersionDisposable?.Dispose();
         }
     }

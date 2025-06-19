@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Flurl.Http;
 using Flurl.Http.Configuration;
+using Needlework.Net.Constants;
 using Needlework.Net.Extensions;
 using Needlework.Net.Messages;
 using Needlework.Net.Services;
@@ -36,7 +37,7 @@ public partial class WebSocketViewModel : PageBase, IEnableLogger
 
     public WebSocketViewModel(IFlurlClientCache clients, NotificationService notificationService) : base("Event Viewer", "fa-solid fa-plug", -100)
     {
-        _githubUserContentClient = clients.Get("GithubUserContentClient");
+        _githubUserContentClient = clients.Get(FlurlClientKeys.GithubUserContentClient);
         _notificationService = notificationService;
 
         EventLog.CollectionChanged += (s, e) => OnPropertyChanged(nameof(FilteredEventLog));
@@ -102,7 +103,7 @@ public partial class WebSocketViewModel : PageBase, IEnableLogger
             var message = "Failed to get event types from GitHub. Please check your internet connection or try again later.";
             this.Log()
                 .Error(ex, message);
-            _notificationService.Notify("Needlework.Net", message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error);
+            _notificationService.Notify(AppInfo.Name, message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error);
         }
     }
 

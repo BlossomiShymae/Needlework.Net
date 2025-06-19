@@ -5,13 +5,13 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Templates;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
+using Needlework.Net.Constants;
 using Needlework.Net.Extensions;
 using Needlework.Net.ViewModels.MainWindow;
 using Needlework.Net.ViewModels.Pages;
 using Needlework.Net.Views.MainWindow;
 using System;
 using System.Reactive.Linq;
-using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -26,7 +26,7 @@ public partial class App : Application, IEnableLogger
         _serviceProvider = serviceProvider;
 
         this.Log()
-            .Debug("NeedleworkDotNet version: {Version}", Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "0.0.0.0");
+            .Debug("NeedleworkDotNet version: {Version}", AppInfo.Version);
         this.Log()
             .Debug("OS description: {Description}", System.Runtime.InteropServices.RuntimeInformation.OSDescription);
     }
