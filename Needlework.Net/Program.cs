@@ -107,6 +107,7 @@ class Program
         builder.AddSingleton<NotificationService>();
         builder.AddSingleton<SchemaPaneService>();
         builder.AddSingleton<HextechDocsPostService>();
+        builder.AddSingleton<GithubService>();
         builder.AddSingleton<IBlobCache>((_) =>
         {
             Directory.CreateDirectory("Data");

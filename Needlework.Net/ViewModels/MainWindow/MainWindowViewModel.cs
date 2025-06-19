@@ -7,8 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentAvalonia.UI.Controls;
-using Flurl.Http;
-using Flurl.Http.Configuration;
+using Needlework.Net.Constants;
 using Needlework.Net.Extensions;
 using Needlework.Net.Helpers;
 using Needlework.Net.Messages;
@@ -35,7 +34,7 @@ public partial class MainWindowViewModel
 {
     private readonly DocumentService _documentService;
 
-    private readonly IFlurlClient _githubClient;
+    private readonly GithubService _githubService;
 
     private readonly NotificationService _notificationService;
 
@@ -47,13 +46,13 @@ public partial class MainWindowViewModel
 
     private readonly IDisposable _checkForSchemaVersionDisposable;
 
-    public MainWindowViewModel(IEnumerable<PageBase> pages, DialogService dialogService, DocumentService documentService, NotificationService notificationService, IFlurlClientCache clients, SchemaPaneService schemaPaneService)
+    public MainWindowViewModel(IEnumerable<PageBase> pages, DialogService dialogService, DocumentService documentService, NotificationService notificationService, GithubService githubService, SchemaPaneService schemaPaneService)
     {
         _dialogService = dialogService;
         _documentService = documentService;
         _notificationService = notificationService;
         _schemaPaneService = schemaPaneService;
-        _githubClient = clients.Get("GithubClient");
+        _githubService = githubService;
 
         NavigationViewItems = pages
             .OrderBy(p => p.Index)
@@ -91,7 +90,7 @@ public partial class MainWindowViewModel
             }
         });
 
-        _checkForUpdatesDisposable = Observable.Timer(TimeSpan.Zero, TimeSpan.FromMinutes(10))
+        _checkForUpdatesDisposable = Observable.Timer(TimeSpan.Zero, Intervals.CheckForUpdates)
             .Select(time => Unit.Default)
             .Subscribe(async _ =>
             {
@@ -109,7 +108,7 @@ public partial class MainWindowViewModel
                 }
             });
 
-        _checkForSchemaVersionDisposable = Observable.Timer(TimeSpan.Zero, TimeSpan.FromMinutes(10))
+        _checkForSchemaVersionDisposable = Observable.Timer(TimeSpan.Zero, TimeSpan.FromMinutes(5))
             .Select(time => Unit.Default)
             .Subscribe(async _ =>
             {
@@ -228,11 +227,7 @@ public partial class MainWindowViewModel
 
     private async Task CheckForUpdatesAsync()
     {
-        var release = await _githubClient
-            .Request("/repos/BlossomiShymae/Needlework.Net/releases/latest")
-            .WithHeader("User-Agent", $"Needlework.Net/{Version}")
-            .GetJsonAsync<GithubRelease>();
-
+        var release = await _githubService.GetLatestReleaseAsync();
         if (release.IsLatest(Version))
         {
             this.Log()
