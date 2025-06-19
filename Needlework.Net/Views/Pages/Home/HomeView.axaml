@@ -23,7 +23,7 @@
 		</Style>
 	</UserControl.Styles>
 	<!-- TOP LEVEL -->
-	<Grid ColumnDefinitions="*,400"
+	<Grid ColumnDefinitions="*"
 		  RowDefinitions="*">
 		<!-- MAIN AREA -->
 		<ScrollViewer Grid.Column="0"
@@ -44,70 +44,71 @@
 					<ContentControl Margin="12" 
 												 Content="{Binding SelectedHextechDocsPost}"
 												 IsVisible="{Binding HextechDocsPosts, Converter={StaticResource EnumerableToVisibilityConverter}}"/>
+					<!-- LIBRARIES -->
+					<Grid	Margin="12"
+							ColumnDefinitions="*"
+							RowDefinitions="auto,*">
+						<TextBlock Theme="{StaticResource SubtitleTextBlockStyle}"
+								   Grid.Column="0"
+								   Grid.Row="0">Libraries</TextBlock>
+						<ScrollViewer Grid.Column="0"
+									  Grid.Row="1"
+									  Offset="{Binding LibrariesOffset, Mode=TwoWay}"
+									  FlowDirection="LeftToRight"
+									  HorizontalScrollBarVisibility="Auto">
+							<ItemsControl ItemsSource="{Binding Libraries}">
+								<ItemsControl.ItemsPanel>
+									<ItemsPanelTemplate>
+										<StackPanel Orientation="Horizontal" FlowDirection="LeftToRight"/>
+									</ItemsPanelTemplate>
+								</ItemsControl.ItemsPanel>
+								<ItemsControl.ItemTemplate>
+									<DataTemplate x:DataType="vm:LibraryViewModel">
+										<ContentControl Content="{Binding}"
+														Margin="0, 12, 16, 0"
+														Width="350"/>
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+							</ItemsControl>
+						</ScrollViewer>
+					</Grid>
 					<controls:Card Margin="12">
 						<TextBlock TextWrapping="Wrap">THE PROGRAM IS PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE IMPLIED WARRANTIES OF MERCHANTABILITY, NONINFRINGMENT, OR OF FITNESS FOR A PARTICULAR PURPOSE. LICENSOR DOES NOT WARRANT THAT THE FUNCTIONS CONTAINED IN THE PROGRAM WILL MEET YOUR REQUIREMENTS OR THAT OPERATION WILL BE UNINTERRUPTED OR ERROR FREE. LICENSOR MAKES NO WARRANTIES RESPECTING ANY HARM THAT MAY BE CAUSED BY MALICIOUS USE OF THIS SOFTWARE. LICENSOR FURTHER EXPRESSLY DISCLAIMS ANY WARRANTY OR REPRESENTATION TO AUTHORIZED USERS OR TO ANY THIRD PARTY.</TextBlock>
 					</controls:Card>
 				</StackPanel>
-				<!-- FOOTER -->
-				<StackPanel>
-					<controls:Card Margin="12" Width="300">
-						<StackPanel>
-							<TextBlock
-									   Theme="{StaticResource SubtitleTextBlockStyle}"
-									   Margin="0 0 0 8">Resources</TextBlock>
-							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-								<HyperlinkButton NavigateUri="https://hextechdocs.dev/tag/lcu/" Margin="4">
-									Hextech Docs
-								</HyperlinkButton>
-								<HyperlinkButton NavigateUri="https://hextechdocs.dev/getting-started-with-the-lcu-api/" Margin="4">
-									Getting Started
-								</HyperlinkButton>
-							</StackPanel>
-							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-								<HyperlinkButton NavigateUri="https://discord.com/channels/187652476080488449/516802588805431296" Margin="4">
-									#lcu-api
-								</HyperlinkButton>
-								<HyperlinkButton NavigateUri="https://discord.com/channels/187652476080488449/543112946402721832" Margin="4">
-									#ingame-api
-								</HyperlinkButton>
-							</StackPanel>
+				<controls:Card Margin="12" Width="300">
+					<StackPanel>
+						<TextBlock
+								   Theme="{StaticResource SubtitleTextBlockStyle}"
+								   Margin="0 0 0 8">Resources</TextBlock>
+						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+							<HyperlinkButton NavigateUri="https://hextechdocs.dev/tag/lcu/" Margin="4">
+								Hextech Docs
+							</HyperlinkButton>
+							<HyperlinkButton NavigateUri="https://hextechdocs.dev/getting-started-with-the-lcu-api/" Margin="4">
+								Getting Started
+							</HyperlinkButton>
 						</StackPanel>
-					</controls:Card>
-					<controls:Card Margin="12" Width="300">
-						<StackPanel>
-							<TextBlock>© 2025 - Blossomi Shymae</TextBlock>
-							<TextBlock>MIT License</TextBlock>
+						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+							<HyperlinkButton NavigateUri="https://discord.com/channels/187652476080488449/516802588805431296" Margin="4">
+								#lcu-api
+							</HyperlinkButton>
+							<HyperlinkButton NavigateUri="https://discord.com/channels/187652476080488449/543112946402721832" Margin="4">
+								#ingame-api
+							</HyperlinkButton>
 						</StackPanel>
-					</controls:Card>
-				</StackPanel>
-				<!-- LEGAL -->
+					</StackPanel>
+				</controls:Card>
+				<controls:Card Margin="12" Width="200">
+					<StackPanel>
+						<TextBlock>© 2025 - Blossomi Shymae</TextBlock>
+						<TextBlock>MIT License</TextBlock>
+					</StackPanel>
+				</controls:Card>
 				<controls:Card Margin="12" Width="300">
 					<TextBlock TextWrapping="Wrap">Needlework.Net isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.</TextBlock>
 				</controls:Card>
 			</WrapPanel>
 		</ScrollViewer>
-		<!-- LIBRARIES -->
-		<Grid	Margin="20"
-				Grid.Column="1"
-				Grid.Row="0"
-				ColumnDefinitions="*"
-				RowDefinitions="auto,*">
-			<TextBlock Theme="{StaticResource SubtitleTextBlockStyle}"
-					   Grid.Column="0"
-					   Grid.Row="0">Libraries</TextBlock>
-			<ScrollViewer Grid.Column="0"
-						  Grid.Row="1"
-						  HorizontalScrollBarVisibility="Disabled"
-						  Offset="{Binding LibrariesOffset, Mode=TwoWay}">
-				<ItemsRepeater ItemsSource="{Binding Libraries}">
-					<ItemsRepeater.ItemTemplate>
-						<DataTemplate x:DataType="vm:LibraryViewModel">
-							<ContentControl Content="{Binding}"
-											Margin="0 12 16 0"/>
-						</DataTemplate>
-					</ItemsRepeater.ItemTemplate>
-				</ItemsRepeater>
-			</ScrollViewer>
-		</Grid>
 	</Grid>
 </UserControl>
