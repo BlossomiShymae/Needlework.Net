@@ -1,0 +1,75 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:Needlework.Net.ViewModels.Pages.Settings"
+			 xmlns:ui="using:FluentAvalonia.UI.Controls"             
+             xmlns:uip="using:FluentAvalonia.UI.Controls.Primitives"
+			 xmlns:i="https://github.com/projektanker/icons.avalonia"
+			 xmlns:controls="using:Needlework.Net.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Needlework.Net.Views.Pages.Settings.SettingsView"
+			 x:DataType="vm:SettingsViewModel">
+	<controls:BusyArea IsBusy="{Binding IsBusy}"
+					   BusyText="Loading...">
+		<ScrollViewer Margin="16">
+			<StackPanel>
+				<StackPanel.Styles>
+					<Style Selector="ui|SettingsExpander">
+						<Setter Property="Margin" Value="0,0,0,4"/>
+					</Style>
+				</StackPanel.Styles>
+				<Grid ColumnDefinitions="auto,*"
+					  Margin="16">
+					<i:Icon Value="{Binding UpdateCheckIconValue}"
+							FontSize="64"
+							Grid.Column="0"
+							Margin="0,0,16,0"/>
+					<StackPanel Grid.Column="1"
+								VerticalAlignment="Center">
+						<TextBlock Theme="{StaticResource SubtitleTextBlockStyle}"
+								   Text="{Binding UpdateCheckTitle}"/>
+						<TextBlock Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+								   Text="{Binding UpdateCheckLastChecked}"/>
+					</StackPanel>
+				</Grid>
+				<ui:SettingsExpander Header="Updates">
+					<ui:SettingsExpander.IconSource>
+						<ui:ImageIconSource>
+							<ui:ImageIconSource.Source>
+								<i:IconImage Value="fa-rotate" Brush="{DynamicResource TextFillColorPrimaryBrush}"/>
+							</ui:ImageIconSource.Source>
+						</ui:ImageIconSource>
+					</ui:SettingsExpander.IconSource>
+					<ui:SettingsExpander.Footer>
+						<Button Command="{Binding CheckForUpdatesCommand}">Check for updates</Button>
+					</ui:SettingsExpander.Footer>
+				</ui:SettingsExpander>
+				<ui:SettingsExpander Header="Get notified of the latest update as soon as it's available">
+					<ui:SettingsExpander.IconSource>
+						<ui:ImageIconSource>
+							<ui:ImageIconSource.Source>
+								<i:IconImage Value="fa-bullhorn" Brush="{DynamicResource TextFillColorPrimaryBrush}"/>
+							</ui:ImageIconSource.Source>
+						</ui:ImageIconSource>
+					</ui:SettingsExpander.IconSource>
+					<ui:SettingsExpander.Footer>
+						<ToggleSwitch IsChecked="{Binding AppSettings.IsCheckForUpdates}"/>
+					</ui:SettingsExpander.Footer>
+				</ui:SettingsExpander>
+				<ui:SettingsExpander Header="Get notified when LCU Schema is outdated with /system/v1/builds">
+					<ui:SettingsExpander.IconSource>
+						<ui:ImageIconSource>
+							<ui:ImageIconSource.Source>
+								<i:IconImage Value="fa-file-circle-question" Brush="{DynamicResource TextFillColorPrimaryBrush}"/>
+							</ui:ImageIconSource.Source>
+						</ui:ImageIconSource>
+					</ui:SettingsExpander.IconSource>
+					<ui:SettingsExpander.Footer>
+						<ToggleSwitch IsChecked="{Binding AppSettings.IsCheckForSchema}"/>
+					</ui:SettingsExpander.Footer>
+				</ui:SettingsExpander>
+			</StackPanel>
+		</ScrollViewer>
+	</controls:BusyArea>
+</UserControl>

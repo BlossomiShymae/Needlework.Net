@@ -14,6 +14,7 @@ using Needlework.Net.ViewModels.Pages.Console;
 using Needlework.Net.ViewModels.Pages.Endpoints;
 using Needlework.Net.ViewModels.Pages.Home;
 using Needlework.Net.ViewModels.Pages.Schemas;
+using Needlework.Net.ViewModels.Pages.Settings;
 using Needlework.Net.ViewModels.Pages.WebSocket;
 using Needlework.Net.Views.MainWindow;
 using Needlework.Net.Views.Pages.About;
@@ -21,6 +22,7 @@ using Needlework.Net.Views.Pages.Console;
 using Needlework.Net.Views.Pages.Endpoints;
 using Needlework.Net.Views.Pages.Home;
 using Needlework.Net.Views.Pages.Schemas;
+using Needlework.Net.Views.Pages.Settings;
 using Needlework.Net.Views.Pages.WebSocket;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
@@ -97,6 +99,8 @@ class Program
         // WEBSOCKET
         locator.Register<WebSocketViewModel>(() => new WebSocketView());
         locator.Register<EventViewModel>(() => new EventView());
+        // SETTINGS
+        locator.Register<SettingsViewModel>(() => new SettingsView());
 
         builder.AddSingleton<IDataTemplate>(locator);
     }
@@ -132,6 +136,7 @@ class Program
         builder.AddSingleton<PageBase, WebSocketViewModel>();
         builder.AddSingleton<PageBase, SchemasViewModel>();
         builder.AddSingleton<PageBase, AboutViewModel>();
+        builder.AddSingleton<PageBase, SettingsViewModel>();
     }
 
     private static void Program_UnhandledException(object sender, UnhandledExceptionEventArgs e)
