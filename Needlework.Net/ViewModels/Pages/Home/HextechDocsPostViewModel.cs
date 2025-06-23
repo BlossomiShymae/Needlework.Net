@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Needlework.Net.Models;
+using Needlework.Net.DataModels;
 
 namespace Needlework.Net.ViewModels.Pages.Home
 {

@@ -2,8 +2,8 @@
 using Flurl.Http;
 using Flurl.Http.Configuration;
 using Needlework.Net.Constants;
+using Needlework.Net.DataModels;
 using Needlework.Net.Extensions;
-using Needlework.Net.Models;
 using System;
 using System.Reactive.Linq;
 using System.Threading.Tasks;

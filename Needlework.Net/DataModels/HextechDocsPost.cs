@@ -1,4 +1,4 @@
-﻿namespace Needlework.Net.Models
+﻿namespace Needlework.Net.DataModels
 {
     public class HextechDocsPost
     {

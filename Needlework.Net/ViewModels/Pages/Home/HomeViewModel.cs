@@ -17,13 +17,13 @@ namespace Needlework.Net.ViewModels.Pages.Home;
 
 public partial class HomeViewModel : PageBase, IEnableLogger
 {
-    private readonly HextechDocsPostService _hextechDocsPostService;
+    private readonly HextechDocsService _hextechDocsService;
 
     private readonly IDisposable _carouselNextDisposable;
 
-    public HomeViewModel(HextechDocsPostService hextechDocsPostService) : base("Home", "fa-solid fa-house", int.MinValue)
+    public HomeViewModel(HextechDocsService hextechDocsService) : base("Home", "fa-solid fa-house", int.MinValue)
     {
-        _hextechDocsPostService = hextechDocsPostService;
+        _hextechDocsService = hextechDocsService;
 
         _carouselNextDisposable = Observable.Timer(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5))
             .Select(time => Unit.Default)
@@ -63,7 +63,7 @@ public partial class HomeViewModel : PageBase, IEnableLogger
     {
         try
         {
-            var posts = await _hextechDocsPostService.GetPostsAsync();
+            var posts = await _hextechDocsService.GetPostsAsync();
             var hextechDocsPosts = posts.Select(post => new HextechDocsPostViewModel(post)).ToList();
             Dispatcher.UIThread.Invoke(() =>
             {

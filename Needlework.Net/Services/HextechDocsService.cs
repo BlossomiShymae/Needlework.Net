@@ -1,7 +1,7 @@
 ﻿using Akavache;
 using AngleSharp;
+using Needlework.Net.DataModels;
 using Needlework.Net.Extensions;
-using Needlework.Net.Models;
 using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace Needlework.Net.Services
 {
-    public class HextechDocsPostService : IEnableLogger
+    public class HextechDocsService : IEnableLogger
     {
         private readonly IBrowsingContext _context = BrowsingContext.New(Configuration.Default.WithDefaultLoader());
 
         private readonly IBlobCache _blobCache;
 
-        public HextechDocsPostService(IBlobCache blobCache)
+        public HextechDocsService(IBlobCache blobCache)
         {
             _blobCache = blobCache;
         }

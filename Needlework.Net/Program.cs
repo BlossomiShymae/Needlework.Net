@@ -111,7 +111,7 @@ class Program
         builder.AddSingleton<DocumentService>();
         builder.AddSingleton<NotificationService>();
         builder.AddSingleton<SchemaPaneService>();
-        builder.AddSingleton<HextechDocsPostService>();
+        builder.AddSingleton<HextechDocsService>();
         builder.AddSingleton<GithubService>();
         builder.AddSingleton<IBlobCache>((_) =>
         {
