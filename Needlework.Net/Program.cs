@@ -115,8 +115,12 @@ class Program
         builder.AddSingleton<GithubService>();
         builder.AddSingleton<IBlobCache>((_) =>
         {
-            Directory.CreateDirectory("Data");
-            return new SqlRawPersistentBlobCache("Data/data.sqlite");
+            var appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            appDataFolder = string.IsNullOrEmpty(appDataFolder) ? "AppData" : appDataFolder;
+            var appFolder = Path.Join(appDataFolder, AppInfo.Name);
+            Directory.CreateDirectory(appFolder);
+            var filePath = Path.Join(appFolder, "cache.sqlite");
+            return new SqlRawPersistentBlobCache(filePath);
         });
         builder.AddSingleton<IFlurlClientCache>(new FlurlClientCache()
             .Add(FlurlClientKeys.GithubClient, "https://api.github.com")
