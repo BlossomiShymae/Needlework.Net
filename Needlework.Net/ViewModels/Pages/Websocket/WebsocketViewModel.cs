@@ -35,7 +35,7 @@ public partial class WebSocketViewModel : PageBase, IEnableLogger
 
     private readonly object _tokenLock = new();
 
-    public WebSocketViewModel(IFlurlClientCache clients, NotificationService notificationService) : base("Event Viewer", "fa-solid fa-plug", -100)
+    public WebSocketViewModel(IFlurlClientCache clients, NotificationService notificationService) : base("Event Viewer", "fa-solid fa-plug")
     {
         _githubUserContentClient = clients.Get(FlurlClientKeys.GithubUserContentClient);
         _notificationService = notificationService;

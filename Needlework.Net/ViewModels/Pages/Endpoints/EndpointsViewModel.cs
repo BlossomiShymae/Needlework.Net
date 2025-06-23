@@ -22,7 +22,7 @@ public partial class EndpointsViewModel : PageBase
 
     private readonly NotificationService _notificationService;
 
-    public EndpointsViewModel(DocumentService documentService, NotificationService notificationService) : base("Endpoints", "fa-solid fa-rectangle-list", -500)
+    public EndpointsViewModel(DocumentService documentService, NotificationService notificationService) : base("Endpoints", "fa-solid fa-rectangle-list")
     {
         _documentService = documentService;
         _notificationService = notificationService;

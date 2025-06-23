@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 namespace Needlework.Net.ViewModels.Pages;
 
 
-public abstract partial class PageBase(string displayName, string icon, int index = 0) : ObservableValidator
+public abstract partial class PageBase(string displayName, string icon) : ObservableValidator
 {
-    [ObservableProperty] private string _displayName = displayName;
-    [ObservableProperty] private string _icon = icon;
-    [ObservableProperty] private int _index = index;
+    public string DisplayName { get; } = displayName;
+
+    public string Icon { get; } = icon;
 
     public abstract Task InitializeAsync();
 }

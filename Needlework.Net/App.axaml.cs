@@ -13,17 +13,25 @@ using Needlework.Net.Views.MainWindow;
 using System;
 using System.Reactive.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Needlework.Net;
 
 public partial class App : Application, IEnableLogger
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IDataTemplate _viewLocator;
+
+    private readonly IBlobCache _blobCache;
+
+    private readonly PageFactory _pageFactory;
+
+    private readonly MainWindowViewModel _mainWindowViewModel;
 
     public App(IServiceProvider serviceProvider)
     {
-        _serviceProvider = serviceProvider;
+        _viewLocator = serviceProvider.GetRequiredService<IDataTemplate>();
+        _blobCache = serviceProvider.GetRequiredService<IBlobCache>();
+        _pageFactory = serviceProvider.GetRequiredService<PageFactory>();
+        _mainWindowViewModel = serviceProvider.GetRequiredService<MainWindowViewModel>();
 
         this.Log()
             .Debug("NeedleworkDotNet version: {Version}", AppInfo.Version);
@@ -43,30 +51,20 @@ public partial class App : Application, IEnableLogger
 
     public override void Initialize()
     {
-        DataTemplates.Add(_serviceProvider.GetRequiredService<IDataTemplate>());
+        DataTemplates.Add(_viewLocator);
         AvaloniaXamlLoader.Load(this);
     }
 
     public override void OnFrameworkInitializationCompleted()
     {
-        foreach (var page in _serviceProvider.GetServices<PageBase>())
-        {
-            Task.Run(page.InitializeAsync);
-        }
-
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindowView()
-            {
-                DataContext = _serviceProvider.GetRequiredService<MainWindowViewModel>()
-            };
+            desktop.MainWindow = new MainWindowView(_mainWindowViewModel, _pageFactory);
             MainWindow = desktop.MainWindow;
-
             desktop.ShutdownRequested += (_, _) =>
             {
-                var blobCache = _serviceProvider.GetRequiredService<IBlobCache>();
-                blobCache.Flush().Wait();
-                blobCache.Dispose();
+                _blobCache.Flush().Wait();
+                _blobCache.Dispose();
             };
         }
 

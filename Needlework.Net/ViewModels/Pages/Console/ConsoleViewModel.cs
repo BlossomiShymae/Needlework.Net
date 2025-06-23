@@ -12,7 +12,7 @@ public partial class ConsoleViewModel : PageBase
 {
     private readonly DocumentService _documentService;
 
-    public ConsoleViewModel(DocumentService documentService, NotificationService notificationService) : base("Console", "fa-solid fa-terminal", -200)
+    public ConsoleViewModel(DocumentService documentService, NotificationService notificationService) : base("Console", "fa-solid fa-terminal")
     {
         _request = new(notificationService, Endpoints.Tab.LCU);
         _documentService = documentService;

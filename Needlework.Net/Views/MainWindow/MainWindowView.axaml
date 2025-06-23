@@ -66,13 +66,12 @@
 				   OpenPaneLength="350"
 				   PanePlacement="Right">
 			<ui:NavigationView AlwaysShowHeader="False"
-						   PaneDisplayMode="Left"
-						   IsSettingsVisible="False"
-						   IsPaneOpen="False"
-						   OpenPaneLength="200"
-						   Grid.Row="1"
-						   MenuItemsSource="{Binding NavigationViewItems}"
-						   SelectedItem="{Binding SelectedNavigationViewItem}">
+							   PaneDisplayMode="Left"
+							   IsSettingsVisible="False"
+							   IsPaneOpen="False"
+							   OpenPaneLength="200"
+							   Grid.Row="1"
+							   Name="NavigationView">
 				<ui:NavigationView.PaneFooter>
 					<StackPanel Orientation="Vertical">
 						<StackPanel.Styles>
@@ -105,7 +104,7 @@
 					</StackPanel>
 				</ui:NavigationView.PaneFooter>
 				<Grid>
-					<TransitioningContentControl Content="{Binding CurrentPage}"/>
+					<TransitioningContentControl Name="CurrentPageContentControl"/>
 					<ItemsControl ItemsSource="{Binding Notifications}"
 								   VerticalAlignment="Bottom">
 						<ItemsControl.ItemTemplate>

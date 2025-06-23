@@ -1,16 +1,12 @@
-﻿using Avalonia;
-using Avalonia.Media;
-using Avalonia.Threading;
+﻿using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using FluentAvalonia.UI.Controls;
 using Needlework.Net.Constants;
 using Needlework.Net.Extensions;
 using Needlework.Net.Helpers;
 using Needlework.Net.Messages;
 using Needlework.Net.Services;
-using Needlework.Net.ViewModels.Pages;
 using Needlework.Net.Views.MainWindow;
 using System;
 using System.Collections.Generic;
@@ -34,20 +30,12 @@ public partial class MainWindowViewModel
 
     private readonly SchemaPaneService _schemaPaneService;
 
-    public MainWindowViewModel(IEnumerable<PageBase> pages, DialogService dialogService, DocumentService documentService, NotificationService notificationService, SchemaPaneService schemaPaneService)
+    public MainWindowViewModel(DialogService dialogService, DocumentService documentService, NotificationService notificationService, SchemaPaneService schemaPaneService)
     {
         _dialogService = dialogService;
         _documentService = documentService;
         _notificationService = notificationService;
         _schemaPaneService = schemaPaneService;
-
-        NavigationViewItems = pages
-            .OrderBy(p => p.Index)
-            .ThenBy(p => p.DisplayName)
-            .Select(ToNavigationViewItem)
-            .ToList();
-        SelectedNavigationViewItem = NavigationViewItems.First();
-        CurrentPage = (PageBase)SelectedNavigationViewItem.Tag!;
 
         _notificationService.Notifications.Subscribe(async notification =>
         {
@@ -93,27 +81,11 @@ public partial class MainWindowViewModel
     private ObservableCollection<NotificationViewModel> _notifications = [];
 
     [ObservableProperty]
-    private NavigationViewItem _selectedNavigationViewItem;
-
-    [ObservableProperty]
-    private PageBase _currentPage;
-
-    [ObservableProperty]
     private SchemaSearchDetailsViewModel? _selectedSchemaSearchDetails;
-
-    public List<NavigationViewItem> NavigationViewItems { get; private set; } = [];
 
     public string AppName => AppInfo.Name;
 
     public string Title => $"{AppInfo.Name} {AppInfo.Version}";
-
-    partial void OnSelectedNavigationViewItemChanged(NavigationViewItem value)
-    {
-        if (value.Tag is PageBase page)
-        {
-            CurrentPage = page;
-        }
-    }
 
     partial void OnSelectedSchemaSearchDetailsChanged(SchemaSearchDetailsViewModel? value)
     {
@@ -154,25 +126,6 @@ public partial class MainWindowViewModel
             IsPaneOpen = false;
         }
     }
-
-    private NavigationViewItem ToNavigationViewItem(PageBase page) => new()
-    {
-        Content = page.DisplayName,
-        Tag = page,
-        IconSource = new ImageIconSource
-        {
-            Source = new Projektanker.Icons.Avalonia.IconImage()
-            {
-                Value = page.Icon,
-                Brush = new SolidColorBrush(Application.Current!.ActualThemeVariant.Key switch
-                {
-                    "Light" => Colors.Black,
-                    "Dark" => Colors.White,
-                    _ => Colors.Gray
-                })
-            }
-        }
-    };
 
     public async Task<IEnumerable<object>> PopulateAsync(string? searchText, CancellationToken cancellationToken)
     {

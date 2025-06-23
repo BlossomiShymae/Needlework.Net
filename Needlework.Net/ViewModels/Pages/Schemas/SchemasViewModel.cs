@@ -22,7 +22,7 @@ namespace Needlework.Net.ViewModels.Pages.Schemas
 
         private List<SchemaSearchDetailsViewModel> _schemas = [];
 
-        public SchemasViewModel(DocumentService documentService, SchemaPaneService schemaPaneService) : base("Schemas", "fa-solid fa-file-lines", -100)
+        public SchemasViewModel(DocumentService documentService, SchemaPaneService schemaPaneService) : base("Schemas", "fa-solid fa-file-lines")
         {
             _documentService = documentService;
             _schemaPaneService = schemaPaneService;

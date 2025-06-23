@@ -21,7 +21,7 @@ public partial class HomeViewModel : PageBase, IEnableLogger
 
     private readonly IDisposable _carouselNextDisposable;
 
-    public HomeViewModel(HextechDocsService hextechDocsService) : base("Home", "fa-solid fa-house", int.MinValue)
+    public HomeViewModel(HextechDocsService hextechDocsService) : base("Home", "fa-solid fa-house")
     {
         _hextechDocsService = hextechDocsService;
 

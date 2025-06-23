@@ -137,6 +137,8 @@ class Program
         builder.AddSingleton<PageBase, SchemasViewModel>();
         builder.AddSingleton<PageBase, AboutViewModel>();
         builder.AddSingleton<PageBase, SettingsViewModel>();
+
+        builder.AddSingleton<PageFactory>();
     }
 
     private static void Program_UnhandledException(object sender, UnhandledExceptionEventArgs e)
