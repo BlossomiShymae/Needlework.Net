@@ -30,7 +30,6 @@
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.8" />
     <PackageReference Include="AvaloniaEdit.TextMate" Version="11.3.0" />
     <PackageReference Include="BlossomiShymae.Briar" Version="0.2.2" />
-    <PackageReference Include="bodong.Avalonia.PropertyGrid" Version="11.2.4" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="DebounceThrottle" Version="3.0.1" />
     <PackageReference Include="FastCache.Cached" Version="1.8.2" />
