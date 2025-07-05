@@ -27,10 +27,10 @@ Needlework.Net is an open-source helper tool for the LCU and Game Client that pr
 
 ## Credits
 
-### GrrrLCU
+### Briar
 
-A simple wrapper for the LCU.
-- [Repository](https://github.com/BlossomiShymae/GrrrLCU)
+A simple wrapper for the League Client and Game Client APIs. 
+- [Repository](https://github.com/BlossomiShymae/Briar)
 
 ### LCU Explorer
 
