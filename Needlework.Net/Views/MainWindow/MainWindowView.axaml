@@ -96,6 +96,15 @@
 								Theme="{StaticResource TransparentButton}"
 								VerticalAlignment="Center"
 								Command="{Binding OpenUrlCommand}"
+								CommandParameter="https://github.com/BlossomiShymae/Needlework.Net/issues/new"
+								ToolTip.Tip="Submit bug report."
+								Margin="4">
+							<i:Icon Value="fa-solid fa-bug" />
+						</Button>
+						<Button
+								Theme="{StaticResource TransparentButton}"
+								VerticalAlignment="Center"
+								Command="{Binding OpenUrlCommand}"
 								CommandParameter="https://discord.gg/chEvEX5J4E"
 								ToolTip.Tip="Open Discord server."
 								Margin="4">
