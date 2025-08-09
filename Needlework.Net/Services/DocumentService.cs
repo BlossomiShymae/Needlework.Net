@@ -49,7 +49,7 @@ namespace Needlework.Net
                 return cached;
             }
 
-            var lolClientStream = await _githubUserContentClient.Request("/AlsoSylv/Irelia/refs/heads/master/schemas/game_schema.json")
+            var lolClientStream = await _githubUserContentClient.Request("/AlsoSylv/Irelia/refs/heads/master/schemas/game.json")
                 .GetStreamAsync(cancellationToken: cancellationToken);
             var lolClientRaw = _reader.Read(lolClientStream, out var diagnostic);
             foreach (var error in diagnostic.Errors)
