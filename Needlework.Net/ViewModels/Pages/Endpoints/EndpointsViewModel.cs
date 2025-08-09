@@ -2,6 +2,7 @@
 using AvaloniaEdit.Utils;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Needlework.Net.Extensions;
 using Needlework.Net.Models;
 using Needlework.Net.Services;
 using System;
@@ -16,7 +17,7 @@ public enum Tab
     GameClient
 }
 
-public partial class EndpointsViewModel : PageBase
+public partial class EndpointsViewModel : PageBase, IEnableLogger
 {
     private readonly DocumentService _documentService;
 
@@ -36,32 +37,50 @@ public partial class EndpointsViewModel : PageBase
 
     public override async Task InitializeAsync()
     {
-        await AddEndpoint(Tab.LCU);
-        IsBusy = false;
+        try
+        {
+            await AddEndpoint(Tab.LCU);
+            IsBusy = false;
+        }
+        catch (Exception ex)
+        {
+            this.Log()
+                .Error(ex, "Failed to load endpoints.");
+            _notificationService.Notify("Endpoints", ex.Message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error);
+        }
     }
 
     [RelayCommand]
     private async Task AddEndpoint(Tab tab)
     {
-        Document document = tab switch
+        try
         {
-            Tab.LCU => await _documentService.GetLcuSchemaDocumentAsync(),
-            Tab.GameClient => await _documentService.GetLolClientDocumentAsync(),
-            _ => throw new NotImplementedException(),
-        };
-
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            Plugins.Clear();
-            Plugins.AddRange(document.Plugins.Keys);
-            var vm = new EndpointTabItemContentViewModel(_notificationService, Plugins, OnEndpointNavigation, AddEndpointCommand, document, tab);
-            Endpoints.Add(new()
+            Document document = tab switch
             {
-                Content = vm,
-                Header = vm.Title,
-                Selected = true
+                Tab.LCU => await _documentService.GetLcuSchemaDocumentAsync(),
+                Tab.GameClient => await _documentService.GetLolClientDocumentAsync(),
+                _ => throw new NotImplementedException(),
+            };
+
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Plugins.Clear();
+                Plugins.AddRange(document.Plugins.Keys);
+                var vm = new EndpointTabItemContentViewModel(_notificationService, Plugins, OnEndpointNavigation, AddEndpointCommand, document, tab);
+                Endpoints.Add(new()
+                {
+                    Content = vm,
+                    Header = vm.Title,
+                    Selected = true
+                });
             });
-        });
+        }
+        catch (Exception ex)
+        {
+            this.Log()
+                .Error(ex, "Failed to add endpoint.");
+            _notificationService.Notify("Endpoints", ex.Message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error);
+        }
     }
 
     private void OnEndpointNavigation(string? title, Guid guid)

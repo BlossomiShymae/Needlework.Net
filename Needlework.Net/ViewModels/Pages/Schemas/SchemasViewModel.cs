@@ -2,6 +2,7 @@
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DebounceThrottle;
+using Needlework.Net.Extensions;
 using Needlework.Net.Helpers;
 using Needlework.Net.Services;
 using Needlework.Net.ViewModels.Pages.Endpoints;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Needlework.Net.ViewModels.Pages.Schemas
 {
-    public partial class SchemasViewModel : PageBase
+    public partial class SchemasViewModel : PageBase, IEnableLogger
     {
         private readonly DebounceDispatcher _debounceDispatcher = new(TimeSpan.FromMilliseconds(500));
 
@@ -20,12 +21,15 @@ namespace Needlework.Net.ViewModels.Pages.Schemas
 
         private readonly SchemaPaneService _schemaPaneService;
 
+        private readonly NotificationService _notificationService;
+
         private List<SchemaSearchDetailsViewModel> _schemas = [];
 
-        public SchemasViewModel(DocumentService documentService, SchemaPaneService schemaPaneService) : base("Schemas", "fa-solid fa-file-lines")
+        public SchemasViewModel(DocumentService documentService, SchemaPaneService schemaPaneService, NotificationService notificationService) : base("Schemas", "fa-solid fa-file-lines")
         {
             _documentService = documentService;
             _schemaPaneService = schemaPaneService;
+            _notificationService = notificationService;
         }
 
         [ObservableProperty]
@@ -60,18 +64,27 @@ namespace Needlework.Net.ViewModels.Pages.Schemas
 
         public override async Task InitializeAsync()
         {
-            var lcuSchemaDocument = await _documentService.GetLcuSchemaDocumentAsync();
-            var lolClientDocument = await _documentService.GetLolClientDocumentAsync();
-            Dispatcher.UIThread.Invoke(() =>
+            try
             {
-                var schemas = Enumerable.Concat(
-                    lcuSchemaDocument.OpenApiDocument.Components.Schemas.Values.Select(schema => new SchemaSearchDetailsViewModel(Tab.LCU, OpenApiHelpers.WalkSchema(schema, lcuSchemaDocument.OpenApiDocument), _schemaPaneService)),
-                    lolClientDocument.OpenApiDocument.Components.Schemas.Values.Select(schema => new SchemaSearchDetailsViewModel(Tab.GameClient, OpenApiHelpers.WalkSchema(schema, lolClientDocument.OpenApiDocument), _schemaPaneService))
-                    ).ToList();
-                _schemas = schemas;
-                SchemaItems = schemas.ToList();
-                IsBusy = false;
-            });
+                var lcuSchemaDocument = await _documentService.GetLcuSchemaDocumentAsync();
+                var lolClientDocument = await _documentService.GetLolClientDocumentAsync();
+                Dispatcher.UIThread.Invoke(() =>
+                {
+                    var schemas = Enumerable.Concat(
+                        lcuSchemaDocument.OpenApiDocument.Components.Schemas.Values.Select(schema => new SchemaSearchDetailsViewModel(Tab.LCU, OpenApiHelpers.WalkSchema(schema, lcuSchemaDocument.OpenApiDocument), _schemaPaneService)),
+                        lolClientDocument.OpenApiDocument.Components.Schemas.Values.Select(schema => new SchemaSearchDetailsViewModel(Tab.GameClient, OpenApiHelpers.WalkSchema(schema, lolClientDocument.OpenApiDocument), _schemaPaneService))
+                        ).ToList();
+                    _schemas = schemas;
+                    SchemaItems = schemas.ToList();
+                    IsBusy = false;
+                });
+            }
+            catch (Exception ex)
+            {
+                this.Log()
+                    .Error(ex, "Failed to load schemas.");
+                _notificationService.Notify("Schemas", ex.Message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error);
+            }
         }
     }
 }

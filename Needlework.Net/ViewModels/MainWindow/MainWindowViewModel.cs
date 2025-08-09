@@ -47,21 +47,31 @@ public partial class MainWindowViewModel
 
         _schemaPaneService.SchemaPaneItems.Subscribe(async item =>
         {
-            var document = item.Tab switch
+            try
             {
-                Pages.Endpoints.Tab.LCU => await documentService.GetLcuSchemaDocumentAsync(),
-                Pages.Endpoints.Tab.GameClient => await documentService.GetLolClientDocumentAsync(),
-                _ => throw new NotImplementedException()
-            };
-            var propertyClassViewModel = OpenApiHelpers.WalkSchema(document.OpenApiDocument.Components.Schemas[item.Key], document.OpenApiDocument);
-            var schemaViewModel = new SchemaViewModel(propertyClassViewModel);
-            if (Schemas.ToList().Find(schema => schema.Id == schemaViewModel.Id) == null)
-            {
-                Schemas.Add(schemaViewModel);
-                IsPaneOpen = true;
+                var document = item.Tab switch
+                {
+                    Pages.Endpoints.Tab.LCU => await documentService.GetLcuSchemaDocumentAsync(),
+                    Pages.Endpoints.Tab.GameClient => await documentService.GetLolClientDocumentAsync(),
+                    _ => throw new NotImplementedException()
+                };
+                var propertyClassViewModel = OpenApiHelpers.WalkSchema(document.OpenApiDocument.Components.Schemas[item.Key], document.OpenApiDocument);
+                var schemaViewModel = new SchemaViewModel(propertyClassViewModel);
+                if (Schemas.ToList().Find(schema => schema.Id == schemaViewModel.Id) == null)
+                {
+                    Schemas.Add(schemaViewModel);
+                    IsPaneOpen = true;
 
-                OpenSchemaPaneCommand.NotifyCanExecuteChanged();
-                CloseSchemaAllCommand.NotifyCanExecuteChanged();
+                    OpenSchemaPaneCommand.NotifyCanExecuteChanged();
+                    CloseSchemaAllCommand.NotifyCanExecuteChanged();
+                }
+            }
+            catch (Exception ex)
+            {
+                this.Log()
+                    .Error(ex, "Failed to load schema pane item.");
+                _notificationService.Notify("Schema pane", ex.Message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error);
+                throw;
             }
         });
 
@@ -92,25 +102,35 @@ public partial class MainWindowViewModel
         if (value == null) return;
         Task.Run(async () =>
         {
-            var document = value.Tab switch
+            try
             {
-                Pages.Endpoints.Tab.LCU => await _documentService.GetLcuSchemaDocumentAsync(),
-                Pages.Endpoints.Tab.GameClient => await _documentService.GetLolClientDocumentAsync(),
-                _ => throw new NotImplementedException()
-            };
-            var propertyClassViewModel = OpenApiHelpers.WalkSchema(document.OpenApiDocument.Components.Schemas[value.Key], document.OpenApiDocument);
-            var schemaViewModel = new SchemaViewModel(propertyClassViewModel);
-            Dispatcher.UIThread.Post(() =>
-            {
-                if (Schemas.ToList().Find(schema => schema.Id == schemaViewModel.Id) == null)
+                var document = value.Tab switch
                 {
-                    Schemas.Add(schemaViewModel);
-                    IsPaneOpen = true;
+                    Pages.Endpoints.Tab.LCU => await _documentService.GetLcuSchemaDocumentAsync(),
+                    Pages.Endpoints.Tab.GameClient => await _documentService.GetLolClientDocumentAsync(),
+                    _ => throw new NotImplementedException()
+                };
+                var propertyClassViewModel = OpenApiHelpers.WalkSchema(document.OpenApiDocument.Components.Schemas[value.Key], document.OpenApiDocument);
+                var schemaViewModel = new SchemaViewModel(propertyClassViewModel);
+                Dispatcher.UIThread.Post(() =>
+                {
+                    if (Schemas.ToList().Find(schema => schema.Id == schemaViewModel.Id) == null)
+                    {
+                        Schemas.Add(schemaViewModel);
+                        IsPaneOpen = true;
 
-                    OpenSchemaPaneCommand.NotifyCanExecuteChanged();
-                    CloseSchemaAllCommand.NotifyCanExecuteChanged();
-                }
-            });
+                        OpenSchemaPaneCommand.NotifyCanExecuteChanged();
+                        CloseSchemaAllCommand.NotifyCanExecuteChanged();
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                this.Log()
+                    .Error(ex, "Failed to load schema search details.");
+                _notificationService.Notify("Schema search", ex.Message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error);
+                throw;
+            }
         });
     }
 
@@ -131,14 +151,23 @@ public partial class MainWindowViewModel
     {
         if (searchText == null) return [];
 
-        var lcuSchemaDocument = await _documentService.GetLcuSchemaDocumentAsync(cancellationToken);
-        var gameClientDocument = await _documentService.GetLolClientDocumentAsync(cancellationToken);
-        var lcuResults = lcuSchemaDocument.OpenApiDocument.Components.Schemas.Keys.Where(key => key.Contains(searchText, StringComparison.OrdinalIgnoreCase))
-                .Select(key => new SchemaSearchDetailsViewModel(key, Pages.Endpoints.Tab.LCU));
-        var gameClientResults = gameClientDocument.OpenApiDocument.Components.Schemas.Keys.Where(key => key.Contains(searchText, StringComparison.OrdinalIgnoreCase))
-                .Select(key => new SchemaSearchDetailsViewModel(key, Pages.Endpoints.Tab.GameClient));
-
-        return Enumerable.Concat(lcuResults, gameClientResults);
+        try
+        {
+            var lcuSchemaDocument = await _documentService.GetLcuSchemaDocumentAsync(cancellationToken);
+            var gameClientDocument = await _documentService.GetLolClientDocumentAsync(cancellationToken);
+            var lcuResults = lcuSchemaDocument.OpenApiDocument.Components.Schemas.Keys.Where(key => key.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                    .Select(key => new SchemaSearchDetailsViewModel(key, Pages.Endpoints.Tab.LCU));
+            var gameClientResults = gameClientDocument.OpenApiDocument.Components.Schemas.Keys.Where(key => key.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                    .Select(key => new SchemaSearchDetailsViewModel(key, Pages.Endpoints.Tab.GameClient));
+            return Enumerable.Concat(lcuResults, gameClientResults);
+        }
+        catch (Exception ex)
+        {
+            this.Log()
+                .Error(ex, "Failed to load populate.");
+            _notificationService.Notify("Schema search", ex.Message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error);
+            throw;
+        }
     }
 
     [RelayCommand(CanExecute = nameof(CanOpenSchemaPane))]

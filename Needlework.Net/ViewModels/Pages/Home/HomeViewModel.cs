@@ -19,11 +19,14 @@ public partial class HomeViewModel : PageBase, IEnableLogger
 {
     private readonly HextechDocsService _hextechDocsService;
 
+    private readonly NotificationService _notificationService;
+
     private readonly IDisposable _carouselNextDisposable;
 
-    public HomeViewModel(HextechDocsService hextechDocsService) : base("Home", "fa-solid fa-house")
+    public HomeViewModel(HextechDocsService hextechDocsService, NotificationService notificationService) : base("Home", "fa-solid fa-house")
     {
         _hextechDocsService = hextechDocsService;
+        _notificationService = notificationService;
 
         _carouselNextDisposable = Observable.Timer(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5))
             .Select(time => Unit.Default)
@@ -75,6 +78,7 @@ public partial class HomeViewModel : PageBase, IEnableLogger
         {
             this.Log()
                 .Error(ex, "Failed to get posts from HextechDocs.");
+            _notificationService.Notify("Home", ex.Message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error);
         }
     }
 }

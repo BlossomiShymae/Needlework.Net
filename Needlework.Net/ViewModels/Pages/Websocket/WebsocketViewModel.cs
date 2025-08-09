@@ -103,7 +103,7 @@ public partial class WebSocketViewModel : PageBase, IEnableLogger
             var message = "Failed to get event types from GitHub. Please check your internet connection or try again later.";
             this.Log()
                 .Error(ex, message);
-            _notificationService.Notify(AppInfo.Name, message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error);
+            _notificationService.Notify("WebSocket", message, FluentAvalonia.UI.Controls.InfoBarSeverity.Error);
         }
     }
 
