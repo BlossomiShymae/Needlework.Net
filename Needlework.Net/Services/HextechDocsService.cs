@@ -33,7 +33,7 @@ namespace Needlework.Net.Services
                 {
                     var path = element.QuerySelector("a.post-card-content-link")!.GetAttribute("href")!;
                     var title = element.QuerySelector(".post-card-title")!.TextContent;
-                    var excerpt = element.QuerySelector(".post-card-excerpt > p")!.TextContent;
+                    var excerpt = element.QuerySelector(".post-card-excerpt")!.TextContent;
                     var post = new HextechDocsPost()
                     {
                         Path = path,
