@@ -32,7 +32,7 @@ namespace Needlework.Net.Services
                 foreach (var element in elements)
                 {
                     var path = element.QuerySelector("a.post-card-content-link")!.GetAttribute("href")!;
-                    var title = element.QuerySelector(".post-card-title")!.TextContent;
+                    var title = element.QuerySelector(".post-card-title")!.TextContent.Trim();
                     var excerpt = element.QuerySelector(".post-card-excerpt")!.TextContent;
                     var post = new HextechDocsPost()
                     {
