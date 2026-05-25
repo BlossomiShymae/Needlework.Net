@@ -1,11 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Needlework.Net.Extensions;
 using Needlework.Net.Models;
 using System.Diagnostics;
 
 namespace Needlework.Net.ViewModels.MainWindow
 {
-    public partial class NotificationViewModel : ObservableObject
+    public partial class NotificationViewModel : ObservableObject, IEnableLogger
     {
         public NotificationViewModel(Notification notification)
         {
@@ -20,8 +21,17 @@ namespace Needlework.Net.ViewModels.MainWindow
         [RelayCommand]
         public void OpenUrl()
         {
-            var process = new Process() { StartInfo = new() { UseShellExecute = true } };
-            process.Start();
+            try
+            {
+                var url = Notification?.Url ?? "https://github.com/BlossomiShymae/Needlework.Net/releases/latest";
+                var process = new Process() { StartInfo = new(url) { UseShellExecute = true } };
+                process.Start();
+            }
+            catch (System.Exception exception)
+            {
+                this.Log()
+                    .Error("Failed to open URL for notification: {@exception}", exception);
+            }
         }
     }
 }
